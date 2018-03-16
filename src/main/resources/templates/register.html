@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/mainLayout}">
+
+<head>
+<title>Home</title>
+</head>
+<body class="hold-transition register-page">
+	<div layout:fragment="content">
+		<div class="register-box">
+			<div class="login-logo">
+				<a href="#"><b>Register</b></a>
+			</div>
+			<div class="register-box-body">
+				<p class="login-box-msg">Register a new membership</p>
+
+				<form th:action="@{/register}" th:object="${customer}" method="post">
+					<div class="form-group has-feedback">
+						<input type="text" name="fullName" th:field="*{fullName}"
+							class="form-control" placeholder="Full name" required> <span
+							class="glyphicon glyphicon-user form-control-feedback"></span>
+						<p th:if="${#fields.hasErrors('fullName')}"
+							th:errors="*{fullName}" th:errorclass="text-danger">Incorrect
+							data</p>
+					</div>
+					<div class="form-group has-feedback">
+						<input type="email" name="email" th:field="*{email}"
+							class="form-control" placeholder="Email" required> <span
+							class="glyphicon glyphicon-envelope form-control-feedback"></span>
+						<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+							th:errorclass="text-danger">Incorrect data</p>
+					</div>
+					<div class="form-group has-feedback">
+						<input type="password" name="password" th:field="*{password}"
+							class="form-control" placeholder="Password" required> <span
+							class="glyphicon glyphicon-lock form-control-feedback"></span>
+						<p th:if="${#fields.hasErrors('password')}"
+							th:errors="*{password}" th:errorclass="text-danger">Incorrect
+							data</p>
+					</div>
+					<div class="form-group has-feedback">
+						<input type="password" name="passwordConfirm"
+							th:field="*{passwordConfirm}" class="form-control"
+							placeholder="Confirm password" required> <span
+							class="glyphicon glyphicon-lock form-control-feedback"></span>
+						<p th:if="${#fields.hasErrors('passwordConfirm')}"
+							th:errors="*{passwordConfirm}" th:errorclass="text-danger">Incorrect
+							data</p>
+					</div>
+					<div class="row">
+						<div class="col-xs-8"></div>
+						<!-- /.col -->
+						<div class="col-xs-4">
+							<button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+						</div>
+						<!-- /.col -->
+					</div>
+
+					<p class="lost_password">
+						Have an account? <a href="#" th:href="@{/login}"
+							th:text="#{label.login}">Login</a>
+					</p>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

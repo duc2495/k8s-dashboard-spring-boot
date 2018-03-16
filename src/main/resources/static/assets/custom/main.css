@@ -1,0 +1,10 @@
+.navbar {
+	margin-bottom: 0px;
+	border-radius: 0px;
+}
+
+.main-sidebar, .left-side {
+	top: unset;
+	padding-top: 0px;
+	min-height: unset;
+}

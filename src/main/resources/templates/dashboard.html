@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Dashboard</title>
+</head>
+<body>
+	<div layout:fragment="leftSidebar">
+		<!-- Left side column. contains the logo and sidebar -->
+		<aside class="main-sidebar">
+
+			<!-- sidebar: style can be found in sidebar.less -->
+			<section class="sidebar">
+
+				<!-- Sidebar Menu -->
+				<ul class="sidebar-menu">
+					<!-- <li class="header">HEADER</li> -->
+					<!-- Optionally, you can add icons to the links -->
+
+
+					<li th:class="${CURRENT_MENU == 'Overview'}? 'active' : ''"><a
+						href="#"
+						th:href="@{/overview/{name}(name=${project.projectName})}"><i
+							class="fa fa-dashboard"></i> <span>Overview</span></a></li>
+
+					<li th:class="${CURRENT_MENU == 'Application'}? 'active' : ''"><a
+						href="#" th:href="@{'/application/'}"><i class="fa fa-cubes"></i>
+							<span>Application</span></a></li>
+
+					<li th:class="${CURRENT_MENU == 'Database'}? 'active' : ''"><a
+						href="#" th:href="@{'/database/'}"><i class="fa fa-database"></i>
+							<span>Database</span></a></li>
+				</ul>
+				<!-- /.sidebar-menu -->
+			</section>
+			<!-- /.sidebar -->
+		</aside>
+	</div>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>K8S Administration</h1>
+		</section>
+	</div>
+
+	<div layout:fragment="content">
+		<p>Welcome</p>
+	</div>
+
+</body>
+
+</html>
