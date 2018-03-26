@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Application</title>
+</head>
+<body>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>My Application</h1>
+		</section>
+	</div>
+
+	<div layout:fragment="content">
+		<div class="box box-warning">
+			<div class="box-header with-border">
+				<h3 class="box-title">Deploy New Application</h3>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<form role="form" th:action="@{/project/{name}/apps(name=${project.projectName})}" th:object="${app}"
+					method="post">
+					<p th:if="${#fields.hasErrors('global')}" th:errors="*{global}"
+						th:class="text-red">Incorrect data</p>
+					<!-- text input -->
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+						<label>Application Name</label> <input type="text"
+							class="form-control" name="name" th:field="*{name}"
+							placeholder="Enter Application Name" />
+						<p th:if="${#fields.hasErrors('name')}"
+							th:errors="*{name}" th:class="text-red">Incorrect data</p>
+					</div>
+					
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('image')}? 'has-error'">
+						<label>Application Image</label> <input type="text"
+							class="form-control" name="image" th:field="*{image}"
+							placeholder="Enter image" />
+						<p th:if="${#fields.hasErrors('image')}"
+							th:errors="*{image}" th:class="text-red">Incorrect data</p>
+					</div>
+
+					<div class="box-footer">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</form>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+
+	</div>
+
+</body>
+
+</html>
