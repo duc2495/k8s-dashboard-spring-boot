@@ -40,9 +40,17 @@ public class ApplicationController {
 			return "403";
 		}
 		model.addAttribute("project",project);
-		List<Application> apps = appService.getAllApp(name);
+		List<Application> apps = appService.getAll(name);
 		model.addAttribute("apps", apps);
 		return "application/apps";
+	}
+	
+	@RequestMapping(value = "/project/{name}/apps/{appName}", method = RequestMethod.GET)
+	public String viewApplication(@PathVariable String name, @PathVariable String appName, Model model) {
+		model.addAttribute("project",project);
+		Application app = appService.getByName(appName, name);
+		model.addAttribute("app", app);
+		return "application/app";
 	}
 
 	@RequestMapping(value = "/project/{name}/apps/new", method = RequestMethod.GET)

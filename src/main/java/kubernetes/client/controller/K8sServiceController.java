@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import kubernetes.client.model.K8sService;
+import io.fabric8.kubernetes.api.model.Service;
 import kubernetes.client.model.Project;
 import kubernetes.client.service.K8sServiceService;
 import kubernetes.client.service.ProjectService;
@@ -30,7 +30,7 @@ public class K8sServiceController extends BaseController {
 			return "403";
 		}
 		model.addAttribute("project", project);
-		List<K8sService> serviceList = serviceService.getServiceByProjectName(project.getProjectName());
+		List<Service> serviceList = serviceService.getServiceByProjectName(project.getProjectName());
 		model.addAttribute("serviceList", serviceList);
 		return "services/services";
 	}
@@ -69,7 +69,7 @@ public class K8sServiceController extends BaseController {
 			return "403";
 		}
 		model.addAttribute("project", project);
-		K8sService service = serviceService.getServiceByName(serviceName, name);
+		Service service = serviceService.getServiceByName(serviceName, name);
 		model.addAttribute("service", service);
 		return "services/service";
 	}

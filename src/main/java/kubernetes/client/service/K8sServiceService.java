@@ -2,16 +2,17 @@ package kubernetes.client.service;
 
 import java.util.List;
 
-import kubernetes.client.model.K8sService;
+import io.fabric8.kubernetes.api.model.Service;
+import kubernetes.client.model.Application;
 
 public interface K8sServiceService {
-	void create(K8sService service, String projectName);
+	void create(Application app, String projectName);
 
 	void delete(String serviceName, String projectName);
 
-	K8sService getServiceByName(String serviceName, String projectName);
+	Service getServiceByName(String serviceName, String projectName);
 
-	List<K8sService> getServiceByProjectName(String projectName);
+	List<Service> getServiceByProjectName(String projectName);
 
 	boolean serviceExists(String serviceName, String projectName);
 }

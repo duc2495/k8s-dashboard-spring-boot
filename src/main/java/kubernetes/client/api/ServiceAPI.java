@@ -4,12 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import kubernetes.client.model.K8sService;
+import kubernetes.client.model.Application;
 
 @Repository
 public class ServiceAPI {
@@ -20,14 +21,14 @@ public class ServiceAPI {
 
 	Config config = new ConfigBuilder().withMasterUrl(master).build();
 
-	public void create(K8sService k8sService, String namespace) {
+	public void create(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a service
 			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder().withNewMetadata()
-					.withName(k8sService.getName()).endMetadata().withNewSpec().addNewPort()
-					.withPort(k8sService.getPort()).endPort()
-					.addToSelector(k8sService.getSelectors()).withType("NodePort").endSpec().build();
+					.withName(app.getName()).endMetadata().withNewSpec().addNewPort().withPort(app.getPort()).endPort()
+					.addToSelector("app", app.getName()).withType("NodePort").endSpec().build();
 			logger.info("Created service", client.services().inNamespace(namespace).create(service));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -39,6 +40,27 @@ public class ServiceAPI {
 			}
 
 		}
+	}
+
+	public Service get(String name, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Get a service
+			Service service = client.services().inNamespace(namespace).withName(name).get();
+			logger.info("Created service", service);
+			if (service != null) {
+				return service;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+		return null;
 	}
 
 	public void delete(String name, String namespace) {
@@ -56,11 +78,12 @@ public class ServiceAPI {
 			}
 		}
 	}
-	
+
 	public boolean exists(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Exists Service
-			io.fabric8.kubernetes.api.model.Service service = client.services().inNamespace(namespace).withName(name).get();
+			io.fabric8.kubernetes.api.model.Service service = client.services().inNamespace(namespace).withName(name)
+					.get();
 			if (service != null) {
 				return true;
 			}

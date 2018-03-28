@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import io.fabric8.kubernetes.api.model.ServiceBuilder;
+import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
 import io.fabric8.kubernetes.client.Config;
@@ -22,24 +22,20 @@ public class DeploymentAPI {
 
 	Config config = new ConfigBuilder().withMasterUrl(master).build();
 
-	public void deploy(Application app, String projectName) {
+	public void create(Application app, String namespace) {
 
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-
-			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder().withNewMetadata()
-					.withName(app.getName()).endMetadata().withNewSpec().addNewPort().withPort(null)
-					.withNewTargetPort(8080).endPort().addToSelector("app", app.getName()).withType("NodePort")
-					.endSpec().build();
-			service = client.services().inNamespace(projectName).create(service);
-			logger.info("Created service", service);
-
+			// Create a deployment
 			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(app.getName())
 					.addToLabels("app", app.getName()).endMetadata().withNewSpec().withReplicas(1).withNewSelector()
 					.addToMatchLabels("app", app.getName()).endSelector().withNewTemplate().withNewMetadata()
 					.addToLabels("app", app.getName()).endMetadata().withNewSpec().addNewContainer()
-					.withName(app.getName()).withImage("").addNewPort().withContainerPort(8080).endPort()
-					.endContainer().endSpec().endTemplate().endSpec().build();
-			deployment = client.extensions().deployments().inNamespace(projectName).create(deployment);
+					.withName(app.getName()).withImage(app.getImage()).addNewPort().withContainerPort(app.getPort())
+					.endPort().withNewResources().addToLimits("cpu", new Quantity("300m"))
+					.addToLimits("memory", new Quantity("500Mi")).addToRequests("cpu", new Quantity("300m"))
+					.addToRequests("memory", new Quantity("500Mi")).endResources().endContainer().endSpec()
+					.endTemplate().endSpec().build();
+			deployment = client.extensions().deployments().inNamespace(namespace).create(deployment);
 			logger.info("Created deployment", deployment);
 
 		} catch (Exception e) {
@@ -54,10 +50,44 @@ public class DeploymentAPI {
 		}
 
 	}
-	
-	public boolean appExists(String name, String projectName) {
+
+	public Deployment get(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			if (client.extensions().deployments().inNamespace(projectName).withName(name).get() != null) {
+			// Get a deployment
+			Deployment deployment = client.extensions().deployments().inNamespace(namespace).withName(name).get();
+			return deployment;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+		return null;
+	}
+
+	public void delete(String name, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Delete a deployment
+			logger.info("Delete Service", client.services().inNamespace(namespace).withName(name).delete());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+
+	public boolean exists(String name, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			if (client.extensions().deployments().inNamespace(namespace).withName(name).get() != null) {
 				return true;
 			}
 		} catch (Exception e) {

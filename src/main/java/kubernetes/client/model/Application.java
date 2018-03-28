@@ -1,14 +1,14 @@
 package kubernetes.client.model;
 
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
-import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
 
 public class Application {
 	private String name;
+	private String image;
+	private int port;
 	private Deployment deployment;
 	private Service service;
-	private Pod pod;
 
 	public Application() {
 	}
@@ -19,6 +19,22 @@ public class Application {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 
 	public Deployment getDeployment() {
@@ -35,14 +51,6 @@ public class Application {
 
 	public void setService(Service service) {
 		this.service = service;
-	}
-
-	public Pod getPod() {
-		return pod;
-	}
-
-	public void setPod(Pod pod) {
-		this.pod = pod;
 	}
 
 }
