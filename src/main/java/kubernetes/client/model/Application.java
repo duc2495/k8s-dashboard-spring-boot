@@ -1,20 +1,16 @@
 package kubernetes.client.model;
 
-import java.util.Hashtable;
+import io.fabric8.kubernetes.api.model.extensions.Deployment;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.Service;
 
 public class Application {
 	private String name;
-	private String image;
-	private String tag;
-	private String createdAt;
-	private int pods;
-	private String version;
+	private Deployment deployment;
+	private Service service;
+	private Pod pod;
 
-
-	private Hashtable<String, String> envList;
-	private Hashtable<String, String> labelList;
-	
-	public Application() {	
+	public Application() {
 	}
 
 	public String getName() {
@@ -25,60 +21,28 @@ public class Application {
 		this.name = name;
 	}
 
-	public String getImage() {
-		return image;
+	public Deployment getDeployment() {
+		return deployment;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setDeployment(Deployment deployment) {
+		this.deployment = deployment;
 	}
 
-	public String getTag() {
-		return tag;
+	public Service getService() {
+		return service;
 	}
 
-	public void setTag(String tag) {
-		this.tag = tag;
+	public void setService(Service service) {
+		this.service = service;
 	}
 
-	public Hashtable<String, String> getEnvList() {
-		return envList;
+	public Pod getPod() {
+		return pod;
 	}
 
-	public void setEnvList(Hashtable<String, String> envList) {
-		this.envList = envList;
+	public void setPod(Pod pod) {
+		this.pod = pod;
 	}
 
-	public Hashtable<String, String> getLabelList() {
-		return labelList;
-	}
-
-	public void setLabelList(Hashtable<String, String> labelList) {
-		this.labelList = labelList;
-	}
-	
-	public String getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public int getPods() {
-		return pods;
-	}
-
-	public void setPods(int pods) {
-		this.pods = pods;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	
 }

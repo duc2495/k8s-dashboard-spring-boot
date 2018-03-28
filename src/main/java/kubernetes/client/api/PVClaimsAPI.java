@@ -18,7 +18,7 @@ import kubernetes.client.model.Storage;
 
 @Repository
 public class PVClaimsAPI {
-	private static final Logger logger = LoggerFactory.getLogger(NamespacesAPI.class);
+	private static final Logger logger = LoggerFactory.getLogger(PVClaimsAPI.class);
 
 	String master = "https://k8s-master:6443/";
 
@@ -28,12 +28,11 @@ public class PVClaimsAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a pvc
 			Quantity size = new Quantity(storage.getSize());
-			System.out.println();
 			PersistentVolumeClaim pvc = new PersistentVolumeClaimBuilder().withNewMetadata().withName(storage.getName())
 					.endMetadata().withNewSpec().withAccessModes().addToAccessModes("ReadWriteMany")
 					.withStorageClassName("").withNewResources().addToRequests("storage", size).endResources().endSpec()
 					.build();
-			client.persistentVolumeClaims().inNamespace(namespace).create(pvc);
+			logger.info("Create PVC", client.persistentVolumeClaims().inNamespace(namespace).create(pvc));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -50,8 +49,7 @@ public class PVClaimsAPI {
 	public void delete(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Delete a pvc
-			client.persistentVolumeClaims().inNamespace(namespace).withName(name).delete();
-
+			logger.info("Delete PVC", client.persistentVolumeClaims().inNamespace(namespace).withName(name).delete());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

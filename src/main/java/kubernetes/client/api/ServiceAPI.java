@@ -4,30 +4,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import io.fabric8.kubernetes.api.model.Namespace;
-import io.fabric8.kubernetes.api.model.NamespaceBuilder;
+import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import kubernetes.client.model.K8sService;
 
 @Repository
-public class NamespacesAPI {
+public class ServiceAPI {
 
-	private static final Logger logger = LoggerFactory.getLogger(NamespacesAPI.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceAPI.class);
 
 	String master = "https://k8s-master:6443/";
 
 	Config config = new ConfigBuilder().withMasterUrl(master).build();
 
-	public void create(String name) {
-
+	public void create(K8sService k8sService, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-
-			// Create a namespace
-			Namespace ns = new NamespaceBuilder().withNewMetadata().withName(name).endMetadata().build();
-			logger.info("Create namespace", client.namespaces().create(ns));
-
+			// Create a service
+			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder().withNewMetadata()
+					.withName(k8sService.getName()).endMetadata().withNewSpec().addNewPort()
+					.withPort(k8sService.getPort()).endPort()
+					.addToSelector(k8sService.getSelectors()).withType("NodePort").endSpec().build();
+			logger.info("Created service", client.services().inNamespace(namespace).create(service));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -41,13 +41,10 @@ public class NamespacesAPI {
 		}
 	}
 
-	public void delete(String name) {
+	public void delete(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-
-			// Delete a namespace
-			Namespace ns = new NamespaceBuilder().withNewMetadata().withName(name).endMetadata().build();
-			client.namespaces().delete(ns);
-			logger.info("Delete namespace", client.namespaces().delete(ns));
+			// Delete a service
+			logger.info("Delete Service", client.services().inNamespace(namespace).withName(name).delete());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -57,15 +54,14 @@ public class NamespacesAPI {
 					logger.error(t.getMessage(), t);
 				}
 			}
-
 		}
 	}
-
-	public boolean exists(String name) {
+	
+	public boolean exists(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-
-			// Exists namespace
-			if (client.namespaces().withName(name).get() != null) {
+			// Exists Service
+			io.fabric8.kubernetes.api.model.Service service = client.services().inNamespace(namespace).withName(name).get();
+			if (service != null) {
 				return true;
 			}
 		} catch (Exception e) {

@@ -16,7 +16,7 @@ public class StorageServiceImpl implements StorageService{
 	private PVClaimsAPI pvcAPI;
 	
 	@Override
-	public void insert(Storage storage, String projectName) {
+	public void create(Storage storage, String projectName) {
 		pvcAPI.create(storage, projectName);
 	}
 

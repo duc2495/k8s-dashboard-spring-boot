@@ -71,10 +71,10 @@ public class StorageController extends BaseController {
 
 		if (storageService.storageExists(storage.getName(), name)) {
 			result.rejectValue("name", "error.exists", new Object[] { name },
-					"Application " + name + " already exists");
+					"Storage " + name + " already exists");
 			return "storage/create_storage";
 		}
-		storageService.insert(storage, name);
+		storageService.create(storage, name);
 		redirectAttributes.addFlashAttribute("info", "Storage created successfully");
 		return "redirect:/project/" + name + "/storage";
 	}
