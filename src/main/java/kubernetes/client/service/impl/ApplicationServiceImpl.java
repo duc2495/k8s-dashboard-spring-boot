@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import kubernetes.client.api.DeploymentAPI;
 import kubernetes.client.api.ServiceAPI;
+import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.model.Application;
+import kubernetes.client.model.Project;
 import kubernetes.client.service.ApplicationService;
 
 @Service
@@ -16,23 +18,31 @@ public class ApplicationServiceImpl implements ApplicationService {
 	private ServiceAPI serviceAPI;
 	@Autowired
 	private DeploymentAPI deploymentAPI;
+	@Autowired
+	private ApplicationMapper applicationMapper;
 
 	@Override
-	public void deploy(Application app, String projectName) {
-		serviceAPI.create(app, projectName);
-		deploymentAPI.create(app, projectName);
+	public void deploy(Application app, Project project) {
+		applicationMapper.insert(app, project.getProjectId());
+		serviceAPI.create(app, project.getProjectName());
+		deploymentAPI.create(app, project.getProjectName());
 	}
 
 	@Override
-	public void delete(String name, String projectName) {
-		serviceAPI.delete(name, projectName);
-		deploymentAPI.delete(name, projectName);
+	public void delete(String name, Project project) {
+		applicationMapper.delete(name);
+		serviceAPI.delete(name, project.getProjectName());
+		deploymentAPI.delete(name, project.getProjectName());
 	}
 
 	@Override
-	public List<Application> getAll(String projectName) {
-
-		return null;
+	public List<Application> getAll(Project project) {
+		List<Application> apps = applicationMapper.getApplicationsByProjectId(project.getProjectId());
+		for (Application application : apps) {
+			application.setDeployment(deploymentAPI.get(application.getName(), project.getProjectName()));
+			application.setService(serviceAPI.get(application.getName(), project.getProjectName()));
+		}
+		return apps;
 	}
 
 	@Override

@@ -27,16 +27,15 @@ public class DeploymentAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a deployment
 			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(app.getName())
-					.addToLabels("app", app.getName()).endMetadata().withNewSpec().withReplicas(1).withNewSelector()
+					.addToLabels("app", app.getName()).endMetadata().withNewSpec().withReplicas(app.getPods()).withNewSelector()
 					.addToMatchLabels("app", app.getName()).endSelector().withNewTemplate().withNewMetadata()
 					.addToLabels("app", app.getName()).endMetadata().withNewSpec().addNewContainer()
 					.withName(app.getName()).withImage(app.getImage()).addNewPort().withContainerPort(app.getPort())
-					.endPort().withNewResources().addToLimits("cpu", new Quantity("300m"))
-					.addToLimits("memory", new Quantity("500Mi")).addToRequests("cpu", new Quantity("300m"))
-					.addToRequests("memory", new Quantity("500Mi")).endResources().endContainer().endSpec()
+					.endPort().withNewResources().addToLimits("cpu", new Quantity("500m"))
+					.addToLimits("memory", new Quantity("1Gi")).addToRequests("cpu", new Quantity("500m"))
+					.addToRequests("memory", new Quantity("1Gi")).endResources().endContainer().endSpec()
 					.endTemplate().endSpec().build();
-			deployment = client.extensions().deployments().inNamespace(namespace).create(deployment);
-			logger.info("Created deployment", deployment);
+			logger.info("Created deployment", client.extensions().deployments().inNamespace(namespace).create(deployment));
 
 		} catch (Exception e) {
 			e.printStackTrace();

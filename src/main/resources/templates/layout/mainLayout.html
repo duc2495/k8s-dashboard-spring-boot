@@ -55,7 +55,7 @@
 							<li sec:authorize="${!isAuthenticated()}"><a href="#" th:href="@{/login}"><span class="glyphicon glyphicon-log-in"></span>
 							Login</a></li>
                             <li sec:authorize="${isAuthenticated()}"><a href="#" th:href="@{/myAccount}"><i class="fa fa-user"></i> My Account</a></li>
-                            <li sec:authorize="${isAuthenticated()}"><a href="#" th:href="@{/logout}"><i class="fa fa-user"></i> Logout</a></li>
+                            <li sec:authorize="${isAuthenticated()}"><a href="#" th:href="@{/logout}"><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
 				</ul>
 			</div>
 		</div>

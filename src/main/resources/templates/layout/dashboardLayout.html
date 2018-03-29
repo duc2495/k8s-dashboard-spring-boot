@@ -53,16 +53,21 @@
 				<ul class="nav navbar-nav">
 					<li th:class="${CURRENT_MENU == 'Home'}? 'active' : ''"><a
 						th:href="@{/home}">Home</a></li>
-					<li sec:authorize="${isAuthenticated()}" th:class="${CURRENT_MENU == 'Projects'}? 'active' : ''"><a
+					<li sec:authorize="${isAuthenticated()}"
+						th:class="${CURRENT_MENU == 'Projects'}? 'active' : ''"><a
 						th:href="@{/projects}">Projects</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-							
-                            <li sec:authorize="${!isAuthenticated()}"><a href="#" th:href="@{/register}"><i class="fa fa-user"></i> Register</a></li>
-							<li sec:authorize="${!isAuthenticated()}"><a href="#" th:href="@{/login}"><span class="glyphicon glyphicon-log-in"></span>
+
+					<li sec:authorize="${!isAuthenticated()}"><a href="#"
+						th:href="@{/register}"><i class="fa fa-user"></i> Register</a></li>
+					<li sec:authorize="${!isAuthenticated()}"><a href="#"
+						th:href="@{/login}"><span class="glyphicon glyphicon-log-in"></span>
 							Login</a></li>
-                            <li sec:authorize="${isAuthenticated()}"><a href="#" th:href="@{/myAccount}"><i class="fa fa-user"></i> My Account</a></li>
-                            <li sec:authorize="${isAuthenticated()}"><a href="#" th:href="@{/logout}"><i class="fa fa-user"></i> Logout</a></li>
+					<li sec:authorize="${isAuthenticated()}"><a href="#"
+						th:href="@{/myAccount}"><i class="fa fa-user"></i> My Account</a></li>
+					<li sec:authorize="${isAuthenticated()}"><a href="#"
+						th:href="@{/logout}"><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
 				</ul>
 			</div>
 		</div>
@@ -74,8 +79,10 @@
 		<header class="main-header">
 
 			<!-- Logo -->
-			<a href="#" th:href="@{/project/{name}/overview(name=${project.projectName})}" class="logo"> <!-- mini logo for sidebar mini 50x50 pixels -->
-				<span class="logo-mini"><b>NA</b></span> <!-- logo for regular state and mobile devices -->
+			<a href="#"
+				th:href="@{/project/{name}/overview(name=${project.projectName})}"
+				class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
+				class="logo-mini"><b>NA</b></span> <!-- logo for regular state and mobile devices -->
 				<span class="logo-lg"><b th:text="${project.projectName}"></b></span>
 			</a>
 
@@ -85,7 +92,16 @@
 				<a href="#" class="sidebar-toggle" data-toggle="offcanvas"
 					role="button"> <span class="sr-only">Toggle navigation</span>
 				</a>
+				<!-- Navbar Right Menu -->
+				<div class="navbar-custom-menu">
+					<ul class="nav navbar-nav">
+						<li><a
+							th:href="@{/project/{name}/apps/new(name=${project.projectName})}"><i
+								class="fa fa-plus-circle"></i> Deploy Application</a></li>
+					</ul>
+				</div>
 			</nav>
+
 		</header>
 
 		<!-- Left side column. contains the logo and sidebar -->
@@ -93,19 +109,35 @@
 
 			<!-- sidebar: style can be found in sidebar.less -->
 			<section class="sidebar">
-
 				<!-- Sidebar Menu -->
-				<ul class="sidebar-menu">
+				<ul class="sidebar-menu" data-widget="tree">
 					<!-- <li class="header">HEADER</li> -->
 					<!-- Optionally, you can add icons to the links -->
 					<li th:class="${CURRENT_MENU == 'Overview'}? 'active' : ''"><a
 						href="#"
 						th:href="@{/project/{name}/overview(name=${project.projectName})}"><i
 							class="fa fa-dashboard"></i> <span>Overview</span></a></li>
-					<li th:class="${CURRENT_MENU == 'Applications'}? 'active' : ''"><a
-						href="#"
-						th:href="@{/project/{name}/apps(name=${project.projectName})}"><i
-							class="fa fa-cubes"></i> <span>Applications</span></a></li>
+
+					<li th:class="${CURRENT_MENU == 'Deployments' || CURRENT_MENU == 'Pods' || CURRENT_MENU == 'Services'}? 'active' : ''"><a
+						href="#"> <i class="fa fa-cubes"></i> <span>Applications</span>
+							<span class="pull-right-container"> <i
+								class="fa fa-angle-down pull-right"></i>
+						</span>
+					</a>
+						<ul class="treeview-menu" style="display: block;">
+							<li th:class="${CURRENT_MENU == 'Deployments'}? 'active' : ''"><a
+								href="#"
+								th:href="@{/project/{name}/deployments(name=${project.projectName})}"><i
+									class="fa fa-circle-o"></i>Deployments</a></li>
+							<li th:class="${CURRENT_MENU == 'Pods'}? 'active' : ''"><a
+								href="#"
+								th:href="@{/project/{name}/pods(name=${project.projectName})}"><i
+									class="fa fa-circle-o"></i>Pods</a></li>
+							<li th:class="${CURRENT_MENU == 'Services'}? 'active' : ''"><a
+								href="#"
+								th:href="@{/project/{name}/services(name=${project.projectName})}"><i
+									class="fa fa-circle-o"></i>Services</a></li>
+						</ul></li>
 					<li th:class="${CURRENT_MENU == 'Storage'}? 'active' : ''"><a
 						href="#"
 						th:href="@{/project/{name}/storage(name=${project.projectName})}"><i
@@ -151,6 +183,5 @@
 	<script th:src="@{'/assets/plugins/jQuery/jQuery-2.1.4.min.js'}"></script>
 	<script th:src="@{'/assets/bootstrap/js/bootstrap.min.js'}"></script>
 	<script th:src="@{'/assets/dist/js/app.min.js'}"></script>
-
 </body>
 </html>

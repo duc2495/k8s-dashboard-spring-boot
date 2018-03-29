@@ -21,7 +21,7 @@ import kubernetes.client.service.ProjectService;
 import kubernetes.client.validator.ApplicationValidator;
 
 @Controller
-public class ApplicationController {
+public class ApplicationController extends BaseController{
 	@Autowired
 	private ProjectService projectService;
 
@@ -33,14 +33,14 @@ public class ApplicationController {
 	
 	Project project;
 	
-	@RequestMapping(value = "/project/{name}/apps", method = RequestMethod.GET)
+	@RequestMapping(value = "/project/{name}/overview", method = RequestMethod.GET)
 	public String listApplications(@PathVariable String name, Model model) {
 		Project project = projectService.getProjectByName(name);
 		if(project == null) {
 			return "403";
 		}
 		model.addAttribute("project",project);
-		List<Application> apps = appService.getAll(name);
+		List<Application> apps = appService.getAll(project);
 		model.addAttribute("apps", apps);
 		return "application/apps";
 	}
@@ -78,8 +78,8 @@ public class ApplicationController {
 					"Application " + name + " already exists");
 			return "application/deploy_app";
 		}
-		appService.deploy(app, name);
+		appService.deploy(app, project);
 		redirectAttributes.addFlashAttribute("info", "Application deploy successfully");
-		return "redirect:/project/" + name + "/apps";
+		return "redirect:/project/" + name + "/overview";
 	}
 }

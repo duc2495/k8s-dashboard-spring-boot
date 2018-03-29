@@ -46,7 +46,7 @@ public class ServiceAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Get a service
 			Service service = client.services().inNamespace(namespace).withName(name).get();
-			logger.info("Created service", service);
+			logger.info("Get service", service);
 			if (service != null) {
 				return service;
 			}

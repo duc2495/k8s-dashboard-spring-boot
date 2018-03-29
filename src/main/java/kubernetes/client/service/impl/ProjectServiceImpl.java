@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import kubernetes.client.api.NamespacesAPI;
+import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.mapper.ProjectMapper;
 import kubernetes.client.model.Project;
 import kubernetes.client.service.ProjectService;
@@ -14,6 +15,8 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
 	private ProjectMapper projectMapper;
+	@Autowired
+	private ApplicationMapper applicationMapper;
 	@Autowired
 	private NamespacesAPI namespaces;
 
@@ -33,7 +36,9 @@ public class ProjectServiceImpl implements ProjectService {
 	public void delete(int projectId) {
 		Project project = projectMapper.getProjectById(projectId);
 		namespaces.delete(project.getProjectName());
+		applicationMapper.deleteByProjectId(projectId);
 		projectMapper.delete(projectId);
+		
 	}
 
 	@Override

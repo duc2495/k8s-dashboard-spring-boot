@@ -11,18 +11,17 @@ import kubernetes.client.model.Project;
 import kubernetes.client.service.ProjectService;
 
 @Controller
-public class OverviewController {
-	
+public class DeploymentsController extends BaseController{
 	@Autowired
 	private ProjectService projectService;
-	
-	@RequestMapping(value="/project/{name}/overview", method=RequestMethod.GET)
-	public String overviewForm(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name);
-		if(project == null) {
-			return "404";
+
+	@RequestMapping(value = "/project/{name}/deployments", method = RequestMethod.GET)
+	public String getDeploymet(@PathVariable String name, Model model) {
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
 		}
 		model.addAttribute("project", project);
-		return "overview/overview";
+		return "deployments/deployments";
 	}
 }

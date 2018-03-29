@@ -18,8 +18,4 @@ public class HomeController {
     public String welcomePage(Model model) {
         return "home";
     }
-    @RequestMapping(value = { "/dashboard/**" }, method = RequestMethod.GET)
-    public String dashboardPage(Model model) {
-        return "dashboard";
-    }
 }
