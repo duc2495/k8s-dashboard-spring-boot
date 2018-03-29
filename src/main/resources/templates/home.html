@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	  xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorate="~{layout/mainLayout}">
-      
-      <head>
-        <title>Home</title>
-    </head>
-    <body>
-    	<div layout:fragment="content">
-	        <p>Welcome</p>
-    	</div>
-    	
-    </body>
-    
+ xmlns:th="http://www.thymeleaf.org"
+ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+ layout:decorate="~{layout/mainLayout}">
+
+<head>
+<title>Home</title>
+</head>
+<body>
+ <div layout:fragment="content">
+  <div class="form-horizontal">
+   <div class="form-body">
+    <div class="form-group"><label class="control-label col-md-3">Pickup
+      Time</label>
+     <div class="col-md-4 fields">
+      <div class="input-group"><input type="text"
+       class="form-control" /> <span
+       class="btn input-group-addon add-field">(+)</span></div> <span
+      class="help-block">Enter the pickup time </span>
+    </div></div>
+  </div>
+ </div>
+</div>
+
+</body>
+
 </html>
