@@ -11,6 +11,7 @@ import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import kubernetes.client.model.Application;
+import kubernetes.client.model.Template;
 
 @Repository
 public class ServiceAPI {
@@ -24,9 +25,46 @@ public class ServiceAPI {
 	public void create(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a service
-			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder().withNewMetadata()
-					.withName(app.getName()).endMetadata().withNewSpec().addNewPort().withPort(app.getPort()).endPort()
-					.addToSelector("app", app.getName()).withType("NodePort").endSpec().build();
+			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder()
+					.withNewMetadata()
+						.withName(app.getName())
+					.endMetadata()
+					.withNewSpec()
+						.addNewPort()
+							.withPort(app.getPort())
+						.endPort()
+						.addToSelector("app", app.getName())
+					.withType("NodePort")
+					.endSpec().build();
+			logger.info("Created service", client.services().inNamespace(namespace).create(service));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+
+		}
+	}
+	
+	public void create(Template template, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Create a service
+			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder()
+					.withNewMetadata()
+						.withName(template.getName())
+					.endMetadata()
+					.withNewSpec()
+						.addNewPort()
+							.withPort(template.getPort())
+						.endPort()
+						.addToSelector("app", template.getName())
+						.withType("NodePort")
+					.endSpec().build();
 			logger.info("Created service", client.services().inNamespace(namespace).create(service));
 			
 		} catch (Exception e) {

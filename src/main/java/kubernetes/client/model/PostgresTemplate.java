@@ -1,13 +1,24 @@
 package kubernetes.client.model;
 
-public class PostgresTemplate {
-	private String name;
-	private String tag;
-	private int port;
-	private String username;
-	private String password;
-	private String dbname;
-	private String volumeSize;
-	private String mountPath;
-	
+import java.util.ArrayList;
+import java.util.List;
+
+import io.fabric8.kubernetes.api.model.EnvVar;
+
+public class PostgresTemplate extends Template {
+	public PostgresTemplate() {
+		this.setImage("postgres");
+		this.setTag("latest");
+		this.setPort(5432);
+		this.setMountPath("/var/lib/postgresql/data");
+	}
+
+	@Override
+	public List<EnvVar> getEnvs() {
+		List<EnvVar> envs = new ArrayList<EnvVar>();
+		envs.add(new EnvVar("POSTGRES_USER", this.getUsername(), null));
+		envs.add(new EnvVar("POSTGRES_PASSWORD", this.getPassword(), null));
+		envs.add(new EnvVar("POSTGRES_DB", this.getDbname(), null));
+		return envs;
+	}
 }

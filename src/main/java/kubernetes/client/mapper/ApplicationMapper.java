@@ -14,7 +14,7 @@ import kubernetes.client.model.Application;
 public interface ApplicationMapper {
 	@Insert("INSERT INTO application(app_name, description, image, pods, port, project_id) "
 			+ "VALUES(#{app.name}, #{app.description}, #{app.image}, #{app.pods}, #{app.port}, #{project_id})")
-	void insert(@Param("app") Application project, @Param("project_id") int project_id);
+	void insert(@Param("app") Application app, @Param("project_id") int project_id);
 
 	@Select("SELECT * FROM application WHERE project_id = #{project_id}")
 	@Results({ @Result(property = "id", column = "app_id"), @Result(property = "name", column = "app_name"),

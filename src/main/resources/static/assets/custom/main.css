@@ -12,3 +12,8 @@
 .sidebar-menu>li>a {
 	padding: 12px 15px;
 }
+
+img {
+	max-height: 50px;
+	max-width: 50px;
+}

@@ -31,8 +31,6 @@ public class ApplicationController extends BaseController{
 	@Autowired
 	private ApplicationValidator appValidator;
 	
-	Project project;
-	
 	@RequestMapping(value = "/project/{name}/overview", method = RequestMethod.GET)
 	public String listApplications(@PathVariable String name, Model model) {
 		Project project = projectService.getProjectByName(name);
@@ -47,6 +45,7 @@ public class ApplicationController extends BaseController{
 	
 	@RequestMapping(value = "/project/{name}/apps/{appName}", method = RequestMethod.GET)
 	public String viewApplication(@PathVariable String name, @PathVariable String appName, Model model) {
+		Project project = projectService.getProjectByName(name);
 		model.addAttribute("project",project);
 		Application app = appService.getByName(appName, name);
 		model.addAttribute("app", app);

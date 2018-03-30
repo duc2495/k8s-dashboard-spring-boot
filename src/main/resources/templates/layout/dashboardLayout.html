@@ -67,7 +67,8 @@
 					<li sec:authorize="${isAuthenticated()}"><a href="#"
 						th:href="@{/myAccount}"><i class="fa fa-user"></i> My Account</a></li>
 					<li sec:authorize="${isAuthenticated()}"><a href="#"
-						th:href="@{/logout}"><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
+						th:href="@{/logout}"><i class="glyphicon glyphicon-log-out"></i>
+							Logout</a></li>
 				</ul>
 			</div>
 		</div>
@@ -118,7 +119,8 @@
 						th:href="@{/project/{name}/overview(name=${project.projectName})}"><i
 							class="fa fa-dashboard"></i> <span>Overview</span></a></li>
 
-					<li th:class="${CURRENT_MENU == 'Deployments' || CURRENT_MENU == 'Pods' || CURRENT_MENU == 'Services'}? 'active' : ''"><a
+					<li
+						th:class="${CURRENT_MENU == 'Deployments' || CURRENT_MENU == 'Pods' || CURRENT_MENU == 'Services'}? 'active' : ''"><a
 						href="#"> <i class="fa fa-cubes"></i> <span>Applications</span>
 							<span class="pull-right-container"> <i
 								class="fa fa-angle-down pull-right"></i>
@@ -138,6 +140,10 @@
 								th:href="@{/project/{name}/services(name=${project.projectName})}"><i
 									class="fa fa-circle-o"></i>Services</a></li>
 						</ul></li>
+					<li th:class="${CURRENT_MENU == 'Templates'}? 'active' : ''"><a
+						href="#"
+						th:href="@{/project/{name}/templates(name=${project.projectName})}"><i
+							class="fa fa-database"></i> <span>Template</span></a></li>
 					<li th:class="${CURRENT_MENU == 'Storage'}? 'active' : ''"><a
 						href="#"
 						th:href="@{/project/{name}/storage(name=${project.projectName})}"><i

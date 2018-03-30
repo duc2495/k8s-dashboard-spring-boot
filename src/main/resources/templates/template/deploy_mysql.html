@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Template-Postgres</title>
+</head>
+<body>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>Template</h1>
+		</section>
+	</div>
+
+	<div layout:fragment="content">
+		<div class="box box-warning">
+			<div class="box-header with-border">
+				<h3 class="box-title">Deploy New Postgres</h3>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<form role="form"
+					th:action="@{/project/{name}/template/postgres(name=${project.projectName})}"
+					th:object="${template}" method="post">
+					<!-- text input -->
+					<div class="form-group">
+						<label>Postgres name *</label> <input type="text"
+							class="form-control" name="name" th:field="*{name}"
+							placeholder="Enter Application Name" required />
+					</div>
+					<div class="form-group">
+						<label>Version of PostgreSQL Image</label> <input type="text"
+							class="form-control" name="tag" th:field="*{tag}"
+							placeholder="Docker image" required />
+					</div>
+					<div class="form-group">
+						<label>PostgreSQL Connection Username *</label> <input type="text"
+							class="form-control" name="username" th:field="*{username}"
+							placeholder="" required />
+					</div>
+					<div class="form-group">
+						<label>PostgreSQL Connection Password *</label> <input type="text"
+							class="form-control" name="password" th:field="*{password}"
+							placeholder="" required />
+					</div>
+					<div class="form-group">
+						<label>PostgreSQL Database Name *</label> <input type="text"
+							class="form-control" name="dbname" th:field="*{dbname}"
+							placeholder="Port" required />
+					</div>
+
+					<div class="box-footer">
+						<button type="submit" class="btn btn-primary">Deploy</button>
+					</div>
+				</form>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+
+	</div>
+
+</body>
+
+</html>
