@@ -8,7 +8,7 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 public class PostgresTemplate extends Template {
 	public PostgresTemplate() {
 		this.setImage("postgres");
-		this.setTag("latest");
+		this.setTag("9.6");
 		this.setPort(5432);
 		this.setMountPath("/var/lib/postgresql/data");
 	}

@@ -1,1 +1,25 @@
-<h1>error</h1>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/mainLayout}">
+
+<head>
+<title>403 - Error</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<h1>Error</h1>
+			<h4>Access denied</h4>
+			<p>The project does not exist or you are not authorized to view
+				it.</p>
+			<p><a href="/projects">Go Projects &raquo;</a></p>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+
+</body>
+
+</html>

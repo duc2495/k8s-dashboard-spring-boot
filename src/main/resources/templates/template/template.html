@@ -12,26 +12,23 @@
 	<div layout:fragment="pageHeader">
 		<section class="content-header">
 			<h1>Template Database</h1>
-		</section>
-	</div>
+	</section>
+</div>
 	<div layout:fragment="content">
-		<div>
-			<a
-				th:href="@{/project/{name}/template/postgres/new(name=${project.projectName})}">
+		<div class="floating-box"><a
+			th:href="@{/project/{name}/template/postgres/new(name=${project.projectName})}">
 				<img alt="" src=""
-				th:src="@{'/assets/dist/img/logos/postgresql.svg'}"> <label>Postgres</label>
+				th:src="@{'/assets/dist/img/logos/postgresql.svg'}">
+				<p class="text-center">PostgreSQL</p>
 
-			</a>
-		</div>
-		<div>
-			<a
-				th:href="@{/project/{name}/template/mysql/new(name=${project.projectName})}">
+		</a></div>
+		<div class="floating-box"><a
+			th:href="@{/project/{name}/template/mysql/new(name=${project.projectName})}">
 				<img alt="" src=""
-				th:src="@{'/assets/dist/img/logos/mysql-database.svg'}"> <label>Mysql</label>
-
-			</a>
-		</div>
-	</div>
+				th:src="@{'/assets/dist/img/logos/mysql-database.svg'}">
+				<p class="text-center">MySQL</p>
+		</a></div>
+</div>
 </body>
 
 </html>

@@ -11,14 +11,14 @@
 <body>
 	<div layout:fragment="pageHeader">
 		<section class="content-header">
-			<h1>Template</h1>
+			<h1>Template Database</h1>
 		</section>
 	</div>
 
 	<div layout:fragment="content">
 		<div class="box box-warning">
 			<div class="box-header with-border">
-				<h3 class="box-title">Deploy New Postgres</h3>
+				<h3 class="box-title">Deploy Postgres Database</h3>
 			</div>
 			<!-- /.box-header -->
 			<div class="box-body">
@@ -29,29 +29,37 @@
 					<div class="form-group">
 						<label>Postgres name *</label> <input type="text"
 							class="form-control" name="name" th:field="*{name}"
-							placeholder="Enter Application Name" required />
+							placeholder="Enter Application Name" required /><p>The name of
+							the My Service exposed for the database.</p>
 					</div>
 					<div class="form-group">
-						<label>Version of PostgreSQL Image</label> <input type="text"
+						<label>Version of PostgreSQL Image *</label> <input type="text"
 							class="form-control" name="tag" th:field="*{tag}"
-							placeholder="Docker image" required />
+							placeholder="9.6" required />
+							<p>Version of PostgreSQL image to be used (9.4, 9.5, 9.6 or latest).</p>
 					</div>
 					<div class="form-group">
 						<label>PostgreSQL Connection Username *</label> <input type="text"
 							class="form-control" name="username" th:field="*{username}"
-							placeholder="" required />
+							placeholder="POSTGRES_USER" required />
+							<p>Username for PostgreSQL user that will be used for accessing the database.</p>
 					</div>
 					<div class="form-group">
 						<label>PostgreSQL Connection Password *</label> <input type="text"
 							class="form-control" name="password" th:field="*{password}"
-							placeholder="" required />
+							placeholder="POSTGRES_PASSWORD" required />
+							<p>Password for the PostgreSQL connection user.</p>
 					</div>
 					<div class="form-group">
 						<label>PostgreSQL Database Name *</label> <input type="text"
 							class="form-control" name="dbname" th:field="*{dbname}"
-							placeholder="Port" required />
+							placeholder="POSTGRES_DB" required />
+							<p>Name of the PostgreSQL database accessed.</p>
 					</div>
-
+					<div class="form-group"><label> Volume Capacity *</label> <input
+						type="text" class="form-control" name="volumeSize"
+						th:field="*{volumeSize}" placeholder="1Gi" required />
+						<p>Volume space available for data, e.g. 512Mi, 2Gi.</p></div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Deploy</button>
 					</div>

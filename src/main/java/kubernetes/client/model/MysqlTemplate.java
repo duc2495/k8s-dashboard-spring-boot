@@ -9,7 +9,7 @@ public class MysqlTemplate extends Template {
 
 	public MysqlTemplate() {
 		this.setImage("mysql");
-		this.setTag("latest");
+		this.setTag("5.7");
 		this.setPort(3306);
 		this.setMountPath("/var/lib/mysql");
 	}

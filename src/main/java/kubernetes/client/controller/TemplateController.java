@@ -18,7 +18,7 @@ import kubernetes.client.service.ProjectService;
 import kubernetes.client.service.TemplateService;
 
 @Controller
-public class TemplateController {
+public class TemplateController extends BaseController {
 	@Autowired
 	private TemplateService templateService;
 	@Autowired
@@ -26,49 +26,72 @@ public class TemplateController {
 
 	@RequestMapping(value = "/project/{name}/templates", method = RequestMethod.GET)
 	public String listTemplate(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name);
-		model.addAttribute("project",project);
-		if(project == null) {
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
 			return "403";
 		}
+		model.addAttribute("project", project);
 		return "template/template";
 	}
-	
+
 	@RequestMapping(value = "/project/{name}/template/postgres/new", method = RequestMethod.GET)
 	public String deployPostgresTemplateForm(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name);
-		model.addAttribute("project",project);
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
+		}
+		model.addAttribute("project", project);
 		Template template = new PostgresTemplate();
 		model.addAttribute("template", template);
 
 		return "template/deploy_postgres";
 	}
-	
+
 	@RequestMapping(value = "/project/{name}/template/postgres", method = RequestMethod.POST)
-	public String deployPostgresTemplate(@ModelAttribute("template") PostgresTemplate template, @PathVariable String name, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes) {
-		Project project = projectService.getProjectByName(name);
-		model.addAttribute("project",project);
+	public String deployPostgresTemplate(@ModelAttribute("template") PostgresTemplate template,
+			@PathVariable String name, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
+		}
+		if (templateService.exists(template.getName(), name)) {
+			result.rejectValue("name", "error.exists", new Object[] { name },
+					"Application " + name + " already exists");
+			return "application/deploy_app";
+		}
+		model.addAttribute("project", project);
 		templateService.deploy(template, project);
 		redirectAttributes.addFlashAttribute("info", "Application deploy successfully");
 		return "redirect:/project/" + name + "/overview";
 	}
-	
+
 	@RequestMapping(value = "/project/{name}/template/mysql/new", method = RequestMethod.GET)
 	public String deployMySqlTemplateForm(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name);
-		model.addAttribute("project",project);
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
+		}
+		model.addAttribute("project", project);
 		Template template = new MysqlTemplate();
 		model.addAttribute("template", template);
 
-		return "template/deploy_postgres";
+		return "template/deploy_mysql";
 	}
-	
+
 	@RequestMapping(value = "/project/{name}/template/mysql", method = RequestMethod.POST)
-	public String deployMySqlTemplate(@ModelAttribute("template") MysqlTemplate template, @PathVariable String name, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes) {
-		Project project = projectService.getProjectByName(name);
-		model.addAttribute("project",project);
+	public String deployMySqlTemplate(@ModelAttribute("template") MysqlTemplate template, @PathVariable String name,
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
+		}
+
+		if (templateService.exists(template.getName(), name)) {
+			result.rejectValue("name", "error.exists", new Object[] { name },
+					"Application " + name + " already exists");
+			return "application/deploy_app";
+		}
+		model.addAttribute("project", project);
 		templateService.deploy(template, project);
 		redirectAttributes.addFlashAttribute("info", "Application deploy successfully");
 		return "redirect:/project/" + name + "/overview";

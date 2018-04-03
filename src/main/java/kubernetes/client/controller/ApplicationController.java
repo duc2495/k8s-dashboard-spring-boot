@@ -33,8 +33,8 @@ public class ApplicationController extends BaseController{
 	
 	@RequestMapping(value = "/project/{name}/overview", method = RequestMethod.GET)
 	public String listApplications(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name);
-		if(project == null) {
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
 			return "403";
 		}
 		model.addAttribute("project",project);
@@ -45,7 +45,10 @@ public class ApplicationController extends BaseController{
 	
 	@RequestMapping(value = "/project/{name}/apps/{appName}", method = RequestMethod.GET)
 	public String viewApplication(@PathVariable String name, @PathVariable String appName, Model model) {
-		Project project = projectService.getProjectByName(name);
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
+		}
 		model.addAttribute("project",project);
 		Application app = appService.getByName(appName, name);
 		model.addAttribute("app", app);
@@ -54,7 +57,10 @@ public class ApplicationController extends BaseController{
 
 	@RequestMapping(value = "/project/{name}/apps/new", method = RequestMethod.GET)
 	public String deployApplicationForm(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name);
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
+		}
 		model.addAttribute("project",project);
 		Application app = new Application();
 		model.addAttribute("app", app);
@@ -65,7 +71,10 @@ public class ApplicationController extends BaseController{
 	@RequestMapping(value = "/project/{name}/apps", method = RequestMethod.POST)
 	public String deployApplication(@Valid @ModelAttribute("app") Application app, @PathVariable String name, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes) {
-		Project project = projectService.getProjectByName(name);
+		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			return "403";
+		}
 		model.addAttribute("project",project);
 		appValidator.validate(app, result);
 		if (result.hasErrors()) {
