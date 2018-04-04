@@ -13,19 +13,19 @@
 	padding: 12px 15px;
 }
 
-img {
-	height: 100px;
+.floating-box {
+	float: left;
 	width: 100px;
+	height: 100px;
+	margin: 15px 40px 30px 40px;
+	border: none;
+	font-size: 20px;
+	font-weight: 500;
 }
 
-.floating-box {
-    float: left;
-    width: 100px;
-    height: 100px;
-    margin: 5px 40px 30px 40px;
-    border: none;
-    font-size: 20px;
-    font-weight: 500;
+.floating-box img {
+	height: 100px;
+	width: 100px;
 }
 
 /* Set error page style */

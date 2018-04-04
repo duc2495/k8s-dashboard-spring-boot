@@ -68,6 +68,9 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<Project> getProjectsByUserId(int customerId) {
 		List<Project> projectList = projectMapper.getProjectsByUserId(customerId);
+		if(projectList.isEmpty()) {
+			return null;
+		}
 		return projectList;
 	}
 

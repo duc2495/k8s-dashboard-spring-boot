@@ -4,6 +4,7 @@ import kubernetes.client.model.Project;
 import kubernetes.client.model.Template;
 
 public interface TemplateService {
-	public void deploy(Template template, Project project);
+	void deploy(Template template, Project project);
+
 	boolean exists(String name, String projectName);
 }

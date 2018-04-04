@@ -16,6 +16,7 @@ import kubernetes.client.model.Project;
 import kubernetes.client.model.Template;
 import kubernetes.client.service.ProjectService;
 import kubernetes.client.service.TemplateService;
+import kubernetes.client.validator.TemplateValidator;
 
 @Controller
 public class TemplateController extends BaseController {
@@ -23,6 +24,8 @@ public class TemplateController extends BaseController {
 	private TemplateService templateService;
 	@Autowired
 	private ProjectService projectService;
+	@Autowired
+	private TemplateValidator templateValitator;
 
 	@RequestMapping(value = "/project/{name}/templates", method = RequestMethod.GET)
 	public String listTemplate(@PathVariable String name, Model model) {
@@ -54,12 +57,16 @@ public class TemplateController extends BaseController {
 		if (project == null) {
 			return "403";
 		}
+		model.addAttribute("project", project);
+		templateValitator.validate(template, result);
+		if (result.hasErrors()) {
+			return "template/deploy_postgres";
+		}
 		if (templateService.exists(template.getName(), name)) {
 			result.rejectValue("name", "error.exists", new Object[] { name },
 					"Application " + name + " already exists");
-			return "application/deploy_app";
+			return "template/deploy_postgres";
 		}
-		model.addAttribute("project", project);
 		templateService.deploy(template, project);
 		redirectAttributes.addFlashAttribute("info", "Application deploy successfully");
 		return "redirect:/project/" + name + "/overview";
@@ -85,13 +92,16 @@ public class TemplateController extends BaseController {
 		if (project == null) {
 			return "403";
 		}
-
+		model.addAttribute("project", project);
+		templateValitator.validate(template, result);
+		if (result.hasErrors()) {
+			return "template/deploy_mysql";
+		}
 		if (templateService.exists(template.getName(), name)) {
 			result.rejectValue("name", "error.exists", new Object[] { name },
 					"Application " + name + " already exists");
-			return "application/deploy_app";
+			return "template/deploy_mysql";
 		}
-		model.addAttribute("project", project);
 		templateService.deploy(template, project);
 		redirectAttributes.addFlashAttribute("info", "Application deploy successfully");
 		return "redirect:/project/" + name + "/overview";

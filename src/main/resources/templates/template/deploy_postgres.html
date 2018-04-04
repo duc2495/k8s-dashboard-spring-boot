@@ -11,7 +11,7 @@
 <body>
 	<div layout:fragment="pageHeader">
 		<section class="content-header">
-			<h1>Template Database</h1>
+			<h1>Template-Databases</h1>
 		</section>
 	</div>
 
@@ -26,40 +26,51 @@
 					th:action="@{/project/{name}/template/postgres(name=${project.projectName})}"
 					th:object="${template}" method="post">
 					<!-- text input -->
-					<div class="form-group">
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('volumeSize')}? 'has-error'">
 						<label>Postgres name *</label> <input type="text"
 							class="form-control" name="name" th:field="*{name}"
-							placeholder="Enter Application Name" required /><p>The name of
-							the My Service exposed for the database.</p>
+							placeholder="Enter Application Name" required />
+						<p>The name of the My Service exposed for the database. The
+							name must contain only lowercase letters, numbers, and hyphens.</p>
+						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+							th:class="text-red">Incorrect data</p>
 					</div>
 					<div class="form-group">
 						<label>Version of PostgreSQL Image *</label> <input type="text"
 							class="form-control" name="tag" th:field="*{tag}"
 							placeholder="9.6" required />
-							<p>Version of PostgreSQL image to be used (9.4, 9.5, 9.6 or latest).</p>
+						<p>Version of PostgreSQL image to be used (9.4, 9.5, 9.6 or
+							latest).</p>
 					</div>
 					<div class="form-group">
 						<label>PostgreSQL Connection Username *</label> <input type="text"
 							class="form-control" name="username" th:field="*{username}"
 							placeholder="POSTGRES_USER" required />
-							<p>Username for PostgreSQL user that will be used for accessing the database.</p>
+						<p>Username for PostgreSQL user that will be used for
+							accessing the database.</p>
 					</div>
 					<div class="form-group">
 						<label>PostgreSQL Connection Password *</label> <input type="text"
 							class="form-control" name="password" th:field="*{password}"
 							placeholder="POSTGRES_PASSWORD" required />
-							<p>Password for the PostgreSQL connection user.</p>
+						<p>Password for the PostgreSQL connection user.</p>
 					</div>
 					<div class="form-group">
 						<label>PostgreSQL Database Name *</label> <input type="text"
 							class="form-control" name="dbname" th:field="*{dbname}"
 							placeholder="POSTGRES_DB" required />
-							<p>Name of the PostgreSQL database accessed.</p>
+						<p>Name of the PostgreSQL database accessed.</p>
 					</div>
-					<div class="form-group"><label> Volume Capacity *</label> <input
-						type="text" class="form-control" name="volumeSize"
-						th:field="*{volumeSize}" placeholder="1Gi" required />
-						<p>Volume space available for data, e.g. 512Mi, 2Gi.</p></div>
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('volumeSize')}? 'has-error'">
+						<label> Volume Capacity *</label> <input type="text"
+							class="form-control" name="volumeSize" th:field="*{volumeSize}"
+							placeholder="1Gi" required />
+						<p>Volume space available for data, e.g. 512Mi, 2Gi.</p>
+						<p th:if="${#fields.hasErrors('volumeSize')}"
+							th:errors="*{volumeSize}" th:class="text-red">Incorrect data</p>
+					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Deploy</button>
 					</div>

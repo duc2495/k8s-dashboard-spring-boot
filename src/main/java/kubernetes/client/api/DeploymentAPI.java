@@ -1,5 +1,7 @@
 package kubernetes.client.api;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -16,7 +18,7 @@ import kubernetes.client.model.Template;
 
 @Repository
 public class DeploymentAPI {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ServiceAPI.class);
 
 	String master = "https://k8s-master:6443/";
@@ -55,48 +57,19 @@ public class DeploymentAPI {
 	public void create(Template template, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a deployment
-			Deployment deployment = new DeploymentBuilder()
-					.withNewMetadata()
-						.withName(template.getName())
-						.addToLabels("app", template.getName())
-					.endMetadata()
-					.withNewSpec()
-						.withReplicas(1)
-						.withNewSelector()
-							.addToMatchLabels("app", template.getName())
-						.endSelector()
-						.withNewTemplate()
-							.withNewMetadata()
-								.addToLabels("app", template.getName())
-							.endMetadata()
-							.withNewSpec()
-								.addNewContainer()
-									.withName(template.getName())
-									.withImage(template.getImage() + ":" + template.getTag())
-									.withEnv(template.getEnvs())
-									.addNewPort()
-										.withContainerPort(template.getPort())
-									.endPort()
-									.withNewResources()
-										.addToLimits("cpu", new Quantity("100m"))
-										.addToLimits("memory", new Quantity("300Mi"))
-										.addToRequests("cpu", new Quantity("100m"))
-										.addToRequests("memory", new Quantity("300Mi"))
-									.endResources()
-									.addNewVolumeMount()
-										.withName(template.getName())
-										.withMountPath(template.getMountPath())
-										.withReadOnly(false)
-									.endVolumeMount()
-								.endContainer()
-								.addNewVolume()
-									.withName(template.getName())
-									.withNewPersistentVolumeClaim()
-										.withClaimName(template.getName())
-									.endPersistentVolumeClaim()
-								.and()
-							.endSpec()
-						.endTemplate()
+			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(template.getName())
+					.addToLabels("app", template.getName()).endMetadata().withNewSpec().withReplicas(1)
+					.withNewSelector().addToMatchLabels("app", template.getName()).endSelector().withNewTemplate()
+					.withNewMetadata().addToLabels("app", template.getName()).endMetadata().withNewSpec()
+					.addNewContainer().withName(template.getName())
+					.withImage(template.getImage() + ":" + template.getTag()).withEnv(template.getEnvs()).addNewPort()
+					.withContainerPort(template.getPort()).endPort().withNewResources()
+					.addToLimits("cpu", new Quantity("100m")).addToLimits("memory", new Quantity("300Mi"))
+					.addToRequests("cpu", new Quantity("100m")).addToRequests("memory", new Quantity("300Mi"))
+					.endResources().addNewVolumeMount().withName(template.getName())
+					.withMountPath(template.getMountPath()).withReadOnly(false).endVolumeMount().endContainer()
+					.addNewVolume().withName(template.getName()).withNewPersistentVolumeClaim()
+					.withClaimName(template.getName()).endPersistentVolumeClaim().and().endSpec().endTemplate()
 					.endSpec().build();
 			logger.info("Created deployment",
 					client.extensions().deployments().inNamespace(namespace).create(deployment));
@@ -111,12 +84,30 @@ public class DeploymentAPI {
 			}
 		}
 	}
-	
+
 	public Deployment get(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Get a deployment
 			Deployment deployment = client.extensions().deployments().inNamespace(namespace).withName(name).get();
 			return deployment;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+		return null;
+	}
+
+	public List<Deployment> getAll(String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Get all deployment
+			List<Deployment> deployments = client.extensions().deployments().inNamespace(namespace).list().getItems();
+			return deployments;
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

@@ -46,7 +46,6 @@ public class NamespacesAPI {
 
 			// Delete a namespace
 			Namespace ns = new NamespaceBuilder().withNewMetadata().withName(name).endMetadata().build();
-			client.namespaces().delete(ns);
 			logger.info("Delete namespace", client.namespaces().delete(ns));
 		} catch (Exception e) {
 			e.printStackTrace();

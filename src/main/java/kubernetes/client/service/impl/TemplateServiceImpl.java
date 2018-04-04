@@ -3,25 +3,25 @@ package kubernetes.client.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kubernetes.client.api.DeploymentAPI;
-import kubernetes.client.api.PVClaimsAPI;
-import kubernetes.client.api.ServiceAPI;
 import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Project;
 import kubernetes.client.model.Storage;
 import kubernetes.client.model.Template;
+import kubernetes.client.service.DeploymentService;
+import kubernetes.client.service.K8sServiceService;
+import kubernetes.client.service.StorageService;
 import kubernetes.client.service.TemplateService;
 
 @Service
 public class TemplateServiceImpl implements TemplateService {
 
 	@Autowired
-	private ServiceAPI serviceAPI;
+	private K8sServiceService serviceService;
 	@Autowired
-	private DeploymentAPI deploymentAPI;
+	private DeploymentService deploymentService;
 	@Autowired
-	private PVClaimsAPI pVClaimsAPI;
+	private StorageService storageService;
 	@Autowired
 	private ApplicationMapper appMapper;
 
@@ -36,15 +36,15 @@ public class TemplateServiceImpl implements TemplateService {
 		app.setImage(template.getImage() + ":" + template.getTag());
 		app.setPort(template.getPort());
 		appMapper.insert(app, project.getProjectId());
-		pVClaimsAPI.create(storage, project.getProjectName());
-		serviceAPI.create(template, project.getProjectName());
-		deploymentAPI.create(template, project.getProjectName());
+		storageService.create(storage, project.getProjectName());
+		serviceService.create(template, project.getProjectName());
+		deploymentService.create(template, project.getProjectName());
 	}
 
 	@Override
 	public boolean exists(String name, String projectName) {
-		if (serviceAPI.exists(name, projectName) || deploymentAPI.exists(name, projectName)
-				|| pVClaimsAPI.exists(name, projectName)) {
+		if (serviceService.serviceExists(name, projectName) || deploymentService.deploymentExists(name, projectName)
+				|| storageService.storageExists(name, projectName)) {
 			return true;
 		}
 		return false;

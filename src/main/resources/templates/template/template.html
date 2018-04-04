@@ -6,29 +6,32 @@
 	layout:decorate="~{layout/dashboardLayout}">
 
 <head>
-<title>Template Database</title>
+<title>Template-Databases</title>
 </head>
 <body>
 	<div layout:fragment="pageHeader">
 		<section class="content-header">
-			<h1>Template Database</h1>
-	</section>
-</div>
+			<h1>Template-Databases</h1>
+		</section>
+	</div>
 	<div layout:fragment="content">
-		<div class="floating-box"><a
-			th:href="@{/project/{name}/template/postgres/new(name=${project.projectName})}">
+		<div class="floating-box">
+			<a
+				th:href="@{/project/{name}/template/postgres/new(name=${project.projectName})}">
 				<img alt="" src=""
 				th:src="@{'/assets/dist/img/logos/postgresql.svg'}">
 				<p class="text-center">PostgreSQL</p>
-
-		</a></div>
-		<div class="floating-box"><a
-			th:href="@{/project/{name}/template/mysql/new(name=${project.projectName})}">
+			</a>
+		</div>
+		<div class="floating-box">
+			<a
+				th:href="@{/project/{name}/template/mysql/new(name=${project.projectName})}">
 				<img alt="" src=""
 				th:src="@{'/assets/dist/img/logos/mysql-database.svg'}">
 				<p class="text-center">MySQL</p>
-		</a></div>
-</div>
+			</a>
+		</div>
+	</div>
 </body>
 
 </html>

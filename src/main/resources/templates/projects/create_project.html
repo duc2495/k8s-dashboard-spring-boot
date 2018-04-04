@@ -21,8 +21,6 @@
 				<div class="box-body">
 					<form role="form" th:action="@{/projects}" th:object="${project}"
 						method="post">
-						<p th:if="${#fields.hasErrors('global')}" th:errors="*{global}"
-							th:class="text-red">Incorrect data</p>
 						<!-- text input -->
 						<div class="form-group"
 							th:classappend="${#fields.hasErrors('projectName')}? 'has-error'">

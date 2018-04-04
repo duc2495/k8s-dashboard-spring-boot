@@ -30,36 +30,10 @@ public class K8sServiceController extends BaseController {
 			return "403";
 		}
 		model.addAttribute("project", project);
-		List<Service> serviceList = serviceService.getServiceByProjectName(project.getProjectName());
-		model.addAttribute("serviceList", serviceList);
+		List<Service> services = serviceService.getServiceByProjectName(project.getProjectName());
+		model.addAttribute("services", services);
 		return "services/services";
 	}
-	/*
-	 * @RequestMapping(value = "/project/{name}/services/new", method =
-	 * RequestMethod.GET) public String createServiceForm(@PathVariable String name,
-	 * Model model) { Project project = projectService.getProjectByName(name,
-	 * getCurrentUser().getCustomer().getId()); if (project == null) { return "403";
-	 * } model.addAttribute("project", project); K8sService service = new
-	 * K8sService(); model.addAttribute("service", service); return
-	 * "services/create_service"; }
-	 * 
-	 * @RequestMapping(value = "/project/{name}/services", method =
-	 * RequestMethod.POST) public String
-	 * createService(@Valid @ModelAttribute("service") K8sService
-	 * service, @PathVariable String name, BindingResult result, Model model,
-	 * RedirectAttributes redirectAttributes) { Project project =
-	 * projectService.getProjectByName(name,
-	 * getCurrentUser().getCustomer().getId()); if (project == null) { return "403";
-	 * } model.addAttribute("project", project); serviceValidator.validate(service,
-	 * result); if (result.hasErrors()) { return "services/create_service"; }
-	 * 
-	 * if (serviceService.serviceExists(service.getName(), name)) {
-	 * result.rejectValue("name", "error.exists", new Object[] { name }, "Service "
-	 * + name + " already exists"); return "services/create_service"; }
-	 * serviceService.create(service, name);
-	 * redirectAttributes.addFlashAttribute("info", "Service created successfully");
-	 * return "redirect:/project/" + name + "/services"; }
-	 */
 
 	@RequestMapping(value = "/project/{name}/services/{serviceName}", method = RequestMethod.GET)
 	public String getService(@PathVariable("name") String name, @PathVariable("serviceName") String serviceName,

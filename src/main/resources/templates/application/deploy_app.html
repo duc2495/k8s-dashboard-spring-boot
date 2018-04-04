@@ -25,14 +25,14 @@
 				<form role="form"
 					th:action="@{/project/{name}/apps(name=${project.projectName})}"
 					th:object="${app}" method="post">
-					<p th:if="${#fields.hasErrors('global')}" th:errors="*{global}"
-						th:class="text-red">Incorrect data</p>
 					<!-- text input -->
 					<div class="form-group"
 						th:classappend="${#fields.hasErrors('name')}? 'has-error'">
 						<label>Application name *</label> <input type="text"
 							class="form-control" name="name" th:field="*{name}"
 							placeholder="Enter Application Name" required />
+						<p>The name must contain only lowercase letters, numbers, and
+							hyphens.</p>
 						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
 							th:class="text-red">Incorrect data</p>
 					</div>
@@ -40,7 +40,8 @@
 						th:classappend="${#fields.hasErrors('description')}? 'has-error'">
 						<label>Description</label>
 						<textarea class="form-control" rows="3" name="description"
-							th:field="*{description}" placeholder="Enter Application Description"></textarea>
+							th:field="*{description}"
+							placeholder="Enter Application Description"></textarea>
 						<p th:if="${#fields.hasErrors('description')}"
 							th:errors="*{description}" th:class="text-red">Incorrect data</p>
 					</div>

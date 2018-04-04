@@ -7,18 +7,23 @@ import org.springframework.stereotype.Service;
 
 import kubernetes.client.api.ServiceAPI;
 import kubernetes.client.model.Application;
+import kubernetes.client.model.Template;
 import kubernetes.client.service.K8sServiceService;
 
 @Service
-public class K8sServiceServiceImpl implements K8sServiceService{
-	
+public class K8sServiceServiceImpl implements K8sServiceService {
+
 	@Autowired
 	private ServiceAPI serviceAPI;
-	
+
 	@Override
 	public void create(Application app, String projectName) {
 		serviceAPI.create(app, projectName);
-		
+	}
+
+	@Override
+	public void create(Template template, String projectName) {
+		serviceAPI.create(template, projectName);
 	}
 
 	@Override
@@ -28,19 +33,17 @@ public class K8sServiceServiceImpl implements K8sServiceService{
 
 	@Override
 	public io.fabric8.kubernetes.api.model.Service getServiceByName(String serviceName, String projectName) {
-		return null;
+		return serviceAPI.get(serviceName, projectName);
 	}
 
 	@Override
 	public List<io.fabric8.kubernetes.api.model.Service> getServiceByProjectName(String projectName) {
-		
-		return null;
+		return serviceAPI.getAll(projectName);
 	}
 
 	@Override
 	public boolean serviceExists(String serviceName, String projectName) {
-		
+
 		return serviceAPI.exists(serviceName, projectName);
 	}
-
 }
