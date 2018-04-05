@@ -9,7 +9,11 @@
 <title>Application</title>
 </head>
 <body>
-	<div layout:fragment="pageHeader"></div>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>APPLICATIONS</h1>
+		</section>
+	</div>
 	<div layout:fragment="content">
 		<!-- IF -->
 		<div th:if="${apps == null}">
@@ -24,31 +28,77 @@
 		<!-- ELSE -->
 		<div th:unless="${apps == null}">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-12 app-template" th:each="app,iterStat : ${apps}">
+					<div class="box-body table-responsive no-padding">
+						<div class="col-md-2 inline">Name:</div>
+						<div class="col-md-2 inline">Description:</div>
+						<div class="col-md-2 inline">Status:</div>
+						<div class="col-md-2 inline">Created At:</div>
+						<div class="col-md-2 inline">Action:</div>
+					</div>
 					<div class="box">
-						<div class="box-header">
-							<h3 class="box-title">List of Applications</h3>
+						<div class="box-header with-border">
+							<h5 class="box-title">DEPLOYTMENT CONFIG:</h5>
+							<a class="box-title"
+								th:href="@{/project/{name}/deployments/(name=${project.projectName})}"
+								th:text="${app.deployment.metadata.name}"></a>
+							<div class="box-tools pull-right">
+								<!-- Collapse Button -->
+								<button type="button" class="btn btn-box-tool"
+									data-widget="collapse">
+									<i class="fa fa-minus"></i>
+								</button>
+							</div>
 						</div>
 						<!-- /.box-header -->
-						<div class="box-body table-responsive no-padding">
-							<table class="table table-hover">
-								<tr>
-									<th style="width: 10px">#</th>
-									<th>Name</th>
-									<th>Pods</th>
-									<th>Image</th>
-									<th>Age</th>
-									<th>Version</th>
-								</tr>
-								<tr th:each="app,iterStat : ${apps}">
-									<td th:text="${iterStat.count}">1</td>
-									<td th:text="${app.deployment.metadata.name}">Name</td>
-									<td th:text="${app.deployment.spec.replicas}">Pods</td>
-									<td
-										th:text="${app.deployment.spec.template.spec.containers[0].image}">Image</td>
-								</tr>
-
-							</table>
+						<div class="box-body">
+							<div class="col-md-6">
+								<h4 class="component-label section-label">Container</h4>
+								<div class="pod-template">
+									<div>
+										<p th:text="${app.deployment.metadata.name}"></p>
+									</div>
+									<div class="pod-template-image icon-row">
+										<div class="icon-wrap">
+											<i class="glyphicon glyphicon-picture"></i>
+										</div>
+										<div class="word-break">
+											<span class="pod-template-key">Image:</span> <span
+												th:text="${app.deployment.spec.template.spec.containers[0].image}"></span>
+										</div>
+									</div>
+									<div class="pod-template-image icon-row">
+										<div class="icon-wrap">
+											<i class="fa fa-plug"></i>
+										</div>
+										<div class="word-break">
+											<span class="pod-template-key">Port:</span> <span
+												th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<h4 class="component-label section-label">Pods</h4>
+							</div>
+							<div class="col-sm-12 expanded-section">
+								<h4 class="component-label section-label">Network - Service</h4>
+								<div>
+									<a th:text="${app.deployment.metadata.name}"></a>
+								</div>
+								<div class="col-md-6">
+									<div class="resource-label">Internal Traffic</div>
+									<div>
+										<p>Port</p>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="resource-label">External Traffic</div>
+									<div>
+										<p>NodePort</p>
+									</div>
+								</div>
+							</div>
 						</div>
 						<!-- /.box-body -->
 
