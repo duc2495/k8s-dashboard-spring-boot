@@ -21,7 +21,7 @@
 				<h2>There is nothing to display here.</h2>
 				<p>You can deploy new application.</p>
 				<a class="btn btn-primary"
-					th:href="@{/project/{name}/apps/new(name=${project.projectName})}"><i
+					th:href="@{/project/{name}/apps/new(name=${projectName})}"><i
 					class="fa fa-plus-circle"></i> Deploy Application</a>
 			</div>
 		</div>
@@ -43,7 +43,7 @@
 									<th>Ports</th>
 									<th>NodePort</th>
 									<th>Selector</th>
-									<th>Age</th>
+									<th>Creation Time</th>
 								</tr>
 								<tr th:each="service,iterStat : ${services}">
 									<td th:text="${iterStat.count}">1</td>
@@ -52,7 +52,7 @@
 									<td th:text="${service.spec.ports[0].port}">Ports</td>
 									<td th:text="${service.spec.ports[0].nodePort}">NodePort</td>
 									<td th:text="${service.spec.selector}">Selector</td>
-									<td th:text="${service.metadata.creationTimestamp}">Age</td>
+									<td th:text="${service.metadata.creationTimestamp}">Creation Time</td>
 								</tr>
 
 							</table>

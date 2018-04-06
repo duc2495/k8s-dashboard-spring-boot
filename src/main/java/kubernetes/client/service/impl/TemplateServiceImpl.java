@@ -2,6 +2,7 @@ package kubernetes.client.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.model.Application;
@@ -13,6 +14,7 @@ import kubernetes.client.service.K8sServiceService;
 import kubernetes.client.service.StorageService;
 import kubernetes.client.service.TemplateService;
 
+@Transactional
 @Service
 public class TemplateServiceImpl implements TemplateService {
 

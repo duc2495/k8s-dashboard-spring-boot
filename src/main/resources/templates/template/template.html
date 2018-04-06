@@ -17,7 +17,7 @@
 	<div layout:fragment="content">
 		<div class="floating-box">
 			<a
-				th:href="@{/project/{name}/template/postgres/new(name=${project.projectName})}">
+				th:href="@{/project/{name}/template/postgres/new(name=${projectName})}">
 				<img alt="" src=""
 				th:src="@{'/assets/dist/img/logos/postgresql.svg'}">
 				<p class="text-center">PostgreSQL</p>
@@ -25,7 +25,7 @@
 		</div>
 		<div class="floating-box">
 			<a
-				th:href="@{/project/{name}/template/mysql/new(name=${project.projectName})}">
+				th:href="@{/project/{name}/template/mysql/new(name=${projectName})}">
 				<img alt="" src=""
 				th:src="@{'/assets/dist/img/logos/mysql-database.svg'}">
 				<p class="text-center">MySQL</p>

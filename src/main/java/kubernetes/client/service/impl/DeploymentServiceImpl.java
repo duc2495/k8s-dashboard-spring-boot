@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import kubernetes.client.api.DeploymentAPI;
@@ -11,6 +12,7 @@ import kubernetes.client.model.Application;
 import kubernetes.client.model.Template;
 import kubernetes.client.service.DeploymentService;
 
+@Transactional
 @Service
 public class DeploymentServiceImpl implements DeploymentService {
 

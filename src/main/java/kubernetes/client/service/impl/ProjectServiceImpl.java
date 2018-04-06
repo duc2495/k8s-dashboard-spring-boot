@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kubernetes.client.api.NamespacesAPI;
 import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.mapper.ProjectMapper;
 import kubernetes.client.model.Project;
 import kubernetes.client.service.ProjectService;
 
+@Transactional
 @Service
 public class ProjectServiceImpl implements ProjectService {
 

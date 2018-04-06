@@ -21,7 +21,7 @@
 			<!-- /.box-header -->
 			<div class="box-body">
 				<form role="form"
-					th:action="@{/project/{name}/template/postgres(name=${project.projectName})}"
+					th:action="@{/project/{name}/template/mysql(name=${projectName})}"
 					th:object="${template}" method="post">
 					<!-- text input -->
 					<div class="form-group"
@@ -29,7 +29,7 @@
 						<label>MySQL name *</label> <input type="text"
 							class="form-control" name="name" th:field="*{name}"
 							placeholder="Enter Application Name" required />
-						<p>The name of the My Service exposed for the database. The
+						<p class="recommend">The name of the My Service exposed for the database. The
 							name must contain only lowercase letters, numbers, and hyphens.</p>
 						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
 							th:class="text-red">Incorrect data</p>
@@ -38,7 +38,7 @@
 						<label>Version of MySQL Image *</label> <input type="text"
 							class="form-control" name="tag" th:field="*{tag}"
 							placeholder="5.7" required />
-						<p>Version of MySQL image to be used (5.5, 5.6, 5.7, or
+						<p class="recommend">Version of MySQL image to be used (5.5, 5.6, 5.7, or
 							latest).</p>
 					</div>
 					<div class="form-group">
@@ -46,20 +46,20 @@
 							class="form-control" name="rootPassword"
 							th:field="*{rootPassword}" placeholder="MYSQL_ROOT_PASSWORD"
 							required />
-						<p>Password for the MySQL root user.</p>
+						<p class="recommend">Password for the MySQL root user.</p>
 					</div>
 					<div class="form-group">
 						<label>MySQL Connection Username *</label> <input type="text"
 							class="form-control" name="username" th:field="*{username}"
 							placeholder="MYSQL_USER" required />
-						<p>Username for MySQL user that will be used for accessing the
+						<p class="recommend">Username for MySQL user that will be used for accessing the
 							database.</p>
 					</div>
 					<div class="form-group">
 						<label>MySQL Connection Password *</label> <input type="text"
 							class="form-control" name="password" th:field="*{password}"
 							placeholder="MYSQL_PASSWORD" required />
-						<p>Password for the MySQL connection user.</p>
+						<p class="recommend">Password for the MySQL connection user.</p>
 					</div>
 					<div class="form-group">
 						<label> MySQL Database Name *</label> <input type="text"
@@ -72,7 +72,7 @@
 						<label> Volume Capacity *</label> <input type="text"
 							class="form-control" name="volumeSize" th:field="*{volumeSize}"
 							placeholder="1Gi" required />
-						<p>Volume space available for data, e.g. 512Mi, 2Gi.</p>
+						<p class="recommend">Volume space available for data, e.g. 512Mi, 2Gi.</p>
 						<p th:if="${#fields.hasErrors('volumeSize')}"
 							th:errors="*{volumeSize}" th:class="text-red">Incorrect data</p>
 					</div>

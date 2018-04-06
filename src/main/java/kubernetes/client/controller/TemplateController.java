@@ -29,21 +29,19 @@ public class TemplateController extends BaseController {
 
 	@RequestMapping(value = "/project/{name}/templates", method = RequestMethod.GET)
 	public String listTemplate(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
-		if (project == null) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
 			return "403";
 		}
-		model.addAttribute("project", project);
+		model.addAttribute("projectName", name);
 		return "template/template";
 	}
 
 	@RequestMapping(value = "/project/{name}/template/postgres/new", method = RequestMethod.GET)
 	public String deployPostgresTemplateForm(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
-		if (project == null) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
 			return "403";
 		}
-		model.addAttribute("project", project);
+		model.addAttribute("projectName", name);
 		Template template = new PostgresTemplate();
 		model.addAttribute("template", template);
 
@@ -53,20 +51,20 @@ public class TemplateController extends BaseController {
 	@RequestMapping(value = "/project/{name}/template/postgres", method = RequestMethod.POST)
 	public String deployPostgresTemplate(@ModelAttribute("template") PostgresTemplate template,
 			@PathVariable String name, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
-		if (project == null) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
 			return "403";
 		}
-		model.addAttribute("project", project);
+		model.addAttribute("projectName", name);
 		templateValitator.validate(template, result);
 		if (result.hasErrors()) {
 			return "template/deploy_postgres";
 		}
 		if (templateService.exists(template.getName(), name)) {
-			result.rejectValue("name", "error.exists", new Object[] { name },
-					"Application " + name + " already exists");
+			result.rejectValue("name", "error.exists", new Object[] { template.getName() },
+					"Application " + template.getName() + " already exists");
 			return "template/deploy_postgres";
 		}
+		Project project = projectService.getProjectByName(name);
 		templateService.deploy(template, project);
 		redirectAttributes.addFlashAttribute("info", "Application deploy successfully");
 		return "redirect:/project/" + name + "/overview";
@@ -74,11 +72,10 @@ public class TemplateController extends BaseController {
 
 	@RequestMapping(value = "/project/{name}/template/mysql/new", method = RequestMethod.GET)
 	public String deployMySqlTemplateForm(@PathVariable String name, Model model) {
-		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
-		if (project == null) {
+		if (!getCurrentUser().getCustomer().getProjects().contains(new Project(name))) {
 			return "403";
 		}
-		model.addAttribute("project", project);
+		model.addAttribute("projectName", name);;
 		Template template = new MysqlTemplate();
 		model.addAttribute("template", template);
 
@@ -88,11 +85,10 @@ public class TemplateController extends BaseController {
 	@RequestMapping(value = "/project/{name}/template/mysql", method = RequestMethod.POST)
 	public String deployMySqlTemplate(@ModelAttribute("template") MysqlTemplate template, @PathVariable String name,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		Project project = projectService.getProjectByName(name, getCurrentUser().getCustomer().getId());
-		if (project == null) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
 			return "403";
 		}
-		model.addAttribute("project", project);
+		model.addAttribute("projectName", name);
 		templateValitator.validate(template, result);
 		if (result.hasErrors()) {
 			return "template/deploy_mysql";
@@ -102,6 +98,7 @@ public class TemplateController extends BaseController {
 					"Application " + name + " already exists");
 			return "template/deploy_mysql";
 		}
+		Project project = projectService.getProjectByName(name);
 		templateService.deploy(template, project);
 		redirectAttributes.addFlashAttribute("info", "Application deploy successfully");
 		return "redirect:/project/" + name + "/overview";

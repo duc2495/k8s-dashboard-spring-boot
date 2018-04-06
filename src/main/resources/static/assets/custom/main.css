@@ -103,14 +103,24 @@
 }
 
 .icon-row .icon-wrap {
-    text-align: center;
-    width: 30px;
+	text-align: center;
+	width: 30px;
 }
 
 .expanded-section {
-    margin-top: 20px;
+	margin-top: 20px;
 }
 
 .app-template {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
+}
+
+.recommend {
+	margin-bottom: 0px;
+}
+
+.dropdown-menu {
+	background-color: #ecf0f5;
+	border: 1px solid #bbb;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }

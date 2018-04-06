@@ -27,10 +27,10 @@ public class ServiceAPI {
 	public void create(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a service
-			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder().withNewMetadata()
+			Service service = new ServiceBuilder().withNewMetadata()
 					.withName(app.getName()).endMetadata().withNewSpec().addNewPort().withPort(app.getPort()).endPort()
 					.addToSelector("app", app.getName()).withType("NodePort").endSpec().build();
-			logger.info("Created service", client.services().inNamespace(namespace).create(service));
+			logger.info("{}: {}", "Created service", client.services().inNamespace(namespace).create(service));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,10 +48,10 @@ public class ServiceAPI {
 	public void create(Template template, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a service
-			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder().withNewMetadata()
+			Service service = new ServiceBuilder().withNewMetadata()
 					.withName(template.getName()).endMetadata().withNewSpec().addNewPort().withPort(template.getPort())
-					.endPort().addToSelector("app", template.getName()).withType("NodePort").endSpec().build();
-			logger.info("Created service", client.services().inNamespace(namespace).create(service));
+					.endPort().addToSelector("app", template.getName()).endSpec().build();
+			logger.info("{}: {}", "Created service", client.services().inNamespace(namespace).create(service));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -70,7 +70,7 @@ public class ServiceAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Get a service
 			Service service = client.services().inNamespace(namespace).withName(name).get();
-			logger.info("Get service", service.toString());
+			logger.info("{}: {}", "Get service", service);
 			if (service != null) {
 				return service;
 			}
@@ -91,7 +91,6 @@ public class ServiceAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Get all service
 			List<Service> services = client.services().inNamespace(namespace).list().getItems();
-			logger.info("Get service", services.toString());
 			if (services != null) {
 				return services;
 			}
@@ -111,7 +110,7 @@ public class ServiceAPI {
 	public void delete(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Delete a service
-			logger.info("Delete Service", client.services().inNamespace(namespace).withName(name).delete());
+			logger.info("{}: {}", "Delete Service", client.services().inNamespace(namespace).withName(name).delete());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

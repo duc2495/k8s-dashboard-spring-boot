@@ -2,11 +2,13 @@ package kubernetes.client.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kubernetes.client.mapper.CustomerMapper;
 import kubernetes.client.model.Customer;
 import kubernetes.client.service.CustomerService;
 
+@Transactional
 @Service
 public class CustomerServiceImpl implements CustomerService{
 

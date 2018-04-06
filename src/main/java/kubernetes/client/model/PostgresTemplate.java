@@ -7,6 +7,7 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 
 public class PostgresTemplate extends Template {
 	public PostgresTemplate() {
+		super();
 		this.setImage("postgres");
 		this.setTag("9.6");
 		this.setPort(5432);

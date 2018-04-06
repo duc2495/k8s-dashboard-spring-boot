@@ -38,7 +38,7 @@ public class DeploymentAPI {
 					.addToLimits("memory", new Quantity("1Gi")).addToRequests("cpu", new Quantity("500m"))
 					.addToRequests("memory", new Quantity("1Gi")).endResources().endContainer().endSpec().endTemplate()
 					.endSpec().build();
-			logger.info("Created deployment",
+			logger.info("{}: {}", "Created deployment",
 					client.extensions().deployments().inNamespace(namespace).create(deployment));
 
 		} catch (Exception e) {
@@ -71,8 +71,9 @@ public class DeploymentAPI {
 					.addNewVolume().withName(template.getName()).withNewPersistentVolumeClaim()
 					.withClaimName(template.getName()).endPersistentVolumeClaim().and().endSpec().endTemplate()
 					.endSpec().build();
-			logger.info("Created deployment",
+			logger.info("{}: {}", "Created deployment",
 					client.extensions().deployments().inNamespace(namespace).create(deployment));
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -89,6 +90,7 @@ public class DeploymentAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Get a deployment
 			Deployment deployment = client.extensions().deployments().inNamespace(namespace).withName(name).get();
+			logger.info("{}: {}", "Get deployment", deployment);
 			return deployment;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,7 +126,42 @@ public class DeploymentAPI {
 	public void delete(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Delete a deployment
-			logger.info("Delete Service", client.services().inNamespace(namespace).withName(name).delete());
+			logger.info("{}: {}", "Delete deployment",
+					client.extensions().deployments().inNamespace(namespace).withName(name).delete());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+	
+	public void update(Application app, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Delete a deployment
+			logger.info("{}: {}", "Update deployment",
+					client.extensions().deployments().inNamespace(namespace).withName(app.getName()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+	
+	public void scale(String name, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Delete a deployment
+			logger.info("{}: {}", "Delete deployment",
+					client.extensions().deployments().inNamespace(namespace).withName(name).delete());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

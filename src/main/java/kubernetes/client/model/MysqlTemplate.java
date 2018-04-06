@@ -8,6 +8,7 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 public class MysqlTemplate extends Template {
 
 	public MysqlTemplate() {
+		super();
 		this.setImage("mysql");
 		this.setTag("5.7");
 		this.setPort(3306);

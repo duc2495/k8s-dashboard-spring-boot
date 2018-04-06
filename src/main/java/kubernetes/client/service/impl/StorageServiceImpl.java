@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kubernetes.client.api.PVClaimsAPI;
 import kubernetes.client.model.Storage;
 import kubernetes.client.service.StorageService;
 
+@Transactional
 @Service
 public class StorageServiceImpl implements StorageService{
 

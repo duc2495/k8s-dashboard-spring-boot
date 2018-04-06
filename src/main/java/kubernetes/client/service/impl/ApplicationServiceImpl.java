@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Project;
@@ -11,6 +13,7 @@ import kubernetes.client.service.ApplicationService;
 import kubernetes.client.service.DeploymentService;
 import kubernetes.client.service.K8sServiceService;
 
+@Transactional
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
 
