@@ -9,17 +9,20 @@
 </head>
 <body>
 	<div layout:fragment="content">
-		<div class="col-md-2"></div>
-		<div class="col-md-8">
-			<h1>Error</h1>
-			<h4>Access denied</h4>
-			<p>The project does not exist or you are not authorized to view
-				it.</p>
-			<p><a href="/projects">Go Projects &raquo;</a></p>
-		</div>
-		<div class="col-md-2"></div>
-	</div>
+		<div class="wrapper row2">
+			<div id="container" class="clear">
+				<section id="fof" class="clear">
+					<div class="hgroup">
+						<h1><span><strong>4</strong></span><span><strong>0</strong></span><span><strong>3</strong></span></h1>
+						<h2>Error ! <span>Access denied</span></h2>
+				</div>
+					<p th:text="${error}"></p>
+					<p><a href="/home">Go Home &raquo;</a></p>
+			</section>
 
+		</div>
+	</div>
+</div>
 </body>
 
 </html>

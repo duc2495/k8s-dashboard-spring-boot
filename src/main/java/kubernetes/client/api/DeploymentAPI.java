@@ -139,12 +139,15 @@ public class DeploymentAPI {
 			}
 		}
 	}
-	
+
 	public void update(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			// Delete a deployment
+			// Update a deployment
 			logger.info("{}: {}", "Update deployment",
-					client.extensions().deployments().inNamespace(namespace).withName(app.getName()));
+					client.extensions().deployments().inNamespace(namespace).withName(app.getName()).edit().editSpec()
+							.editTemplate().withNewSpec().addNewContainer().withName(app.getName())
+							.withImage(app.getImage()).addNewPort().withContainerPort(app.getPort()).endPort()
+							.endContainer().endSpec().endTemplate().endSpec().done());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -156,12 +159,48 @@ public class DeploymentAPI {
 			}
 		}
 	}
-	
-	public void scale(String name, String namespace) {
+
+	public void scale(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			// Delete a deployment
-			logger.info("{}: {}", "Delete deployment",
-					client.extensions().deployments().inNamespace(namespace).withName(name).delete());
+			// Scale a deployment
+			logger.info("{}: {}", "Scale deployment", client.extensions().deployments().inNamespace(namespace)
+					.withName(app.getName()).scale(app.getPods(), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+
+	public void rollBack(Deployment deployment, Long revision, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Update a deployment
+			logger.info("{}: {}", "Roll back deployment",
+					client.extensions().deployments().inNamespace(namespace)
+							.withName(deployment.getMetadata().getName()).edit().editSpec().editOrNewRollbackTo()
+							.withRevision(revision).endRollbackTo().endSpec().done());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+
+	public void pause(Deployment deployment, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Update a deployment
+			logger.info("{}: {}", "Pause deployment", client.extensions().deployments().inNamespace(namespace)
+					.withName(deployment.getMetadata().getName()).edit().editSpec().withPaused(true).and().done());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

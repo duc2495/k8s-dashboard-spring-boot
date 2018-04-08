@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kubernetes.client.api.NamespacesAPI;
+import kubernetes.client.api.NamespaceAPI;
 import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.mapper.ProjectMapper;
 import kubernetes.client.model.Project;
@@ -21,7 +21,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	private ApplicationMapper applicationMapper;
 	@Autowired
-	private NamespacesAPI namespaces;
+	private NamespaceAPI namespaces;
 
 	@Override
 	public synchronized void insert(Project project, int customerId) {

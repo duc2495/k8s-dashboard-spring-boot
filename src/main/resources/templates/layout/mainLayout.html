@@ -62,13 +62,8 @@
 	<div layout:fragment="content">
 		<!-- Your Page Content Here -->
 </div>
-
 	<script th:src="@{'/assets/plugins/jQuery/jQuery-2.1.4.min.js'}"></script>
 	<script th:src="@{'/assets/bootstrap/js/bootstrap.min.js'}"></script>
-	<script>
-		function rowClicked(value) {
-			location.href = "/project/" + value + "/overview";
-		}
-	</script>
+	<script th:src="@{'/assets/bootstrap/js/bootstrap-confirm-delete.js'}"></script>
 </body>
 </html>

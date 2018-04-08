@@ -17,8 +17,8 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import kubernetes.client.model.Storage;
 
 @Repository
-public class PVClaimsAPI {
-	private static final Logger logger = LoggerFactory.getLogger(PVClaimsAPI.class);
+public class PersistentVolumeClaimAPI {
+	private static final Logger logger = LoggerFactory.getLogger(PersistentVolumeClaimAPI.class);
 
 	String master = "https://k8s-master:6443/";
 

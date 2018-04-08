@@ -12,6 +12,12 @@ public interface DeploymentService {
 	void create(Template template, String projectName);
 
 	void delete(String name, String projectName);
+	
+	void update(Application app, String projectName);
+	
+	void scale(Application app, String projectName);
+	
+	void rollBack(Deployment deployment, long revision, String projectName);
 
 	Deployment getDeploymentByName(String name, String projectName);
 

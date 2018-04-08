@@ -27,9 +27,9 @@ public class ServiceAPI {
 	public void create(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a service
-			Service service = new ServiceBuilder().withNewMetadata()
-					.withName(app.getName()).endMetadata().withNewSpec().addNewPort().withPort(app.getPort()).endPort()
-					.addToSelector("app", app.getName()).withType("NodePort").endSpec().build();
+			Service service = new ServiceBuilder().withNewMetadata().withName(app.getName()).endMetadata().withNewSpec()
+					.addNewPort().withPort(app.getPort()).endPort().addToSelector("app", app.getName())
+					.withType("NodePort").endSpec().build();
 			logger.info("{}: {}", "Created service", client.services().inNamespace(namespace).create(service));
 
 		} catch (Exception e) {
@@ -48,10 +48,29 @@ public class ServiceAPI {
 	public void create(Template template, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a service
-			Service service = new ServiceBuilder().withNewMetadata()
-					.withName(template.getName()).endMetadata().withNewSpec().addNewPort().withPort(template.getPort())
-					.endPort().addToSelector("app", template.getName()).endSpec().build();
+			Service service = new ServiceBuilder().withNewMetadata().withName(template.getName()).endMetadata()
+					.withNewSpec().addNewPort().withPort(template.getPort()).endPort()
+					.addToSelector("app", template.getName()).endSpec().build();
 			logger.info("{}: {}", "Created service", client.services().inNamespace(namespace).create(service));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+
+		}
+	}
+
+	public void update(Application app, String namespace) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Update a service
+			logger.info("{}: {}", "Update service", client.services().inNamespace(namespace).withName(app.getName())
+					.edit().editSpec().editFirstPort().withPort(app.getPort()).endPort().endSpec().done());
 
 		} catch (Exception e) {
 			e.printStackTrace();

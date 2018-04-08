@@ -12,9 +12,9 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
-public class NamespacesAPI {
+public class NamespaceAPI {
 
-	private static final Logger logger = LoggerFactory.getLogger(NamespacesAPI.class);
+	private static final Logger logger = LoggerFactory.getLogger(NamespaceAPI.class);
 
 	String master = "https://k8s-master:6443/";
 

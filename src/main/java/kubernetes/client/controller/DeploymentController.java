@@ -14,7 +14,7 @@ import kubernetes.client.service.DeploymentService;
 import kubernetes.client.service.ProjectService;
 
 @Controller
-public class DeploymentController extends BaseController{
+public class DeploymentController extends BaseController {
 	@Autowired
 	private DeploymentService deployService;
 
@@ -22,16 +22,15 @@ public class DeploymentController extends BaseController{
 	private ProjectService projectService;
 	
 	@RequestMapping(value = "/project/{name}/deployments", method = RequestMethod.GET)
-	public String getDeploymet(@PathVariable String name, Model model) {
-//		if (!getCurrentUser().getCustomer().getProjects().contains(new Project(name))) {
-//			return "403";
-//		}
-		
+	public String listDeployments(@PathVariable String name, Model model) {
+
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error",
+					"The Project \"" + name + "\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
-		model.addAttribute("projectName",name);
-		
+		model.addAttribute("projectName", name);
+
 		List<Deployment> deployments = deployService.getDeploymentByProjectName(name);
 		model.addAttribute("deployments", deployments);
 		return "deployments/deployments";

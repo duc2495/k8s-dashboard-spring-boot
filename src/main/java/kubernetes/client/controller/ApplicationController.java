@@ -34,6 +34,7 @@ public class ApplicationController extends BaseController {
 	@RequestMapping(value = "/project/{name}/overview", method = RequestMethod.GET)
 	public String listApplications(@PathVariable String name, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -43,20 +44,10 @@ public class ApplicationController extends BaseController {
 		return "application/apps";
 	}
 
-	@RequestMapping(value = "/project/{name}/apps/{appName}", method = RequestMethod.GET)
-	public String viewApplication(@PathVariable String name, @PathVariable String appName, Model model) {
-		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
-			return "403";
-		}
-		model.addAttribute("projectName", name);
-		Application app = appService.getByName(appName, name);
-		model.addAttribute("app", app);
-		return "application/app";
-	}
-
 	@RequestMapping(value = "/project/{name}/apps/new", method = RequestMethod.GET)
 	public String deployApplicationForm(@PathVariable String name, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -70,6 +61,7 @@ public class ApplicationController extends BaseController {
 	public String deployApplication(@Valid @ModelAttribute("app") Application app, @PathVariable String name,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -89,38 +81,79 @@ public class ApplicationController extends BaseController {
 	}
 	
 	@RequestMapping(value = "/project/{name}/apps/{id}", method = RequestMethod.GET)
-	public String editApplication(@PathVariable String name, @PathVariable int id, Model model,
-			RedirectAttributes redirectAttributes) {
+	public String updateApplicationForm(@PathVariable String name, @PathVariable int id, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
-
-		return "application/edit_app";
+		Application app = appService.getApplicationById(id, name);
+		model.addAttribute("app", app);
+		return "application/update_app";
 	}
 
 	@RequestMapping(value = "/project/{name}/apps/{id}", method = RequestMethod.POST)
-	public String updateApplication(@PathVariable String name, @PathVariable int id, Model model,
+	public String updateApplication(@PathVariable String name, @PathVariable int id, Application app, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
-
+		appService.update(app, name);
 		redirectAttributes.addFlashAttribute("info", "Application updated successfully");
 		return "redirect:/project/" + name + "/overview";
 	}
-	
-	@RequestMapping(value = "/project/{name}/apps/{id}", method = RequestMethod.DELETE)
+
+	@RequestMapping(value = "/project/{name}/apps/delete/{id}", method = RequestMethod.GET)
 	public String deleteApplication(@PathVariable String name, @PathVariable int id, Model model,
 			RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		
+		if (appService.getApplicationById(id, name) == null) {
+			model.addAttribute("error", "The Application does not exist or you are not authorized to delete it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
-		Project project = projectService.getProjectByName(name);
-		appService.delete(name, project);
+		appService.delete(id, name);
 		redirectAttributes.addFlashAttribute("info", "Application deleted successfully");
+		return "redirect:/project/" + name + "/overview";
+	}
+	
+	@RequestMapping(value = "/project/{name}/apps/scaleup/{id}", method = RequestMethod.GET)
+	public String scaleUp(@PathVariable String name, @PathVariable int id, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		if (appService.getApplicationById(id, name) == null) {
+			model.addAttribute("error", "The Application does not exist or you are not authorized to scale it.");
+			return "403";
+		}
+		model.addAttribute("projectName", name);
+		appService.scaleUp(id, name);
+		redirectAttributes.addFlashAttribute("info", "Application scale up successfully");
+		return "redirect:/project/" + name + "/overview";
+	}
+	
+	@RequestMapping(value = "/project/{name}/apps/scaledown/{id}", method = RequestMethod.GET)
+	public String scaleDown(@PathVariable String name, @PathVariable int id, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		if (appService.getApplicationById(id, name) == null) {
+			model.addAttribute("error", "The Application does not exist or you are not authorized to scale it.");
+			return "403";
+		}
+		model.addAttribute("projectName", name);
+		appService.scaleDown(id, name);
+		redirectAttributes.addFlashAttribute("info", "Application scale down successfully");
 		return "redirect:/project/" + name + "/overview";
 	}
 }

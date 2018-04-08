@@ -30,6 +30,7 @@ public class TemplateController extends BaseController {
 	@RequestMapping(value = "/project/{name}/templates", method = RequestMethod.GET)
 	public String listTemplate(@PathVariable String name, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -39,6 +40,7 @@ public class TemplateController extends BaseController {
 	@RequestMapping(value = "/project/{name}/template/postgres/new", method = RequestMethod.GET)
 	public String deployPostgresTemplateForm(@PathVariable String name, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -52,6 +54,7 @@ public class TemplateController extends BaseController {
 	public String deployPostgresTemplate(@ModelAttribute("template") PostgresTemplate template,
 			@PathVariable String name, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -72,7 +75,8 @@ public class TemplateController extends BaseController {
 
 	@RequestMapping(value = "/project/{name}/template/mysql/new", method = RequestMethod.GET)
 	public String deployMySqlTemplateForm(@PathVariable String name, Model model) {
-		if (!getCurrentUser().getCustomer().getProjects().contains(new Project(name))) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);;
@@ -86,6 +90,7 @@ public class TemplateController extends BaseController {
 	public String deployMySqlTemplate(@ModelAttribute("template") MysqlTemplate template, @PathVariable String name,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);

@@ -27,6 +27,11 @@ public class K8sServiceServiceImpl implements K8sServiceService {
 	public void create(Template template, String projectName) {
 		serviceAPI.create(template, projectName);
 	}
+	
+	@Override
+	public void update(Application app, String projectName) {
+		serviceAPI.update(app, projectName);
+	}
 
 	@Override
 	public void delete(String serviceName, String projectName) {

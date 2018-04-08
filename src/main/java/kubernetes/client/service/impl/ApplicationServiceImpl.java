@@ -26,16 +26,19 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	@Override
 	public void deploy(Application app, Project project) {
-		applicationMapper.insert(app, project.getProjectId());
-		serviceService.create(app, project.getProjectName());
 		deploymentService.create(app, project.getProjectName());
+		serviceService.create(app, project.getProjectName());
+		applicationMapper.insert(app, project.getProjectId());
 	}
 
 	@Override
-	public void delete(String name, Project project) {
-		applicationMapper.delete(name);
-		serviceService.delete(name, project.getProjectName());
-		deploymentService.delete(name, project.getProjectName());
+	public void delete(int id, String projectName) {
+		Application app = applicationMapper.getApplicationById(id);
+		if (app != null) {
+			deploymentService.delete(app.getName(), projectName);
+			serviceService.delete(app.getName(), projectName);
+			applicationMapper.delete(id);
+		}
 	}
 
 	@Override
@@ -45,7 +48,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 			return null;
 		}
 		for (Application application : apps) {
-			application.setDeployment(deploymentService.getDeploymentByName(application.getName(), project.getProjectName()));
+			application.setDeployment(
+					deploymentService.getDeploymentByName(application.getName(), project.getProjectName()));
 			application.setService(serviceService.getServiceByName(application.getName(), project.getProjectName()));
 		}
 		return apps;
@@ -57,12 +61,49 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	public Application getByName(String name, String projectName) {
-		Application app = new Application();
-		app.setName(name);
+	public Application getApplicationByName(String name, String projectName) {
+		Application app = applicationMapper.getApplicationByName(name);
+		if (app == null) {
+			return null;
+		}
 		app.setDeployment(deploymentService.getDeploymentByName(name, projectName));
 		app.setService(serviceService.getServiceByName(name, projectName));
 		return app;
 	}
 
+	@Override
+	public Application getApplicationById(int id, String projectName) {
+		Application app = applicationMapper.getApplicationById(id);
+		if (app == null) {
+			return null;
+		}
+		app.setDeployment(deploymentService.getDeploymentByName(app.getName(), projectName));
+		app.setService(serviceService.getServiceByName(app.getName(), projectName));
+		return app;
+	}
+
+	@Override
+	public void update(Application app, String projectName) {
+		deploymentService.update(app, projectName);
+		serviceService.update(app, projectName);
+		applicationMapper.update(app);
+	}
+
+	@Override
+	public void scaleUp(int id, String projectName) {
+		Application app = getApplicationById(id, projectName);
+		app.setPods(app.getDeployment().getSpec().getReplicas() + 1);
+		deploymentService.scale(app, projectName);
+		applicationMapper.updatePods(app);
+	}
+
+	@Override
+	public void scaleDown(int id, String projectName) {
+		Application app = getApplicationById(id, projectName);
+		if (app.getDeployment().getSpec().getReplicas() > 0) {
+			app.setPods(app.getDeployment().getSpec().getReplicas() - 1);
+			deploymentService.scale(app, projectName);
+			applicationMapper.updatePods(app);
+		}
+	}
 }

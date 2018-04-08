@@ -10,6 +10,8 @@ public interface K8sServiceService {
 	void create(Application app, String projectName);
 
 	void create(Template template, String projectName);
+	
+	void update(Application app, String projectName);
 
 	void delete(String serviceName, String projectName);
 

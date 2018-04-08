@@ -33,6 +33,7 @@ public class StorageController extends BaseController {
 	@RequestMapping(value = "/project/{name}/storage", method = RequestMethod.GET)
 	public String listStorage(@PathVariable String name, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -44,6 +45,7 @@ public class StorageController extends BaseController {
 	@RequestMapping(value = "/project/{name}/storage/new", method = RequestMethod.GET)
 	public String createStorageForm(@PathVariable String name, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -56,6 +58,7 @@ public class StorageController extends BaseController {
 	public String createStorage(@Valid @ModelAttribute("storage") Storage storage, @PathVariable String name,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		storageValidator.validate(storage, result);
@@ -76,6 +79,7 @@ public class StorageController extends BaseController {
 	public String deleteProject(@PathVariable("name") String name, @PathVariable("storageName") String storageName,
 			Model model, RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		storageService.delete(storageName, name);

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kubernetes.client.api.PVClaimsAPI;
+import kubernetes.client.api.PersistentVolumeClaimAPI;
 import kubernetes.client.model.Storage;
 import kubernetes.client.service.StorageService;
 
@@ -15,7 +15,7 @@ import kubernetes.client.service.StorageService;
 public class StorageServiceImpl implements StorageService{
 
 	@Autowired
-	private PVClaimsAPI pvcAPI;
+	private PersistentVolumeClaimAPI pvcAPI;
 	
 	@Override
 	public void create(Storage storage, String projectName) {

@@ -25,6 +25,7 @@ public class K8sServiceController extends BaseController {
 	@RequestMapping(value = "/project/{name}/services", method = RequestMethod.GET)
 	public String listService(@PathVariable String name, Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
@@ -37,6 +38,7 @@ public class K8sServiceController extends BaseController {
 	public String getService(@PathVariable("name") String name, @PathVariable("serviceName") String serviceName,
 			Model model) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);
