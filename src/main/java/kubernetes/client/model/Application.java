@@ -1,6 +1,11 @@
 package kubernetes.client.model;
 
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
+
+import java.util.List;
+
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
+import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.Service;
 
 public class Application {
@@ -12,6 +17,8 @@ public class Application {
 	private int port;
 	private Deployment deployment;
 	private Service service;
+	private List<Pod> listPod;
+	private HorizontalPodAutoscaler hpa;
 
 	public Application() {
 		this.pods = 1;
@@ -79,6 +86,18 @@ public class Application {
 
 	public void setService(Service service) {
 		this.service = service;
+	}
+	public List<Pod> getListPod() {
+		return listPod;
+	}
+	public void setListPod(List<Pod> listPod) {
+		this.listPod = listPod;
+	}
+	public HorizontalPodAutoscaler getHpa() {
+		return hpa;
+	}
+	public void setHpa(HorizontalPodAutoscaler hpa) {
+		this.hpa = hpa;
 	}
 
 }

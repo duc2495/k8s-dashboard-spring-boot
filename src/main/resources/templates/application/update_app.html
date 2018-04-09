@@ -24,7 +24,7 @@
 				th:action="@{/project/{name}/apps/{id}(name=${projectName}, id=${app.id})}"
 				th:object="${app}" method="post">
 					<!-- text input -->
-					<div class="form-group"><label>Application name *</label> <input
+					<div class="form-group"><label>Application name</label> <input
 						type="text" class="form-control" name="name" th:field="*{name}"
 						placeholder="Enter Application Name" readonly="readonly" /></div>
 					<div class="form-group"

@@ -34,9 +34,8 @@ public class DeploymentAPI {
 					.withNewSelector().addToMatchLabels("app", app.getName()).endSelector().withNewTemplate()
 					.withNewMetadata().addToLabels("app", app.getName()).endMetadata().withNewSpec().addNewContainer()
 					.withName(app.getName()).withImage(app.getImage()).addNewPort().withContainerPort(app.getPort())
-					.endPort().withNewResources().addToLimits("cpu", new Quantity("500m"))
-					.addToLimits("memory", new Quantity("1Gi")).addToRequests("cpu", new Quantity("500m"))
-					.addToRequests("memory", new Quantity("1Gi")).endResources().endContainer().endSpec().endTemplate()
+					.endPort().withNewResources().addToRequests("cpu", new Quantity("300m"))
+					.addToRequests("memory", new Quantity("700Mi")).endResources().endContainer().endSpec().endTemplate()
 					.endSpec().build();
 			logger.info("{}: {}", "Created deployment",
 					client.extensions().deployments().inNamespace(namespace).create(deployment));
@@ -64,7 +63,6 @@ public class DeploymentAPI {
 					.addNewContainer().withName(template.getName())
 					.withImage(template.getImage() + ":" + template.getTag()).withEnv(template.getEnvs()).addNewPort()
 					.withContainerPort(template.getPort()).endPort().withNewResources()
-					.addToLimits("cpu", new Quantity("100m")).addToLimits("memory", new Quantity("300Mi"))
 					.addToRequests("cpu", new Quantity("100m")).addToRequests("memory", new Quantity("300Mi"))
 					.endResources().addNewVolumeMount().withName(template.getName())
 					.withMountPath(template.getMountPath()).withReadOnly(false).endVolumeMount().endContainer()

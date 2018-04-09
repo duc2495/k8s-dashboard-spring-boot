@@ -12,72 +12,93 @@
 	<div layout:fragment="pageHeader">
 		<section class="content-header">
 			<h1>DEPLOYMENTS</h1>
-	</section>
-</div>
+		</section>
+	</div>
 	<div layout:fragment="content">
 		<!-- IF -->
 		<div th:if="${#ctx.containsVariable('error')}">
 			<div class="alert alert-danger alert-dismissible" role="alert">
 				<button type="button" class="close" data-dismiss="alert"
-				aria-label="Close"><span aria-hidden="true">×</span></button> <strong
-				th:text="${error}"></strong>
+					aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<strong th:text="${error}"></strong>
+			</div>
 		</div>
-	</div> <!-- ELSE -->
+		<!-- ELSE -->
 		<div th:unless="${#ctx.containsVariable('error')}">
 			<div class="row">
 				<div class="col-md-12">
+					<div th:if="${#ctx.containsVariable('info')}">
+						<div class="alert alert-success alert-dismissible" role="alert">
+							<button type="button" class="close" data-dismiss="alert"
+								aria-label="Close">
+								<span aria-hidden="true">×</span>
+							</button>
+							<strong th:text="${info}"></strong>
+						</div>
+					</div>
 					<div class="box">
 						<div class="box-header">
 							<h3 class="box-title">List of Version</h3>
-					</div> <!-- /.box-header -->
+						</div>
+						<!-- /.box-header -->
 						<div class="box-body table-responsive no-padding">
 							<table class="table table-hover">
 								<tr>
 									<th>Name</th>
 									<th>Version</th>
+									<th>Version History</th>
 									<th>Pods</th>
 									<th>Image</th>
 									<th>Port</th>
 									<th>Creation Time</th>
 									<th>Roll back</th>
 									<th>Delete</th>
-							</tr>
+								</tr>
 								<tr th:each="replicaSet,iterStat : ${replicaSets}">
 									<td th:text="${replicaSet.metadata.name}">Name</td>
 									<td
-									th:text="${replicaSet.metadata.annotations['__${'deployment.kubernetes.io/revision'}__']}">Version</td>
+										th:text="${replicaSet.metadata.annotations['__${'deployment.kubernetes.io/revision'}__']}">Version</td>
+									<td
+										th:text="${replicaSet.metadata.annotations['__${'deployment.kubernetes.io/revision-history'}__']}">Version
+										History</td>
 
 
 									<td>
-										<p th:if="${replicaSet.status.readyReplicas} == null">0/<span
-											th:text="${replicaSet.status.replicas}"></span>
-									</p>
-										<p th:unless="${replicaSet.status.readyReplicas} == null"><span
-											th:text="${replicaSet.status.readyReplicas}"></span>/<span
-											th:text="${replicaSet.status.replicas}"></span></p>
-								</td>
+										<p th:if="${replicaSet.status.readyReplicas} == null">
+											0/<span th:text="${replicaSet.status.replicas}"></span>
+										</p>
+										<p th:unless="${replicaSet.status.readyReplicas} == null">
+											<span th:text="${replicaSet.status.readyReplicas}"></span>/<span
+												th:text="${replicaSet.status.replicas}"></span>
+										</p>
+									</td>
 									<td
-									th:text="${replicaSet.spec.template.spec.containers[0].image}"></td>
+										th:text="${replicaSet.spec.template.spec.containers[0].image}"></td>
 									<td
-									th:text="${replicaSet.spec.template.spec.containers[0].ports[0].containerPort}"></td>
+										th:text="${replicaSet.spec.template.spec.containers[0].ports[0].containerPort}"></td>
 									<td th:text="${replicaSet.metadata.creationTimestamp}"></td>
+									<td><a class="btn btn-sm btn-primary rollback-confirm"
+										th:id="${replicaSet.metadata.annotations['__${'deployment.kubernetes.io/revision'}__'] == deployment.metadata.annotations['__${'deployment.kubernetes.io/revision'}__']}? 'disabled'"
+										th:href="@{/project/{name}/deployment/{deployName}/rs/rollback/{rsName}(name=${projectName}, deployName=${deployment.metadata.name}, rsName=${replicaSet.metadata.name})}"><i
+											class="fa fa-undo"></i> Roll back</a></td>
 									<td><a
-										th:href="@{/project/{name}/deployment/{deployName}/rs/rollback/{rsName}(name=${projectName}, deployName=${deployment.metadata.name}, rsName=${replicaSet.metadata.name})}"
-										class="btn btn-sm rollback-deployment-confirm"><i
-											class="fa fa-remove"></i> Roll back</a></td>
-									<td><a
-										th:href="@{/project/{name}/deployment/{deployName}/rs/delete/{rsName}(name=${projectName}, deployName=${deployment.metadata.name}, rsName=${replicaSet.metadata.name})}"
-										class="btn btn-sm btn-danger delete-project-confirm"><i
+										class="btn btn-sm btn-danger delete-project-confirm"
+										th:id="${replicaSet.metadata.annotations['__${'deployment.kubernetes.io/revision'}__'] == deployment.metadata.annotations['__${'deployment.kubernetes.io/revision'}__']}? 'disabled'"
+										th:href="@{/project/{name}/deployment/{deployName}/rs/delete/{rsName}(name=${projectName}, deployName=${deployment.metadata.name}, rsName=${replicaSet.metadata.name})}"><i
 											class="fa fa-remove"></i> Delete</a></td>
-							</tr>
+								</tr>
 
-						</table>
-					</div> <!-- /.box-body -->
-				</div> <!-- /.box -->
+							</table>
+						</div>
+						<!-- /.box-body -->
+					</div>
+					<!-- /.box -->
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
 </body>
 

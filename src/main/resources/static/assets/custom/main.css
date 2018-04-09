@@ -115,6 +115,8 @@
 }
 
 .dropdown-menu {
+	right: 0;
+	left: auto;
 	background-color: #ecf0f5;
 	border: 1px solid #bbb;
 	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
@@ -125,6 +127,7 @@
 }
 
 .circle {
+	float: left;
 	width: 100px;
 	height: 100px;
 	border: 8px solid #3c8dbc;
@@ -137,12 +140,46 @@
 	margin: 20px 0 0 0;
 }
 
-.scaling-controls a{
-	width: 30px;
+.scaling-controls a {
 	height: 50px;
-	margin:	5px 0 -10px 0;
 	justify-content: center;
 	font-size: 30px;
 	flex-direction: column;
 	display: flex;
+	padding-left: 15px;
+}
+
+#disabled {
+	pointer-events: none;
+	cursor: default;
+	opacity: 0.6;
+}
+
+.alert {
+	margin-bottom: 5px;
+}
+
+.navbar-brand {
+	font-size: 22px;
+}
+
+.app-header {
+	background-color: #fff;
+	padding: unset;
+}
+
+.app-header .table {
+	margin-bottom: 0px;
+}
+
+.app-header th {
+	font-weight: 400;
+}
+
+.box {
+	border-radius: unset;
+}
+
+.btn {
+	padding: 7px 12px;
 }

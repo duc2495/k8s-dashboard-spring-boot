@@ -26,22 +26,25 @@
 </head>
 <body class="hold-transition login-page">
 
-	<nav class="navbar navbar-inverse">
+	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse"
-				data-target="#myNavbar"><span class="icon-bar"></span> <span
-					class="icon-bar"></span> <span class="icon-bar"></span></button> <a
-				class="navbar-brand" href="#">K8S Online</a>
-		</div>
+					data-target="#myNavbar">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><strong>KUBERNETES</strong>
+					ONLINE</a>
+			</div>
 			<div class="collapse navbar-collapse" id="myNavbar">
 				<ul class="nav navbar-nav">
 					<li th:class="${CURRENT_MENU == 'Home'}? 'active' : ''"><a
-						th:href="@{/home}">Home</a></li>
+						th:href="@{/home}">HOME</a></li>
 					<li sec:authorize="${isAuthenticated()}"
-					th:class="${CURRENT_MENU == 'Projects'}? 'active' : ''"><a
-						th:href="@{/projects}">Projects</a></li>
-			</ul>
+						th:class="${CURRENT_MENU == 'Projects'}? 'active' : ''"><a
+						th:href="@{/projects}">PROJECTS</a></li>
+				</ul>
 				<ul class="nav navbar-nav navbar-right">
 
 					<li sec:authorize="${!isAuthenticated()}"><a href="#"
@@ -55,15 +58,15 @@
 					<li sec:authorize="${isAuthenticated()}"><a href="#"
 						th:href="@{/logout}"><i class="glyphicon glyphicon-log-out"></i>
 							Logout</a></li>
-			</ul>
+				</ul>
+			</div>
 		</div>
-	</div>
-</nav>
+	</nav>
 	<div layout:fragment="content">
 		<!-- Your Page Content Here -->
-</div>
+	</div>
 	<script th:src="@{'/assets/plugins/jQuery/jQuery-2.1.4.min.js'}"></script>
 	<script th:src="@{'/assets/bootstrap/js/bootstrap.min.js'}"></script>
-	<script th:src="@{'/assets/bootstrap/js/bootstrap-confirm-delete.js'}"></script>
+	<script th:src="@{'/assets/custom/confirm.js'}"></script>
 </body>
 </html>

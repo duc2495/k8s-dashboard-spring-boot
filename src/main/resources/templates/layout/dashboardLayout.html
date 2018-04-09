@@ -29,7 +29,7 @@
 
 <body class="hold-transition skin-blue sidebar-mini">
 
-	<nav class="navbar navbar-inverse">
+	<nav class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse"
@@ -37,15 +37,15 @@
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#">K8S Online</a>
+				<a class="navbar-brand" href="/"><strong>KUBERNETES</strong> ONLINE</a>
 			</div>
 			<div class="collapse navbar-collapse" id="myNavbar">
 				<ul class="nav navbar-nav">
 					<li th:class="${CURRENT_MENU == 'Home'}? 'active' : ''"><a
-						th:href="@{/home}">Home</a></li>
+						th:href="@{/home}">HOME</a></li>
 					<li sec:authorize="${isAuthenticated()}"
 						th:class="${CURRENT_MENU == 'Projects'}? 'active' : ''"><a
-						th:href="@{/projects}">Projects</a></li>
+						th:href="@{/projects}">PROJECTS</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 
@@ -123,22 +123,20 @@
 								th:href="@{/project/{name}/deployments(name=${projectName})}"><i
 									class="fa fa-circle-o"></i>Deployments</a></li>
 							<li th:class="${CURRENT_MENU == 'Pods'}? 'active' : ''"><a
-								href="#"
-								th:href="@{/project/{name}/pods(name=${projectName})}"><i
+								href="#" th:href="@{/project/{name}/pods(name=${projectName})}"><i
 									class="fa fa-circle-o"></i>Pods</a></li>
 							<li th:class="${CURRENT_MENU == 'Services'}? 'active' : ''"><a
 								href="#"
 								th:href="@{/project/{name}/services(name=${projectName})}"><i
 									class="fa fa-circle-o"></i>Services</a></li>
 						</ul></li>
+					<li th:class="${CURRENT_MENU == 'Storage'}? 'active' : ''"><a
+						href="#" th:href="@{/project/{name}/storage(name=${projectName})}"><i
+							class="fa fa-database"></i> <span>Storage</span></a></li>
 					<li th:class="${CURRENT_MENU == 'Templates'}? 'active' : ''"><a
 						href="#"
 						th:href="@{/project/{name}/templates(name=${projectName})}"><i
 							class="fa fa-book"></i> <span>Template</span></a></li>
-					<li th:class="${CURRENT_MENU == 'Storage'}? 'active' : ''"><a
-						href="#"
-						th:href="@{/project/{name}/storage(name=${projectName})}"><i
-							class="fa fa-database"></i> <span>Storage</span></a></li>
 				</ul>
 				<!-- /.sidebar-menu -->
 			</section>
@@ -179,7 +177,7 @@
 	<!-- REQUIRED JS SCRIPTS -->
 	<script th:src="@{'/assets/plugins/jQuery/jQuery-2.1.4.min.js'}"></script>
 	<script th:src="@{'/assets/bootstrap/js/bootstrap.min.js'}"></script>
-	<script th:src="@{'/assets/bootstrap/js/bootstrap-confirm-delete.js'}"></script>
+	<script th:src="@{'/assets/custom/confirm.js'}"></script>
 	<script th:src="@{'/assets/dist/js/app.min.js'}"></script>
 </body>
 </html>

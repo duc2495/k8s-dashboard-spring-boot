@@ -131,3 +131,11 @@ $('.scale-down-confirm').bootstrap_confirm_delete({
 	btn_ok_label : 'Scale Down',
 	data_type : null,
 });
+
+$('.rollback-confirm').bootstrap_confirm_delete({
+	heading : 'Confirm Roll Back',
+	message : 'Are you sure you want to roll back to this version?',
+	btn_ok_label : 'Roll Back',
+	data_type : null,
+});
+

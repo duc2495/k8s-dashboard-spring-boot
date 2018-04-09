@@ -49,7 +49,7 @@ public class ReplicaSetController extends BaseController {
 
 	@RequestMapping(value = "/project/{name}/deployment/{deployName}/rs/delete/{rsName}", method = RequestMethod.GET)
 	public String deleteReplicaSet(@PathVariable("name") String name, @PathVariable("deployName") String deployName,
-			@PathVariable("rsName") String rsName, Model model) {
+			@PathVariable("rsName") String rsName, Model model, RedirectAttributes redirectAttributes) {
 
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
 			model.addAttribute("error",
@@ -68,8 +68,8 @@ public class ReplicaSetController extends BaseController {
 			return "deployment/deployment";
 		}
 		replicaSetService.delete(rsName, name);
-
-		return "redirect:/project/" + name + "/deployment/" + "deployName";
+		redirectAttributes.addFlashAttribute("info", "The Deployment \'" + deployName + "\' delete version \'" + rsName + "\' successfully");
+		return "redirect:/project/" + name + "/deployment/" + deployName;
 	}
 	
 	@RequestMapping(value = "/project/{name}/deployment/{deployName}/rs/rollback/{rsName}", method = RequestMethod.GET)
@@ -93,9 +93,8 @@ public class ReplicaSetController extends BaseController {
 		}
 		long revision = replicaSetService.getRevision(rsName, name);
 		deployService.rollBack(deployment, revision, name);
-
-		redirectAttributes.addFlashAttribute("name", name);
-		redirectAttributes.addFlashAttribute("deployName", deployName);
-		return "redirect:/project/" + name + "/deployment/" + "deployName";
+		redirectAttributes.addAttribute("name", name);
+		redirectAttributes.addFlashAttribute("info", "The Deployment \'" + deployName + "\' roll back to version \'" + revision + "\' successfully");
+		return "redirect:/project/" + name + "/deployment/" + deployName;
 	}
 }

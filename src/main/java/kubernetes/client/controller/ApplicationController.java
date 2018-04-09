@@ -1,7 +1,5 @@
 package kubernetes.client.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +28,6 @@ public class ApplicationController extends BaseController {
 
 	@Autowired
 	private ApplicationValidator appValidator;
-
-	@RequestMapping(value = "/project/{name}/overview", method = RequestMethod.GET)
-	public String listApplications(@PathVariable String name, Model model) {
-		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
-			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
-			return "403";
-		}
-		model.addAttribute("projectName", name);
-		Project project = projectService.getProjectByName(name);
-		List<Application> apps = appService.getAll(project);
-		model.addAttribute("apps", apps);
-		return "application/apps";
-	}
 
 	@RequestMapping(value = "/project/{name}/apps/new", method = RequestMethod.GET)
 	public String deployApplicationForm(@PathVariable String name, Model model) {

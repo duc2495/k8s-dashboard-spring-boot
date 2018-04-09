@@ -45,7 +45,7 @@ public class ReplicaSetAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Get a ReplicaSet
 			ReplicaSet relica = client.extensions().replicaSets().inNamespace(namespace).withName(name).get();
-			logger.info("{}: {}", "Delete ReplicaSet", relica);
+			logger.info("{}: {}", "Get ReplicaSet", relica);
 			return relica;
 		} catch (Exception e) {
 			e.printStackTrace();
