@@ -1,7 +1,5 @@
 package kubernetes.client.controller;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,7 +41,7 @@ public class ApplicationController extends BaseController {
 	}
 
 	@RequestMapping(value = "/project/{name}/apps", method = RequestMethod.POST)
-	public String deployApplication(@Valid @ModelAttribute("app") Application app, @PathVariable String name,
+	public String deployApplication(@ModelAttribute("app") Application app, @PathVariable String name,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
 			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
@@ -86,6 +84,31 @@ public class ApplicationController extends BaseController {
 		}
 		model.addAttribute("projectName", name);
 		appService.update(app, name);
+		redirectAttributes.addFlashAttribute("info", "Application updated successfully");
+		return "redirect:/project/" + name + "/overview";
+	}
+	
+	@RequestMapping(value = "/project/{name}/apps/add-storage/{id}", method = RequestMethod.GET)
+	public String addStorageForm(@PathVariable String name, @PathVariable int id, Model model) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		model.addAttribute("projectName", name);
+		Application app = appService.getApplicationById(id, name);
+		model.addAttribute("app", app);
+		return "application/update_app";
+	}
+
+	@RequestMapping(value = "/project/{name}/apps/add-storage/{id}", method = RequestMethod.POST)
+	public String addStorage(@PathVariable String name, @PathVariable int id, Application app, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		model.addAttribute("projectName", name);
+		//appService.update(app, name);
 		redirectAttributes.addFlashAttribute("info", "Application updated successfully");
 		return "redirect:/project/" + name + "/overview";
 	}

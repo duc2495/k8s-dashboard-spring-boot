@@ -10,6 +10,7 @@ import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Project;
 import kubernetes.client.service.ApplicationService;
+import kubernetes.client.service.AutoscalerService;
 import kubernetes.client.service.DeploymentService;
 import kubernetes.client.service.K8sServiceService;
 
@@ -21,6 +22,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 	private K8sServiceService serviceService;
 	@Autowired
 	private DeploymentService deploymentService;
+	@Autowired
+	private AutoscalerService autoscalerService;
 	@Autowired
 	private ApplicationMapper applicationMapper;
 
@@ -84,26 +87,31 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 	@Override
 	public void update(Application app, String projectName) {
-		deploymentService.update(app, projectName);
-		serviceService.update(app, projectName);
+		deploymentService.update(app);
+		serviceService.update(app.getService(), app.getPort());
 		applicationMapper.update(app);
 	}
 
 	@Override
 	public void scaleUp(int id, String projectName) {
 		Application app = getApplicationById(id, projectName);
-		app.setPods(app.getDeployment().getSpec().getReplicas() + 1);
-		deploymentService.scale(app, projectName);
-		applicationMapper.updatePods(app);
+		app.getDeployment().getSpec().setReplicas(app.getDeployment().getSpec().getReplicas() + 1);
+		deploymentService.scale(app.getDeployment());
 	}
 
 	@Override
 	public void scaleDown(int id, String projectName) {
 		Application app = getApplicationById(id, projectName);
 		if (app.getDeployment().getSpec().getReplicas() > 0) {
-			app.setPods(app.getDeployment().getSpec().getReplicas() - 1);
-			deploymentService.scale(app, projectName);
-			applicationMapper.updatePods(app);
+			app.getDeployment().getSpec().setReplicas(app.getDeployment().getSpec().getReplicas() - 1);
+			deploymentService.scale(app.getDeployment());
 		}
+	}
+
+	@Override
+	public void autoScaling(Application app, String projectName) {
+		app.getHpa().getMetadata().setName(app.getName());
+		System.out.println(app.getHpa().getMetadata().getName() + "log");
+		autoscalerService.create(app.getHpa(), projectName);
 	}
 }

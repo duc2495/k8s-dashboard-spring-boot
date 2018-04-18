@@ -50,18 +50,18 @@ public class DeploymentServiceImpl implements DeploymentService {
 	}
 
 	@Override
-	public void update(Application app, String projectName) {
-		deploymentAPI.update(app, projectName);
+	public void update(Application app) {
+		deploymentAPI.update(app);
 	}
 
 	@Override
-	public void scale(Application app, String projectName) {
-		deploymentAPI.scale(app, projectName);
+	public void scale(Deployment deployment) {
+		deploymentAPI.scale(deployment);
 	}
 
 	@Override
-	public void rollBack(Deployment deployment, long revision, String projectName) {
-		deploymentAPI.rollBack(deployment, revision, projectName);
+	public void rollBack(Deployment deployment, long revision) {
+		deploymentAPI.rollBack(deployment, revision);
 	}
 
 }

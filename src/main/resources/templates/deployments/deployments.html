@@ -68,11 +68,11 @@
 									</td>
 									<td>
 										<p th:if="${deployment.status.readyReplicas} == null">
-											0/<span th:text="${deployment.status.replicas}"></span>
+											0/<span th:text="${deployment.spec.replicas}"></span>
 										</p>
 										<p th:unless="${deployment.status.readyReplicas} == null">
 											<span th:text="${deployment.status.readyReplicas}"></span>/<span
-												th:text="${deployment.status.replicas}"></span>
+												th:text="${deployment.spec.replicas}"></span>
 										</p>
 									</td>
 									<td

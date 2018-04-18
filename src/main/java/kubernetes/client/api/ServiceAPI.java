@@ -66,11 +66,11 @@ public class ServiceAPI {
 		}
 	}
 
-	public void update(Application app, String namespace) {
+	public void update(Service service, int port) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			// Update a service
-			logger.info("{}: {}", "Update service", client.services().inNamespace(namespace).withName(app.getName())
-					.edit().editSpec().editFirstPort().withPort(app.getPort()).endPort().endSpec().done());
+			// Update service with new port
+			logger.info("{}: {}", "Update service", client.services().inNamespace(service.getMetadata().getNamespace()).withName(service.getMetadata().getName())
+					.edit().editSpec().editFirstPort().withPort(port).endPort().endSpec().done());
 
 		} catch (Exception e) {
 			e.printStackTrace();

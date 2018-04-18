@@ -13,11 +13,11 @@ public interface DeploymentService {
 
 	void delete(String name, String projectName);
 	
-	void update(Application app, String projectName);
+	void update(Application app);
 	
-	void scale(Application app, String projectName);
+	void scale(Deployment deployment);
 	
-	void rollBack(Deployment deployment, long revision, String projectName);
+	void rollBack(Deployment deployment, long revision);
 
 	Deployment getDeploymentByName(String name, String projectName);
 

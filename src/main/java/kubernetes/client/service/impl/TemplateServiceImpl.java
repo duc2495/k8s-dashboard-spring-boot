@@ -35,8 +35,6 @@ public class TemplateServiceImpl implements TemplateService {
 		Application app = new Application();
 		app.setName(template.getName());
 		app.setDescription("Created with Template");
-		app.setImage(template.getImage() + ":" + template.getTag());
-		app.setPort(template.getPort());
 		appMapper.insert(app, project.getProjectId());
 		storageService.create(storage, project.getProjectName());
 		serviceService.create(template, project.getProjectName());

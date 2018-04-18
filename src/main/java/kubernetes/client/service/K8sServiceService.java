@@ -11,7 +11,7 @@ public interface K8sServiceService {
 
 	void create(Template template, String projectName);
 	
-	void update(Application app, String projectName);
+	void update(Service service, int port);
 
 	void delete(String serviceName, String projectName);
 

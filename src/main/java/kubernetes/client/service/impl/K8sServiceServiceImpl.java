@@ -29,8 +29,8 @@ public class K8sServiceServiceImpl implements K8sServiceService {
 	}
 	
 	@Override
-	public void update(Application app, String projectName) {
-		serviceAPI.update(app, projectName);
+	public void update(io.fabric8.kubernetes.api.model.Service service, int port) {
+		serviceAPI.update(service, port);
 	}
 
 	@Override

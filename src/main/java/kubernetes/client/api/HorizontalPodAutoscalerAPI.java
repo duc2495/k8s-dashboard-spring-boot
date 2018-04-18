@@ -19,16 +19,19 @@ public class HorizontalPodAutoscalerAPI {
 
 	Config config = new ConfigBuilder().withMasterUrl(master).build();
 
-	public void create(HorizontalPodAutoscaler hpa1, String namespace) {
+	public void create(HorizontalPodAutoscaler hpa, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a HPA
-			HorizontalPodAutoscaler hpa = new HorizontalPodAutoscalerBuilder().withNewMetadata()
-					.withName("survey-app").withNamespace("test").endMetadata().withNewSpec()
-					.withNewScaleTargetRef().withApiVersion("extensions/v1beta1").withKind("Deployment").withName("survey-app")
-					.endScaleTargetRef().withMinReplicas(1).withMaxReplicas(3).withTargetCPUUtilizationPercentage(50)
+			HorizontalPodAutoscaler temp = new HorizontalPodAutoscalerBuilder().withNewMetadata()
+					.withName(hpa.getMetadata().getName()).withNamespace(namespace).endMetadata().withNewSpec()
+					.withNewScaleTargetRef().withApiVersion("extensions/v1beta1").withKind("Deployment")
+					.withName(hpa.getMetadata().getName()).endScaleTargetRef()
+					.withMinReplicas(hpa.getSpec().getMinReplicas())
+					.withMaxReplicas(hpa.getSpec().getMaxReplicas())
+					.withTargetCPUUtilizationPercentage(hpa.getSpec().getTargetCPUUtilizationPercentage())
 					.endSpec().build();
 			logger.info("{}: {}", "Create HPA",
-					client.autoscaling().horizontalPodAutoscalers().inNamespace("test").create(hpa));
+					client.autoscaling().horizontalPodAutoscalers().inNamespace("test").create(temp));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -44,7 +47,8 @@ public class HorizontalPodAutoscalerAPI {
 	public HorizontalPodAutoscaler get(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Get a HPA
-			HorizontalPodAutoscaler hpa = client.autoscaling().horizontalPodAutoscalers().inNamespace(namespace).withName(name).get();
+			HorizontalPodAutoscaler hpa = client.autoscaling().horizontalPodAutoscalers().inNamespace(namespace)
+					.withName(name).get();
 			logger.info("{}: {}", "Get HPA", hpa);
 			return hpa;
 		} catch (Exception e) {
@@ -59,7 +63,7 @@ public class HorizontalPodAutoscalerAPI {
 		}
 		return null;
 	}
-	
+
 	public void delete(String name, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Delete a HPA

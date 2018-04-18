@@ -35,8 +35,8 @@ public class DeploymentAPI {
 					.withNewMetadata().addToLabels("app", app.getName()).endMetadata().withNewSpec().addNewContainer()
 					.withName(app.getName()).withImage(app.getImage()).addNewPort().withContainerPort(app.getPort())
 					.endPort().withNewResources().addToRequests("cpu", new Quantity("300m"))
-					.addToRequests("memory", new Quantity("700Mi")).endResources().endContainer().endSpec().endTemplate()
-					.endSpec().build();
+					.addToRequests("memory", new Quantity("700Mi")).endResources().endContainer().endSpec()
+					.endTemplate().endSpec().build();
 			logger.info("{}: {}", "Created deployment",
 					client.extensions().deployments().inNamespace(namespace).create(deployment));
 
@@ -138,13 +138,13 @@ public class DeploymentAPI {
 		}
 	}
 
-	public void update(Application app, String namespace) {
+	public void update(Application app) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Update a deployment
 			logger.info("{}: {}", "Update deployment",
-					client.extensions().deployments().inNamespace(namespace).withName(app.getName()).edit().editSpec()
-							.editTemplate().withNewSpec().addNewContainer().withName(app.getName())
-							.withImage(app.getImage()).addNewPort().withContainerPort(app.getPort()).endPort()
+					client.extensions().deployments().inNamespace(app.getDeployment().getMetadata().getNamespace()).withName(app.getName()).edit().editSpec()
+							.editTemplate().editOrNewSpec().editFirstContainer().withName(app.getName())
+							.withImage(app.getImage()).editFirstPort().withContainerPort(app.getPort()).endPort()
 							.endContainer().endSpec().endTemplate().endSpec().done());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,11 +158,15 @@ public class DeploymentAPI {
 		}
 	}
 
-	public void scale(Application app, String namespace) {
+	public void addStorage(Deployment deploy) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			// Scale a deployment
-			logger.info("{}: {}", "Scale deployment", client.extensions().deployments().inNamespace(namespace)
-					.withName(app.getName()).scale(app.getPods(), true));
+			// Add a Storage
+			logger.info("{}: {}", "Add a Storage",
+					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace()).withName(deploy.getMetadata().getName()).edit().editSpec()
+							.editTemplate().editOrNewSpec().editFirstContainer().addNewVolumeMount().withName("")
+							.withMountPath("").withReadOnly(false).endVolumeMount().endContainer().addNewVolume()
+							.withName("").withNewPersistentVolumeClaim().withClaimName("")
+							.endPersistentVolumeClaim().and().endSpec().endTemplate().endSpec().done());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -175,11 +179,28 @@ public class DeploymentAPI {
 		}
 	}
 
-	public void rollBack(Deployment deployment, Long revision, String namespace) {
+	public void scale(Deployment deploy) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Scale a deployment
+			logger.info("{}: {}", "Scale deployment", client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
+					.withName(deploy.getMetadata().getName()).scale(deploy.getSpec().getReplicas(), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+
+	public void rollBack(Deployment deployment, Long revision) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Update a deployment
 			logger.info("{}: {}", "Roll back deployment",
-					client.extensions().deployments().inNamespace(namespace)
+					client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace())
 							.withName(deployment.getMetadata().getName()).edit().editSpec().editOrNewRollbackTo()
 							.withRevision(revision).endRollbackTo().endSpec().done());
 		} catch (Exception e) {
@@ -194,10 +215,10 @@ public class DeploymentAPI {
 		}
 	}
 
-	public void pause(Deployment deployment, String namespace) {
+	public void pause(Deployment deployment) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			// Update a deployment
-			logger.info("{}: {}", "Pause deployment", client.extensions().deployments().inNamespace(namespace)
+			// Pause a deployment
+			logger.info("{}: {}", "Pause deployment", client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace())
 					.withName(deployment.getMetadata().getName()).edit().editSpec().withPaused(true).and().done());
 		} catch (Exception e) {
 			e.printStackTrace();

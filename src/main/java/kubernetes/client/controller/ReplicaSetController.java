@@ -92,7 +92,7 @@ public class ReplicaSetController extends BaseController {
 			return "deployment/deployment";
 		}
 		long revision = replicaSetService.getRevision(rsName, name);
-		deployService.rollBack(deployment, revision, name);
+		deployService.rollBack(deployment, revision);
 		redirectAttributes.addAttribute("name", name);
 		redirectAttributes.addFlashAttribute("info", "The Deployment \'" + deployName + "\' roll back to version \'" + revision + "\' successfully");
 		return "redirect:/project/" + name + "/deployment/" + deployName;
