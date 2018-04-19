@@ -109,9 +109,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	public void autoScaling(Application app, String projectName) {
-		app.getHpa().getMetadata().setName(app.getName());
-		System.out.println(app.getHpa().getMetadata().getName() + "log");
-		autoscalerService.create(app.getHpa(), projectName);
+	public void autoScaling(Application app) {
+		autoscalerService.create(app.getHpa(), app.getDeployment());
 	}
 }

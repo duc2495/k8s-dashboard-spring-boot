@@ -1,3 +1,4 @@
+# psql -h localhost -p 5432 -U postgres
 DROP DATABASE IF EXISTS "k8s-client";
 CREATE DATABASE "k8s-client";
 \connect "k8s-client"
@@ -31,10 +32,7 @@ CREATE TABLE application
 (
   app_id SERIAL,
   project_id integer NOT NULL,
-  app_name character varying(50) NOT NULL unique,
-  image character varying(100) NOT NULL,
-  pods integer NOT NULL,
-  port integer NOT NULL,
+  app_name character varying(50) NOT NULL,
   description character varying,
   PRIMARY KEY (app_id),
   CONSTRAINT application_id_fkey FOREIGN KEY (project_id) REFERENCES project (project_id)

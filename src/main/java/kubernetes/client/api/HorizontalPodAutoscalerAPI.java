@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerBuilder;
+import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
@@ -19,13 +20,13 @@ public class HorizontalPodAutoscalerAPI {
 
 	Config config = new ConfigBuilder().withMasterUrl(master).build();
 
-	public void create(HorizontalPodAutoscaler hpa, String namespace) {
+	public void create(HorizontalPodAutoscaler hpa, Deployment deployment) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a HPA
 			HorizontalPodAutoscaler temp = new HorizontalPodAutoscalerBuilder().withNewMetadata()
-					.withName(hpa.getMetadata().getName()).withNamespace(namespace).endMetadata().withNewSpec()
+					.withName(hpa.getMetadata().getName()).withNamespace(deployment.getMetadata().getNamespace()).endMetadata().withNewSpec()
 					.withNewScaleTargetRef().withApiVersion("extensions/v1beta1").withKind("Deployment")
-					.withName(hpa.getMetadata().getName()).endScaleTargetRef()
+					.withName(deployment.getMetadata().getName()).endScaleTargetRef()
 					.withMinReplicas(hpa.getSpec().getMinReplicas())
 					.withMaxReplicas(hpa.getSpec().getMaxReplicas())
 					.withTargetCPUUtilizationPercentage(hpa.getSpec().getTargetCPUUtilizationPercentage())

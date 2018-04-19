@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
+import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import kubernetes.client.api.HorizontalPodAutoscalerAPI;
 import kubernetes.client.service.AutoscalerService;
 
@@ -14,8 +15,8 @@ public class AutoscalerServiceImpl implements AutoscalerService {
 	private HorizontalPodAutoscalerAPI hpaAPI;
 
 	@Override
-	public void create(HorizontalPodAutoscaler hpa, String projectName) {
-		hpaAPI.create(hpa, projectName);
+	public void create(HorizontalPodAutoscaler hpa , Deployment deployment) {
+		hpaAPI.create(hpa, deployment);
 	}
 
 	@Override
