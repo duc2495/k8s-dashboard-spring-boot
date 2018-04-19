@@ -138,11 +138,11 @@ public class DeploymentAPI {
 		}
 	}
 
-	public void update(Application app) {
+	public void update(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Update a deployment
 			logger.info("{}: {}", "Update deployment",
-					client.extensions().deployments().inNamespace(app.getDeployment().getMetadata().getNamespace()).withName(app.getName()).edit().editSpec()
+					client.extensions().deployments().inNamespace(namespace).withName(app.getName()).edit().editSpec()
 							.editTemplate().editOrNewSpec().editFirstContainer().withName(app.getName())
 							.withImage(app.getImage()).editFirstPort().withContainerPort(app.getPort()).endPort()
 							.endContainer().endSpec().endTemplate().endSpec().done());

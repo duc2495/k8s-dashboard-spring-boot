@@ -164,4 +164,21 @@ public class ApplicationController extends BaseController {
 		redirectAttributes.addFlashAttribute("info", "Application scale down successfully");
 		return "redirect:/project/" + name + "/overview";
 	}
+	
+	@RequestMapping(value = "/project/{name}/apps/pause/{id}", method = RequestMethod.GET)
+	public String pause(@PathVariable String name, @PathVariable int id, Model model,
+			RedirectAttributes redirectAttributes) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		if (appService.getApplicationById(id, name) == null) {
+			model.addAttribute("error", "The Application does not exist or you are not authorized to scale it.");
+			return "403";
+		}
+		model.addAttribute("projectName", name);
+		appService.pause(id, name);
+		redirectAttributes.addFlashAttribute("info", "Application pause successfully");
+		return "redirect:/project/" + name + "/overview";
+	}
 }

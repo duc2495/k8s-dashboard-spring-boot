@@ -50,10 +50,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 		if (apps.isEmpty()) {
 			return null;
 		}
-		for (Application application : apps) {
-			application.setDeployment(
-					deploymentService.getDeploymentByName(application.getName(), project.getProjectName()));
-			application.setService(serviceService.getServiceByName(application.getName(), project.getProjectName()));
+		for (Application app : apps) {
+			app.setDeployment(deploymentService.getDeploymentByName(app.getName(), project.getProjectName()));
+			app.setService(serviceService.getServiceByName(app.getName(), project.getProjectName()));
+			app.setHpa(autoscalerService.getHpaByName(app.getName(), project.getProjectName()));
+			app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+			app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
+					.getContainerPort());
 		}
 		return apps;
 	}
@@ -71,6 +74,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		app.setDeployment(deploymentService.getDeploymentByName(name, projectName));
 		app.setService(serviceService.getServiceByName(name, projectName));
+		app.setHpa(autoscalerService.getHpaByName(name, projectName));
+		app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+		app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
+				.getContainerPort());
 		return app;
 	}
 
@@ -82,14 +89,28 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		app.setDeployment(deploymentService.getDeploymentByName(app.getName(), projectName));
 		app.setService(serviceService.getServiceByName(app.getName(), projectName));
+		app.setHpa(autoscalerService.getHpaByName(app.getName(), projectName));
+		app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+		app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
+				.getContainerPort());
 		return app;
 	}
 
 	@Override
 	public void update(Application app, String projectName) {
-		deploymentService.update(app);
+
+		deploymentService.update(app, projectName);
+
+		app.setService(serviceService.getServiceByName(app.getName(), projectName));
 		serviceService.update(app.getService(), app.getPort());
+
 		applicationMapper.update(app);
+	}
+
+	@Override
+	public void pause(int id, String projectName) {
+		Application app = getApplicationById(id, projectName);
+		deploymentService.pause(app.getDeployment());
 	}
 
 	@Override

@@ -26,143 +26,171 @@
 	</div> <!-- ELSE -->
 		<div th:unless="${apps == null}">
 			<div class="row">
-				<div class="col-md-12 app-template" th:each="app,iterStat : ${apps}">
-					<div class="box-header with-border app-header">
-						<div class="app-header">
-							<table class="table table-hover">
-								<tr></tr>
-								<tr>
-									<th><span class="app-label"> NAME: <span
-											th:text="${app.name}"></span>
-									</span></th>
-									<th><span>STATUS: </span> <span></span></th>
-									<th><span>DESCRIPTION: </span> <span
-										th:text="${app.description}"></span></th>
-									<th><span>CREATION TIME: </span> <span
-										th:text="${app.deployment.metadata.creationTimestamp}"></span>
-								</th>
-									<th style="padding: 0 8px;"><div
-										class="box-tools pull-right">
-											<div class="dropdown">
-												<button class="btn btn-primary dropdown-toggle"
-												type="button" data-toggle="dropdown">ACTION <span
-													class="caret"></span>
-											</button>
-												<ul class="dropdown-menu">
-													<li><a href="#"
-														th:href="@{/project/{name}/apps/{id}(name=${projectName}, id=${app.id})}">Update</a></li>
-													<li><a href="#"
-														th:href="@{/project/{name}/apps/{id}(name=${projectName}, id=${app.id})}">Pause</a></li>
-													<li><a href="#"
-														th:href="@{/project/{name}/app/{appName}/hpa/new(name=${projectName}, appName=${app.name})}">Auto
-															Scaling</a></li>
-													<li><a href="#"
-														th:href="@{/project/{name}/deployment/{deployName}(name=${projectName}, deployName=${app.deployment.metadata.name})}">Rollback</a></li>
-													<li><a href="#" class="delete-application-confirm"
-														th:href="@{/project/{name}/apps/delete/{id}(name=${projectName}, id=${app.id})}">Delete</a></li>
-											</ul>
-										</div>
-									</div></th>
-							</tr>
-
-						</table>
+				<div class="col-md-12">
+					<div th:if="${#ctx.containsVariable('info')}">
+						<div class="alert alert-success alert-dismissible" role="alert">
+							<button type="button" class="close" data-dismiss="alert"
+							aria-label="Close"><span aria-hidden="true">×</span></button> <strong
+							th:text="${info}"></strong>
 					</div>
-
 				</div>
-					<div class="box" style="border-top: none;">
-						<div class="box-header with-border">
-							<h5 class="box-title">DEPLOYTMENT:</h5> <a class="box-title"
-							th:href="@{/project/{name}/deployment/{deployName}(name=${projectName}, deployName=${app.deployment.metadata.name})}"
-							th:text="${app.deployment.metadata.name}"></a>
-							<p class="box-title">last version:</p> <a href="#"
-							class="box-title"
-							th:text="${app.deployment.metadata.annotations['__${'deployment.kubernetes.io/revision'}__']}"></a>
-							<div class="box-tools pull-right">
-								<!-- Collapse Button -->
-								<button type="button" class="btn btn-box-tool"
-								data-widget="collapse"><i class="fa fa-minus"></i></button>
+					<div class="app-template" th:each="app,iterStat : ${apps}">
+						<div class="box-header with-border app-header">
+							<div class="app-header">
+								<table class="table table-hover">
+									<tr></tr>
+									<tr>
+										<th><span class="app-label"> NAME: <span
+												th:text="${app.name}"></span>
+										</span></th>
+										<th><span>STATUS: </span> <span></span></th>
+										<th><span>DESCRIPTION: </span> <span
+											th:text="${app.description}"></span></th>
+										<th><span>CREATION TIME: </span> <span
+											th:text="${app.deployment.metadata.creationTimestamp}"></span>
+									</th>
+										<th style="padding: 0 8px;"><div
+											class="box-tools pull-right">
+												<div class="dropdown">
+													<button class="btn btn-primary dropdown-toggle"
+													type="button" data-toggle="dropdown">ACTION <span
+														class="caret"></span>
+												</button>
+													<ul class="dropdown-menu">
+														<li><a href="#"
+															th:href="@{/project/{name}/apps/{id}(name=${projectName}, id=${app.id})}">Update</a></li>
+
+														<li><a href="#"
+															th:href="@{/project/{name}/deployment/{deployName}(name=${projectName}, deployName=${app.deployment.metadata.name})}">Rollback</a></li>
+														<li><a href="#" class="delete-application-confirm"
+															th:href="@{/project/{name}/apps/delete/{id}(name=${projectName}, id=${app.id})}">Delete</a></li>
+												</ul>
+											</div>
+										</div></th>
+								</tr>
+
+							</table>
 						</div>
-					</div> <!-- /.box-header -->
-						<div class="box-body">
-							<div class="col-md-4">
-								<h4 class="component-label section-label">CONTAINER</h4>
-								<div class="pod-template">
-									<div>
-										<p>Name: <span
-											th:text="${app.deployment.spec.template.spec.containers[0].name}"></span>
-									</p>
-								</div>
-									<div class="pod-template-image icon-row">
-										<div class="icon-wrap"><i
-											class="glyphicon glyphicon-picture"></i></div>
-										<div class="word-break"><span class="pod-template-key">Image:</span>
-											<span
-											th:text="${app.deployment.spec.template.spec.containers[0].image}"></span>
+
+					</div>
+						<div class="box" style="border-top: none;">
+							<div class="box-header with-border">
+								<h5 class="box-title">DEPLOYTMENT:</h5> <a class="box-title"
+								th:href="@{/project/{name}/deployment/{deployName}(name=${projectName}, deployName=${app.deployment.metadata.name})}"
+								th:text="${app.deployment.metadata.name}"></a>
+								<p class="box-title">last version:</p> <a href="#"
+								class="box-title"
+								th:text="${app.deployment.metadata.annotations['__${'deployment.kubernetes.io/revision'}__']}"></a>
+								<div class="box-tools pull-right">
+									<!-- Collapse Button -->
+									<button type="button" class="btn btn-box-tool"
+									data-widget="collapse"><i class="fa fa-minus"></i></button>
+							</div>
+						</div> <!-- /.box-header -->
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-6">
+										<h4 class="component-label section-label">CONTAINER</h4>
+										<div class="pod-template">
+											<div>
+												<p>Name: <span
+													th:text="${app.deployment.spec.template.spec.containers[0].name}"></span>
+											</p>
+										</div>
+											<div class="pod-template-image icon-row">
+												<div class="icon-wrap"><i
+													class="glyphicon glyphicon-picture"></i></div>
+												<div class="word-break"><span class="pod-template-key">Image:</span>
+													<span
+													th:text="${app.deployment.spec.template.spec.containers[0].image}"></span>
+											</div>
+										</div>
+											<div class="pod-template-image icon-row">
+												<div class="icon-wrap"><i class="fa fa-plug"></i></div>
+												<div class="word-break"><span class="pod-template-key">Port:</span>
+													<span
+													th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}"></span>
+											</div>
+										</div>
 									</div>
 								</div>
-									<div class="pod-template-image icon-row">
-										<div class="icon-wrap"><i class="fa fa-plug"></i></div>
-										<div class="word-break"><span class="pod-template-key">Port:</span>
-											<span
-											th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}"></span>
+									<div class="col-md-6">
+										<h4 class="component-label section-label">PODS</h4>
+										<div class="row">
+											<div class="col-md-6">
+												<div class="circle text-center">
+													<div>
+														<p class="pod-number"
+														th:text="${app.deployment.spec.replicas}"></p>
+														<p>Pod</p>
+												</div>
+													<div class="scaling-controls"><a
+														th:href="@{/project/{name}/apps/scaleup/{id}(name=${projectName}, id=${app.id})}"><i
+															class="fa fa-chevron-up"></i></a> <a
+														th:id="${ app.deployment.spec.replicas == 0}? 'disabled'"
+														th:class="${app.deployment.spec.replicas == 1}? 'scale-down-confirm'"
+														th:href="@{/project/{name}/apps/scaledown/{id}(name=${projectName}, id=${app.id})}"><i
+															class="fa fa-chevron-down"></i></a></div>
+											</div>
+										</div>
+											<div class="col-md-6" th:if="${app.hpa == null}">
+
+												<div class="auto-scaler"><a href="#"
+													th:href="@{/project/{name}/app/{appName}/hpa/new(name=${projectName}, appName=${app.name})}"
+													class="btn btn-primary"> <i class="fa fa-plus-circle"></i>
+														Add Auto Scaling
+												</a></div>
+										</div>
+											<div class="col-md-6" th:unless="${app.hpa == null}">
+												<div>
+													<p>Auto Scaling</p>
+													<p>Min Pods:</p>
+													<p>Max Pods:</p>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
-							<div class="col-md-4">
-								<h4 class="component-label section-label">PODS</h4>
 
-								<div class="circle text-center">
-									<div>
-										<p class="pod-number"
-										th:text="${app.deployment.spec.replicas}"></p>
-										<p>Pod</p>
+
+
+
+							</div>
+								<div class="row">
+									<div class="col-md-6">
+										<h4 class="component-label section-label">NETWORK -
+											SERVICE: <a th:text="${app.deployment.metadata.name}"></a>
+									</h4>
+										<div class="row">
+											<div class="col-md-6">
+												<div class="resource-label">Internal Traffic</div>
+												<div>
+													<p>Port: <span
+														th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}">
+													</span><i class="fa fa-long-arrow-right text-muted"> </i> <span
+														th:text="${app.service.spec.ports[0].port}"> </span>
+												</p>
+											</div>
+										</div>
+											<div class="col-md-6">
+												<div class="resource-label">External Traffic</div>
+												<div>
+													<p>NodePort: <span
+														th:text="${app.service.spec.ports[0].nodePort}"></span>
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+									<div class="col-md-6">
+										<h4 class="component-label section-label">STORAGE</h4>
 								</div>
 							</div>
+						</div> <!-- /.box-body -->
 
-								<div class="scaling-controls"><a
-									th:href="@{/project/{name}/apps/scaleup/{id}(name=${projectName}, id=${app.id})}"><i
-										class="fa fa-chevron-up"></i></a> <a
-									th:id="${ app.deployment.spec.replicas == 0}? 'disabled'"
-									th:class="${app.deployment.spec.replicas == 1}? 'scale-down-confirm'"
-									th:href="@{/project/{name}/apps/scaledown/{id}(name=${projectName}, id=${app.id})}"><i
-										class="fa fa-chevron-down"></i></a></div>
-
-						</div>
-							<div class="col-md-4">
-								<h4 class="component-label section-label">AUTO SCALING</h4>
-						</div>
-							<div class="col-md-6">
-								<h4 class="component-label section-label">NETWORK -
-									SERVICE: <a th:text="${app.deployment.metadata.name}"></a>
-							</h4>
-
-								<div class="col-md-6">
-									<div class="resource-label">Internal Traffic</div>
-									<div>
-										<p>Port: <span
-											th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}">
-										</span><i class="fa fa-long-arrow-right text-muted"> </i> <span
-											th:text="${app.service.spec.ports[0].port}"> </span>
-									</p>
-								</div>
-							</div>
-								<div class="col-md-6">
-									<div class="resource-label">External Traffic</div>
-									<div>
-										<p>NodePort: <span
-											th:text="${app.service.spec.ports[0].nodePort}"></span>
-									</p>
-								</div>
-							</div>
-						</div>
-							<div class="col-md-6">
-								<h4 class="component-label section-label">STORAGE</h4>
-						</div>
-					</div> <!-- /.box-body -->
-
-				</div> <!-- /.box -->
+					</div> <!-- /.box -->
+				</div>
 			</div>
+
 		</div>
 	</div>
 </div>

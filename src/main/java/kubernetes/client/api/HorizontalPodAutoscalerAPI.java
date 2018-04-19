@@ -24,15 +24,36 @@ public class HorizontalPodAutoscalerAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a HPA
 			HorizontalPodAutoscaler temp = new HorizontalPodAutoscalerBuilder().withNewMetadata()
-					.withName(hpa.getMetadata().getName()).withNamespace(deployment.getMetadata().getNamespace()).endMetadata().withNewSpec()
-					.withNewScaleTargetRef().withApiVersion("extensions/v1beta1").withKind("Deployment")
-					.withName(deployment.getMetadata().getName()).endScaleTargetRef()
-					.withMinReplicas(hpa.getSpec().getMinReplicas())
-					.withMaxReplicas(hpa.getSpec().getMaxReplicas())
-					.withTargetCPUUtilizationPercentage(hpa.getSpec().getTargetCPUUtilizationPercentage())
-					.endSpec().build();
-			logger.info("{}: {}", "Create HPA",
-					client.autoscaling().horizontalPodAutoscalers().inNamespace("test").create(temp));
+					.withName(deployment.getMetadata().getName()).withNamespace(deployment.getMetadata().getNamespace())
+					.endMetadata().withNewSpec().withNewScaleTargetRef().withApiVersion("extensions/v1beta1")
+					.withKind("Deployment").withName(deployment.getMetadata().getName()).endScaleTargetRef()
+					.withMinReplicas(hpa.getSpec().getMinReplicas()).withMaxReplicas(hpa.getSpec().getMaxReplicas())
+					.withTargetCPUUtilizationPercentage(hpa.getSpec().getTargetCPUUtilizationPercentage()).endSpec()
+					.build();
+			logger.info("{}: {}", "Create HPA", client.autoscaling().horizontalPodAutoscalers()
+					.inNamespace(deployment.getMetadata().getNamespace()).create(temp));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+
+	public void update(HorizontalPodAutoscaler hpa) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Update a HPA
+			logger.info("{}: {}", "Update HPA",
+					client.autoscaling().horizontalPodAutoscalers().inNamespace(hpa.getMetadata().getNamespace())
+							.withName(hpa.getMetadata().getName()).edit().editSpec()
+							.withMinReplicas(hpa.getSpec().getMinReplicas())
+							.withMaxReplicas(hpa.getSpec().getMaxReplicas())
+							.withTargetCPUUtilizationPercentage(hpa.getSpec().getTargetCPUUtilizationPercentage())
+							.endSpec().done());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

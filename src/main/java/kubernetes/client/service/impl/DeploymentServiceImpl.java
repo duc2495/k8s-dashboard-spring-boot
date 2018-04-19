@@ -50,8 +50,13 @@ public class DeploymentServiceImpl implements DeploymentService {
 	}
 
 	@Override
-	public void update(Application app) {
-		deploymentAPI.update(app);
+	public void update(Application app, String projectName) {
+		deploymentAPI.update(app, projectName);
+	}
+
+	@Override
+	public void pause(Deployment deployment) {
+		deploymentAPI.pause(deployment);
 	}
 
 	@Override

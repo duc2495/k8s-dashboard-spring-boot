@@ -16,6 +16,8 @@ public interface ApplicationService {
 
 	void scaleDown(int id, String projectName);
 	
+	void pause(int id, String projectName);
+	
 	void autoScaling(Application app);
 
 	List<Application> getAll(Project project);

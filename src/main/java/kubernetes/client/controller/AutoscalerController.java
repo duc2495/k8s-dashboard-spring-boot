@@ -58,6 +58,7 @@ public class AutoscalerController extends BaseController {
 		}
 		app.setHpa(hpa);
 		appService.autoScaling(app);
+		System.out.println("Horizontal pod autoscaler successfully created.");
 		redirectAttributes.addFlashAttribute("info", "Horizontal pod autoscaler successfully created.");
 		return "redirect:/project/" + name + "/overview";
 	}
