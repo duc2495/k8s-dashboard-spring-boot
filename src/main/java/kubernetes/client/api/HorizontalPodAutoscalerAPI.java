@@ -44,10 +44,10 @@ public class HorizontalPodAutoscalerAPI {
 		}
 	}
 
-	public void update(HorizontalPodAutoscaler hpa) {
+	public void edit(HorizontalPodAutoscaler hpa) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Update a HPA
-			logger.info("{}: {}", "Update HPA",
+			logger.info("{}: {}", "Edit HPA",
 					client.autoscaling().horizontalPodAutoscalers().inNamespace(hpa.getMetadata().getNamespace())
 							.withName(hpa.getMetadata().getName()).edit().editSpec()
 							.withMinReplicas(hpa.getSpec().getMinReplicas())

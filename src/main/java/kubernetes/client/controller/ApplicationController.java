@@ -173,7 +173,7 @@ public class ApplicationController extends BaseController {
 			return "403";
 		}
 		if (appService.getApplicationById(id, name) == null) {
-			model.addAttribute("error", "The Application does not exist or you are not authorized to scale it.");
+			model.addAttribute("error", "The Application does not exist or you are not authorized to pause it.");
 			return "403";
 		}
 		model.addAttribute("projectName", name);

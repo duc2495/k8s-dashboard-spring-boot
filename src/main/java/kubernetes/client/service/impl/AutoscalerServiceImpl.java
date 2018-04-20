@@ -15,8 +15,13 @@ public class AutoscalerServiceImpl implements AutoscalerService {
 	private HorizontalPodAutoscalerAPI hpaAPI;
 
 	@Override
-	public void create(HorizontalPodAutoscaler hpa , Deployment deployment) {
+	public void create(HorizontalPodAutoscaler hpa, Deployment deployment) {
 		hpaAPI.create(hpa, deployment);
+	}
+
+	@Override
+	public void edit(HorizontalPodAutoscaler hpa) {
+		hpaAPI.edit(hpa);
 	}
 
 	@Override
