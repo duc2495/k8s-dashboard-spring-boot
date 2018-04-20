@@ -12,66 +12,77 @@
 	<div layout:fragment="pageHeader">
 		<section class="content-header">
 			<h1>APPLICATIONS</h1>
-	</section>
-</div>
+		</section>
+	</div>
 
 	<div layout:fragment="content">
 		<div class="box box-warning">
 			<div class="box-header with-border">
 				<h3 class="box-title">Deploy New Application</h3>
-		</div> <!-- /.box-header -->
+			</div>
+			<!-- /.box-header -->
 			<div class="box-body">
 				<form role="form"
-				th:action="@{/project/{name}/apps(name=${projectName})}"
-				th:object="${app}" method="post">
+					th:action="@{/project/{name}/apps(name=${projectName})}"
+					th:object="${app}" method="post">
 					<!-- text input -->
 					<div class="form-group"
-					th:classappend="${#fields.hasErrors('name')}? 'has-error'"><label>Application
-							name *</label> <input type="text" class="form-control" name="name"
-						th:field="*{name}" placeholder="Enter Application Name" required />
+						th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+						<label>Application name *</label> <input type="text"
+							class="form-control" name="name" th:field="*{name}"
+							placeholder="Enter Application Name" required />
 						<p class="recommend">The name must contain only lowercase
 							letters, numbers, and hyphens.</p>
 						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
-						th:class="text-red">Incorrect data</p></div>
+							th:class="text-red">Incorrect data</p>
+					</div>
 					<div class="form-group"
-					th:classappend="${#fields.hasErrors('description')}? 'has-error'">
-						<label>Description</label> <textarea class="form-control" rows="3"
-						name="description" th:field="*{description}"
-						placeholder="Enter Application Description"></textarea>
+						th:classappend="${#fields.hasErrors('description')}? 'has-error'">
+						<label>Description</label>
+						<textarea class="form-control" rows="3" name="description"
+							th:field="*{description}"
+							placeholder="Enter Application Description"></textarea>
 						<p th:if="${#fields.hasErrors('description')}"
-						th:errors="*{description}" th:class="text-red">Incorrect data</p>
-				</div>
+							th:errors="*{description}" th:class="text-red">Incorrect data</p>
+					</div>
 					<div class="form-group"
-					th:classappend="${#fields.hasErrors('image')}? 'has-error'">
+						th:classappend="${#fields.hasErrors('image')}? 'has-error'">
 						<label>Container image *</label> <input type="text"
-						class="form-control" name="image" th:field="*{image}"
-						placeholder="Docker image" required />
+							class="form-control" name="image" th:field="*{image}"
+							placeholder="Docker image" required />
 						<p th:if="${#fields.hasErrors('image')}" th:errors="*{image}"
-						th:class="text-red">Incorrect data</p>
-				</div>
+							th:class="text-red">Incorrect data</p>
+					</div>
 					<div class="form-group"
-					th:classappend="${#fields.hasErrors('pods')}? 'has-error'"><label>Number
-							of pods *</label> <input type="number" class="form-control" name="pods"
-						th:field="*{pods}" placeholder="1" required />
+						th:classappend="${#fields.hasErrors('pods')}? 'has-error'">
+						<label>Number of pods *</label> <input type="number"
+							class="form-control" name="pods" th:field="*{pods}"
+							placeholder="1" required />
 						<p class="recommend">The pods number must be between 1 and 10.</p>
 						<p th:if="${#fields.hasErrors('pods')}" th:errors="*{pods}"
-						th:class="text-red">Incorrect data</p></div>
+							th:class="text-red">Incorrect data</p>
+					</div>
 					<div class="form-group"
-					th:classappend="${#fields.hasErrors('port')}? 'has-error'"><label>Services
-							*</label> <input type="number" class="form-control" name="image"
-						th:field="*{port}" placeholder="Port" required />
-						<p class="recommend">The port number must be between 1 and 65535.</p>
+						th:classappend="${#fields.hasErrors('port')}? 'has-error'">
+						<label>Services *</label> <input type="number"
+							class="form-control" name="image" th:field="*{port}"
+							placeholder="Port" required />
+						<p class="recommend">The port number must be between 1 and
+							65535.</p>
 						<p th:if="${#fields.hasErrors('port')}" th:errors="*{port}"
-						th:class="text-red">Incorrect data</p></div>
+							th:class="text-red">Incorrect data</p>
+					</div>
 
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Deploy</button>
-				</div>
-			</form>
-		</div> <!-- /.box-body -->
-	</div> <!-- /.box -->
+					</div>
+				</form>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
 
-</div>
+	</div>
 
 </body>
 

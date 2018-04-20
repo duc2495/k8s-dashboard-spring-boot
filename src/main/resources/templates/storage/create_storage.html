@@ -32,8 +32,8 @@
 						<label>Storage Name *</label> <input type="text"
 							class="form-control" name="name" th:field="*{name}"
 							placeholder="Enter Storage Name" required />
-						<p class="recommend">The name must contain only lowercase letters, numbers, and
-							hyphens.</p>
+						<p class="recommend">The name must contain only lowercase
+							letters, numbers, and hyphens.</p>
 						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
 							th:class="text-red">Incorrect data</p>
 					</div>
@@ -43,7 +43,8 @@
 						<label>Volume Capacity *</label> <input type="text"
 							class="form-control" name="size" th:field="*{size}"
 							placeholder="Enter Volume Capacity" required />
-						<p class="recommend">Volume space available for data, e.g. 512Mi, 2Gi.</p>
+						<p class="recommend">Volume space available for data, e.g.
+							512Mi, 2Gi.</p>
 						<p th:if="${#fields.hasErrors('size')}" th:errors="*{size}"
 							th:class="text-red">Incorrect data</p>
 					</div>

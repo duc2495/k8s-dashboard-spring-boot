@@ -10,12 +10,12 @@
 <body>
 	<div layout:fragment="content">
 		<h1 class="text-center">Welcome</h1>
-		<div class ="text-center">
+		<div class="text-center">
 			<p
-			th:text="${#authentication.getPrincipal().getCustomer().getFullName()}">
-		</p>
+				th:text="${#authentication.getPrincipal().getCustomer().getFullName()}">
+			</p>
+		</div>
 	</div>
-</div>
 
 </body>
 
