@@ -1,24 +1,15 @@
 package kubernetes.client.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
-import io.fabric8.kubernetes.client.Config;
-import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
-public class HorizontalPodAutoscalerAPI {
-	private static final Logger logger = LoggerFactory.getLogger(ServiceAPI.class);
-
-	String master = "https://k8s-master:6443/";
-
-	Config config = new ConfigBuilder().withMasterUrl(master).build();
+public class HorizontalPodAutoscalerAPI extends ConnectK8SConfig {
 
 	public void create(HorizontalPodAutoscaler hpa, Deployment deployment) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {

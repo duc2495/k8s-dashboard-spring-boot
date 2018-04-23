@@ -11,14 +11,14 @@ import kubernetes.client.api.ReplicaSetAPI;
 import kubernetes.client.service.ReplicaSetService;
 
 @Service
-public class ReplicaSetServiceImpl implements ReplicaSetService{
-	
+public class ReplicaSetServiceImpl implements ReplicaSetService {
+
 	@Autowired
 	private ReplicaSetAPI replicaSetAPI;
-	
+
 	@Override
-	public List<ReplicaSet> getAll(Deployment deployment, String projectName) {
-		return replicaSetAPI.getAll(deployment, projectName);
+	public List<ReplicaSet> getAll(Deployment deployment) {
+		return replicaSetAPI.getAll(deployment);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class ReplicaSetServiceImpl implements ReplicaSetService{
 
 	@Override
 	public ReplicaSet getByName(String rsName, String projectName) {
-		
+
 		return replicaSetAPI.get(rsName, projectName);
 	}
 

@@ -19,6 +19,10 @@ public interface ApplicationService {
 	void pause(int id, String projectName);
 	
 	void autoScaling(Application app);
+	
+	void proAutoScaling(Application app);
+	
+	void deleteProAutoscaler(Application app);
 
 	List<Application> getAll(Project project);
 

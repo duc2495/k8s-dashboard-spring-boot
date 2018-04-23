@@ -41,7 +41,7 @@ public class ReplicaSetController extends BaseController {
 		if (deployment == null) {
 			model.addAttribute("error", "The Deployment \"" + deployName + "\" does not exist");
 		}
-		List<ReplicaSet> replicaSets = replicaSetService.getAll(deployment, name);
+		List<ReplicaSet> replicaSets = replicaSetService.getAll(deployment);
 		model.addAttribute("deployment", deployment);
 		model.addAttribute("replicaSets", replicaSets);
 		return "deployments/deployment";

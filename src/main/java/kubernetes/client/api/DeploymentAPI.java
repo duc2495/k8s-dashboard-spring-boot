@@ -2,29 +2,18 @@ package kubernetes.client.api;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
-import io.fabric8.kubernetes.client.Config;
-import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Template;
 
 @Repository
-public class DeploymentAPI {
-
-	private static final Logger logger = LoggerFactory.getLogger(ServiceAPI.class);
-
-	String master = "https://k8s-master:6443/";
-
-	Config config = new ConfigBuilder().withMasterUrl(master).build();
-
+public class DeploymentAPI extends ConnectK8SConfig {
 	public void create(Application app, String namespace) {
 
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
@@ -162,11 +151,12 @@ public class DeploymentAPI {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Add a Storage
 			logger.info("{}: {}", "Add a Storage",
-					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace()).withName(deploy.getMetadata().getName()).edit().editSpec()
-							.editTemplate().editOrNewSpec().editFirstContainer().addNewVolumeMount().withName("")
-							.withMountPath("").withReadOnly(false).endVolumeMount().endContainer().addNewVolume()
-							.withName("").withNewPersistentVolumeClaim().withClaimName("")
-							.endPersistentVolumeClaim().and().endSpec().endTemplate().endSpec().done());
+					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
+							.withName(deploy.getMetadata().getName()).edit().editSpec().editTemplate().editOrNewSpec()
+							.editFirstContainer().addNewVolumeMount().withName("").withMountPath("").withReadOnly(false)
+							.endVolumeMount().endContainer().addNewVolume().withName("").withNewPersistentVolumeClaim()
+							.withClaimName("").endPersistentVolumeClaim().and().endSpec().endTemplate().endSpec()
+							.done());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -182,8 +172,9 @@ public class DeploymentAPI {
 	public void scale(Deployment deploy) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Scale a deployment
-			logger.info("{}: {}", "Scale deployment", client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
-					.withName(deploy.getMetadata().getName()).scale(deploy.getSpec().getReplicas(), true));
+			logger.info("{}: {}", "Scale deployment",
+					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
+							.withName(deploy.getMetadata().getName()).scale(deploy.getSpec().getReplicas(), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -218,8 +209,10 @@ public class DeploymentAPI {
 	public void pause(Deployment deployment) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Pause a deployment
-			logger.info("{}: {}", "Pause deployment", client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace())
-					.withName(deployment.getMetadata().getName()).edit().editSpec().withPaused(true).and().done());
+			logger.info("{}: {}", "Pause deployment",
+					client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace())
+							.withName(deployment.getMetadata().getName()).edit().editSpec().withPaused(true).and()
+							.done());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

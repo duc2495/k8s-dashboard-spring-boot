@@ -19,11 +19,13 @@ public class Application {
 	private Service service;
 	private List<Pod> listPod;
 	private HorizontalPodAutoscaler hpa;
+	private boolean proAutoscaler = false;
 
 	public Application() {
 		this.pods = 1;
 		this.port = 80;
 	}
+
 	public int getId() {
 		return id;
 	}
@@ -87,17 +89,29 @@ public class Application {
 	public void setService(Service service) {
 		this.service = service;
 	}
+
 	public List<Pod> getListPod() {
 		return listPod;
 	}
+
 	public void setListPod(List<Pod> listPod) {
 		this.listPod = listPod;
 	}
+
 	public HorizontalPodAutoscaler getHpa() {
 		return hpa;
 	}
+
 	public void setHpa(HorizontalPodAutoscaler hpa) {
 		this.hpa = hpa;
+	}
+
+	public boolean isProAutoscaler() {
+		return proAutoscaler;
+	}
+
+	public void setProAutoscaler(boolean proAutoscaler) {
+		this.proAutoscaler = proAutoscaler;
 	}
 
 }

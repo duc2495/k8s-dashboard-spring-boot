@@ -161,7 +161,7 @@
 }
 
 .auto-scaler {
-	float: right;
+	margin: 5px;
 }
 
 #disabled {

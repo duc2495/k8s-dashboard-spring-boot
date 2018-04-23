@@ -2,27 +2,17 @@ package kubernetes.client.api;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceBuilder;
-import io.fabric8.kubernetes.client.Config;
-import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Template;
 
 @Repository
-public class ServiceAPI {
-
-	private static final Logger logger = LoggerFactory.getLogger(ServiceAPI.class);
-
-	String master = "https://k8s-master:6443/";
-
-	Config config = new ConfigBuilder().withMasterUrl(master).build();
+public class ServiceAPI extends ConnectK8SConfig {
 
 	public void create(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
@@ -69,8 +59,10 @@ public class ServiceAPI {
 	public void update(Service service, int port) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Update service with new port
-			logger.info("{}: {}", "Update service", client.services().inNamespace(service.getMetadata().getNamespace()).withName(service.getMetadata().getName())
-					.edit().editSpec().editFirstPort().withPort(port).endPort().endSpec().done());
+			logger.info("{}: {}", "Update service",
+					client.services().inNamespace(service.getMetadata().getNamespace())
+							.withName(service.getMetadata().getName()).edit().editSpec().editFirstPort().withPort(port)
+							.endPort().endSpec().done());
 
 		} catch (Exception e) {
 			e.printStackTrace();

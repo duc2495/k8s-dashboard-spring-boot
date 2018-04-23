@@ -148,7 +148,8 @@
 														<p>Pod</p>
 													</div>
 												</div>
-												<div class="scaling-controls" th:if="${app.hpa == null}">
+												<div class="scaling-controls"
+													th:if="${app.hpa} == null  and ${app.proAutoscaler} == false">
 													<a
 														th:href="@{/project/{name}/apps/scaleup/{id}(name=${projectName}, id=${app.id})}"><i
 														class="fa fa-chevron-up"></i></a> <a
@@ -159,8 +160,9 @@
 												</div>
 
 											</div>
-											<div class="col-md-6" th:if="${app.hpa == null}">
 
+											<div class="col-md-6"
+												th:if="${app.hpa} == null  and ${app.proAutoscaler} == false">
 												<div class="auto-scaler">
 													<a href="#"
 														th:href="@{/project/{name}/app/{appName}/hpa/new(name=${projectName}, appName=${app.name})}"
@@ -168,34 +170,53 @@
 														Add Auto Scaling
 													</a>
 												</div>
+
+												<div class="auto-scaler">
+													<a href="#"
+														th:href="@{/project/{name}/app/{id}/autoscaler/create(name=${projectName}, id=${app.id})}"
+														class="btn btn-primary"> <i class="fa fa-plus-circle"></i>
+														Add Proactive Auto Scaling
+													</a>
+												</div>
+
 											</div>
-											<div class="col-md-6" th:unless="${app.hpa == null}">
-												<div class="autoscaler-template">
+											<div class="col-md-6"
+												th:unless="${app.hpa} == null  and ${app.proAutoscaler} == false">
+												<div th:if="${app.hpa} != null">
+													<div class="autoscaler-template">
+														<div>
+															<span>Auto Scaling</span> <a href="#"
+																th:href="@{/project/{name}/app/{appName}/hpa(name=${projectName}, appName=${app.name})}"
+																style="padding-left: 10px;"> Edit</a> <span
+																class="action-divider">|</span> <a href="#"
+																th:href="@{/project/{name}/app/{appName}/hpa/delete(name=${projectName}, appName=${app.name})}">
+																Delete</a>
+														</div>
+														<div class="icon-row">
+															<div class="word-break">
+																<span class="pod-template-key">Min Pods:</span> <span
+																	th:text="${app.hpa.spec.minReplicas}"></span>
+															</div>
+														</div>
+														<div class="icon-row">
+															<div class="word-break">
+																<span class="pod-template-key">Max Pods:</span> <span
+																	th:text="${app.hpa.spec.maxReplicas}"></span>
+															</div>
+														</div>
+														<div class="icon-row">
+															<div class="word-break">
+																<span class="pod-template-key">CPU Request:</span> <span
+																	th:text="${app.hpa.spec.targetCPUUtilizationPercentage}"></span><span>%</span>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div th:if="${app.proAutoscaler} == true">
 													<div>
-														<span>Auto Scaling</span> <a href="#"
-															th:href="@{/project/{name}/app/{appName}/hpa(name=${projectName}, appName=${app.name})}"
-															style="padding-left: 10px;"> Edit</a> <span
-															class="action-divider">|</span> <a href="#"
-															th:href="@{/project/{name}/app/{appName}/hpa/delete(name=${projectName}, appName=${app.name})}">
-															Delete</a>
-													</div>
-													<div class="icon-row">
-														<div class="word-break">
-															<span class="pod-template-key">Min Pods:</span> <span
-																th:text="${app.hpa.spec.minReplicas}"></span>
-														</div>
-													</div>
-													<div class="icon-row">
-														<div class="word-break">
-															<span class="pod-template-key">Max Pods:</span> <span
-																th:text="${app.hpa.spec.maxReplicas}"></span>
-														</div>
-													</div>
-													<div class="icon-row">
-														<div class="word-break">
-															<span class="pod-template-key">CPU Request:</span> <span
-																th:text="${app.hpa.spec.targetCPUUtilizationPercentage}"></span><span>%</span>
-														</div>
+														<span>Proactive Auto Scaling</span> <a href="#"
+															th:href="@{/project/{name}/app/{id}/autoscaler/delete(name=${projectName}, id=${app.id})}"
+															style="padding-left: 10px;"> Delete</a>
 													</div>
 												</div>
 											</div>
@@ -226,7 +247,6 @@
 												<div>
 													<p>
 														NodePort: <span
-															th:if=""
 															th:text="${app.service.spec.ports[0].nodePort}"></span>
 													</p>
 												</div>

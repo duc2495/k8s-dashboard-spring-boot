@@ -13,6 +13,8 @@ import kubernetes.client.service.ApplicationService;
 import kubernetes.client.service.AutoscalerService;
 import kubernetes.client.service.DeploymentService;
 import kubernetes.client.service.K8sServiceService;
+import kubernetes.client.service.PodService;
+import kubernetes.client.service.ProactiveAutoScalerService;
 
 @Transactional
 @Service
@@ -26,6 +28,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 	private AutoscalerService autoscalerService;
 	@Autowired
 	private ApplicationMapper applicationMapper;
+	@Autowired
+	private ProactiveAutoScalerService proAuto;
+	@Autowired
+	private PodService podService;
 
 	@Override
 	public void deploy(Application app, Project project) {
@@ -41,6 +47,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 			deploymentService.delete(app.getName(), projectName);
 			serviceService.delete(app.getName(), projectName);
 			applicationMapper.delete(id);
+			if (app.isProAutoscaler()) {
+				proAuto.delete(app.getName(), projectName);
+			}
 		}
 	}
 
@@ -53,6 +62,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		for (Application app : apps) {
 			app.setDeployment(deploymentService.getDeploymentByName(app.getName(), project.getProjectName()));
 			app.setService(serviceService.getServiceByName(app.getName(), project.getProjectName()));
+			app.setListPod(podService.getAll(app.getDeployment()));
 			app.setHpa(autoscalerService.getHpaByName(app.getName(), project.getProjectName()));
 			app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 			app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
@@ -74,6 +84,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		app.setDeployment(deploymentService.getDeploymentByName(name, projectName));
 		app.setService(serviceService.getServiceByName(name, projectName));
+		app.setListPod(podService.getAll(app.getDeployment()));
 		app.setHpa(autoscalerService.getHpaByName(name, projectName));
 		app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 		app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
@@ -89,6 +100,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		}
 		app.setDeployment(deploymentService.getDeploymentByName(app.getName(), projectName));
 		app.setService(serviceService.getServiceByName(app.getName(), projectName));
+		app.setListPod(podService.getAll(app.getDeployment()));
 		app.setHpa(autoscalerService.getHpaByName(app.getName(), projectName));
 		app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 		app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
@@ -127,6 +139,20 @@ public class ApplicationServiceImpl implements ApplicationService {
 			app.getDeployment().getSpec().setReplicas(app.getDeployment().getSpec().getReplicas() - 1);
 			deploymentService.scale(app.getDeployment());
 		}
+	}
+
+	@Override
+	public void proAutoScaling(Application app) {
+		app.setProAutoscaler(true);
+		applicationMapper.update(app);
+		proAuto.create(app);
+	}
+
+	@Override
+	public void deleteProAutoscaler(Application app) {
+		app.setProAutoscaler(false);
+		applicationMapper.update(app);
+		proAuto.delete(app.getName(), app.getDeployment().getMetadata().getNamespace());
 	}
 
 	@Override
