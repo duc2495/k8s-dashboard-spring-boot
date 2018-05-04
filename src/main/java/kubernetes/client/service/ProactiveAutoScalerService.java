@@ -5,6 +5,8 @@ import kubernetes.client.model.Application;
 
 public interface ProactiveAutoScalerService {
 	void create(Application app);
+	
+	void update(Application app);
 
 	void delete(String name, String namespace);
 

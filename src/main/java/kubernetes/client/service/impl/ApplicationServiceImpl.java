@@ -115,8 +115,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 		app.setService(serviceService.getServiceByName(app.getName(), projectName));
 		serviceService.update(app.getService(), app.getPort());
-
 		applicationMapper.update(app);
+		Application appUpdated = getApplicationByName(app.getName(), projectName);
+		if (appUpdated.isProAutoscaler()) {
+			proAuto.update(appUpdated);
+		}
 	}
 
 	@Override
@@ -144,14 +147,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	public void proAutoScaling(Application app) {
 		app.setProAutoscaler(true);
-		applicationMapper.update(app);
+		applicationMapper.updateAutoscaler(app);
 		proAuto.create(app);
 	}
 
 	@Override
 	public void deleteProAutoscaler(Application app) {
 		app.setProAutoscaler(false);
-		applicationMapper.update(app);
+		applicationMapper.updateAutoscaler(app);
 		proAuto.delete(app.getName(), app.getDeployment().getMetadata().getNamespace());
 	}
 

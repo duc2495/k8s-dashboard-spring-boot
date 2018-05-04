@@ -18,7 +18,6 @@ import io.kubernetes.client.models.V1JobSpec;
 import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1PodSpec;
 import io.kubernetes.client.models.V1PodTemplateSpec;
-import io.kubernetes.client.models.V1Status;
 import io.kubernetes.client.models.V2alpha1CronJob;
 import io.kubernetes.client.models.V2alpha1CronJobSpec;
 import io.kubernetes.client.models.V2alpha1JobTemplateSpec;
@@ -42,7 +41,7 @@ public class CronJobAPI {
 		body.setKind("CronJob");
 
 		V1ObjectMeta metadata = new V1ObjectMeta();
-		metadata.setName(app.getDeployment().getMetadata().getName() + "-autoscaler");
+		metadata.setName(app.getDeployment().getMetadata().getName() + "-job-autoscaler");
 		metadata.setNamespace(app.getDeployment().getMetadata().getNamespace());
 		body.setMetadata(metadata);
 
@@ -53,7 +52,7 @@ public class CronJobAPI {
 		V1PodTemplateSpec podTemplateSpec = new V1PodTemplateSpec();
 		V1PodSpec podSpec = new V1PodSpec();
 		V1Container container = new V1Container();
-		container.setName(app.getDeployment().getMetadata().getName() + "-autoscaler");
+		container.setName(app.getDeployment().getMetadata().getName() + "-job-autoscaler");
 		container.setImage("duc2495/tf-serving-client:latest");
 		List<V1EnvVar> env = new ArrayList<V1EnvVar>();
 		V1EnvVar e1 = new V1EnvVar();
@@ -92,7 +91,7 @@ public class CronJobAPI {
 		argsContainer.add("-c");
 		argsContainer.add("/run_client.sh");
 		container.setArgs(argsContainer);
-		podSpec.setRestartPolicy("OnFailure");
+		podSpec.setRestartPolicy("Never");
 		List<V1Container> containers = new ArrayList<V1Container>();
 		containers.add(0, container);
 		podSpec.setContainers(containers);
@@ -104,33 +103,27 @@ public class CronJobAPI {
 
 		try {
 			apiInstance.createNamespacedCronJob(app.getDeployment().getMetadata().getNamespace(), body, null);
-			System.out.println("Created cronjob");
+			System.out.println("Created CronJob");
 		} catch (ApiException e) {
 			System.err.println("Exception when calling BatchV2alpha1Api#createNamespacedCronJob");
 			e.printStackTrace();
 		}
 	}
 
-	public V2alpha1CronJob get(String name, String namespace) {
+	public V2alpha1CronJob get(String name, String namespace) throws IOException {
 		ApiClient client;
+		client = Config.defaultClient();
+		Configuration.setDefaultApiClient(client);
+
+		BatchV2alpha1Api apiInstance = new BatchV2alpha1Api();
+		String jobName = name + "-job-autoscaler";
+		String pretty = "pretty_example";
 		try {
-			client = Config.defaultClient();
-			Configuration.setDefaultApiClient(client);
-
-			BatchV2alpha1Api apiInstance = new BatchV2alpha1Api();
-			String jobName = name + "-autoscaler";
-			String pretty = "pretty_example";
-			try {
-				V2alpha1CronJob result = apiInstance.readNamespacedCronJob(jobName, namespace, pretty, true, true);
-				System.out.println("Get CronJob: " + result);
-				return result;
-			} catch (ApiException e) {
-				System.err.println("Exception when calling BatchV2alpha1Api#patchNamespacedCronJob");
-				e.printStackTrace();
-			}
-
-		} catch (IOException e) {
-			System.out.println("Connect to K8S cluster error");
+			V2alpha1CronJob result = apiInstance.readNamespacedCronJob(jobName, namespace, pretty, true, true);
+			return result;
+		} catch (ApiException e) {
+			System.err.println("Exception when calling BatchV2alpha1Api#patchNamespacedCronJob");
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -141,23 +134,39 @@ public class CronJobAPI {
 		Configuration.setDefaultApiClient(client);
 
 		BatchV2alpha1Api apiInstance = new BatchV2alpha1Api();
-		String jobName = name + "-autoscaler";
+		String jobName = name + "-job-autoscaler";
 		V1DeleteOptions body = new V1DeleteOptions();
 		String pretty = "pretty_example";
 		Integer gracePeriodSeconds = 1;
 		Boolean orphanDependents = true;
 		String propagationPolicy = "propagationPolicy_example";
 		try {
-			V1Status result = apiInstance.deleteNamespacedCronJob(jobName, namespace, body, pretty, gracePeriodSeconds,
-					orphanDependents, propagationPolicy);
-			System.out.println(result);
+			apiInstance.deleteNamespacedCronJob(jobName, namespace, body, pretty, gracePeriodSeconds, orphanDependents,
+					propagationPolicy);
 		} catch (ApiException e) {
 			System.err.println("Exception when calling BatchV2alpha1Api#deleteNamespacedCronJob");
 			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			System.err.println("Exception when calling BatchV2alpha1Api#deleteNamespacedCronJob");
+		} catch (Exception e) {
+			System.out.println("Deleted CronJob");
 		}
-		
+
+	}
+
+	public void update(V2alpha1CronJob cronJob) throws IOException {
+		ApiClient client;
+		client = Config.defaultClient();
+		Configuration.setDefaultApiClient(client);
+
+		BatchV2alpha1Api apiInstance = new BatchV2alpha1Api();
+		String pretty = "pretty_example";
+		try {
+			V2alpha1CronJob result = apiInstance.replaceNamespacedCronJob(cronJob.getMetadata().getName(),
+					cronJob.getMetadata().getNamespace(), cronJob, pretty);
+			System.out.println(result);
+		} catch (ApiException e) {
+			System.err.println("Exception when calling BatchV2alpha1Api#replaceNamespacedCronJob");
+			e.printStackTrace();
+		}
 
 	}
 }

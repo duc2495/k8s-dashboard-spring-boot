@@ -23,8 +23,8 @@ public class DeploymentAPI extends ConnectK8SConfig {
 					.withNewSelector().addToMatchLabels("app", app.getName()).endSelector().withNewTemplate()
 					.withNewMetadata().addToLabels("app", app.getName()).endMetadata().withNewSpec().addNewContainer()
 					.withName(app.getName()).withImage(app.getImage()).addNewPort().withContainerPort(app.getPort())
-					.endPort().withNewResources().addToRequests("cpu", new Quantity("300m"))
-					.addToRequests("memory", new Quantity("700Mi")).endResources().endContainer().endSpec()
+					.endPort().withNewResources().addToRequests("cpu", new Quantity("500m"))
+					.addToRequests("memory", new Quantity("1Gi")).endResources().endContainer().endSpec()
 					.endTemplate().endSpec().build();
 			logger.info("{}: {}", "Created deployment",
 					client.extensions().deployments().inNamespace(namespace).create(deployment));

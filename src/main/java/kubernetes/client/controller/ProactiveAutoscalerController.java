@@ -76,16 +76,21 @@ public class ProactiveAutoscalerController extends BaseController {
 			model.addAttribute("error", "The Application does not exist or you are not authorized to scale it.");
 			return "403";
 		}
+		int pods = app.getDeployment().getSpec().getReplicas();
 		if (currentCPU > 80 || futureCPU > 80) {
 			appService.scaleUp(id, name);
-			System.out.println("Auto Scaling: scale up with " + futureCPU + "% future cpu usage.");
+			System.out.println(
+					"Auto Scaling: scale up with \'" + futureCPU + "%\' future cpu usage(" + currentCPU + "% current). Number of pods after scaled: " + (pods + 1));
 			model.addAttribute("info", "Auto Scaling: scale up with " + futureCPU + "% future cpu usage.");
-		} else if ((currentCPU < 30 || futureCPU < 30) && app.getDeployment().getSpec().getReplicas() > 1) {
+		} else if (((currentCPU < 30 && futureCPU < 50 ) || ( currentCPU < 50 && futureCPU < 30)) && pods > 1) {
 			appService.scaleDown(id, name);
-			System.out.println("Auto Scaling: scale down with " + futureCPU + "% future cpu usage.");
+			System.out.println("Auto Scaling: scale down with \'" + futureCPU + "%\' future cpu usage (" + currentCPU
+					+ "% current). Number of pods after scaled: " + (pods - 1));
 			model.addAttribute("info", "Auto Scaling: scale down with " + futureCPU + "% future cpu usage.");
 		} else {
-			System.out.println("Auto Scaling: no action with " + futureCPU + "% future cpu usage.");
+			System.out.println(
+					"Auto Scaling: no action with \'" + futureCPU + "%\' future cpu usage (" + currentCPU
+					+ "% current). Curent pods: " + pods);
 			model.addAttribute("info", "Auto Scaling: no action with " + futureCPU + "% future cpu usage.");
 		}
 		return "admin/autoscaler";
