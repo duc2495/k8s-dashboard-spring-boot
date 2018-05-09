@@ -17,7 +17,7 @@ public interface ApplicationMapper {
 			+ "VALUES(#{app.name}, #{app.description}, #{project_id})")
 	void insert(@Param("app") Application app, @Param("project_id") int project_id);
 
-	@Select("SELECT * FROM application WHERE project_id = #{project_id}")
+	@Select("SELECT * FROM application WHERE project_id = #{project_id} ORDER BY app_id")
 	@Results({ @Result(property = "id", column = "app_id"), @Result(property = "name", column = "app_name"),
 			@Result(property = "descrition", column = "descrition"),
 			@Result(property = "proAutoscaler", column = "pro_autoscaler") })

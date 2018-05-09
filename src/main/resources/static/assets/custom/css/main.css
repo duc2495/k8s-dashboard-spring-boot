@@ -208,3 +208,7 @@
 	color: #9c9c9c;
 	padding: 0 6px;
 }
+
+.box .overlay {
+	background: unset;
+}
