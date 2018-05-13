@@ -1,8 +1,6 @@
-var cpuPredict = [], cpuCurrent = [];
-var listData = [];
-var number = 3;
+var size = 0;
 var dataset;
-var totalPoints = 10;
+var totalPoints = 13;
 var updateInterval = 60000;
 var now = new Date().getTime();
 
@@ -74,101 +72,70 @@ var options = {
 	}
 };
 
-function initData() {
-
-	for (var j = 0; j < number; j++) {
-		var fixTime = now - totalPoints * updateInterval - now % 60000;
-		var cpuPredictTemp = [], cpuCurrentTemp = [];
-		for (var i = 0; i < totalPoints; i++) {
-			var temp = [ fixTime += updateInterval, 10 ];
-			cpuPredictTemp.push(temp);
-			cpuCurrentTemp.push(temp);
-		}
-		for (var i = 0; i < 3; i++) {
-			var temp = [ fixTime += updateInterval, 10 ];
-			cpuPredictTemp.push(temp);
-		}
-		cpuPredict.push(cpuPredictTemp);
-		cpuCurrent.push(cpuCurrentTemp);
+function convertStrToArr(str) {
+	var data = [];
+	var arr1 = str.split("]");
+	var arr2 = arr1[0].split(" ");
+	var temp = [ arr2[0].substr(2, 13), arr2[1] ];
+	data.push(temp);
+	for (var i = 1; i < arr1.length - 2; i++) {
+		var arr2 = arr1[i].split(" ");
+		var temp = [ arr2[1].substr(1, 13), arr2[2] ];
+		data.push(temp);
 	}
-
+	return data;
 }
 
-function GetData() {
-	$.ajaxSetup({
-		cache : false
-	});
-
-	$.ajax({
-		url : "http://www.jqueryflottutorial.com/AjaxUpdateChart.aspx",
-		dataType : 'json',
-		success : update,
-		error : function() {
-			setTimeout(GetData, updateInterval);
-		}
-	});
-}
-
-var temp;
-
-function update(_data) {
-	cpu.shift();
-	cpuCore.shift();
-
-	now += updateInterval - now % 60000;
-
-	temp = [ now + 3 * updateInterval, _data.cpu ];
-	cpu.push(temp);
-
-	temp = [ now, _data.core ];
-	cpuCore.push(temp);
-
-	dataset = [ {
-		label : "Predict CPU:" + _data.cpu + "%",
-		data : cpu,
-		lines : {
-			fill : true,
-			lineWidth : 1.2
-		},
-		color : "#00FF00"
-	}, {
-		label : "Current CPU:" + _data.core + "%",
-		data : cpuCore,
-		lines : {
-			fill : true,
-			lineWidth : 1.2
-		},
-		color : "#FF0000"
-	} ];
-
-	$.plot($("#flot-placeholder1"), dataset, options);
-	setTimeout(GetData, updateInterval);
-}
-
-$(document).ready(function() {
-
-	for (var j = 0; j < number; j++) {
-		initData();
-
-		dataset = [ {
-			label : "Predict CPU",
-			data : cpuPredict[j],
-			lines : {
-				fill : true,
-				lineWidth : 1.2
-			},
-			color : "#00FF00"
-		}, {
-			label : "Current CPU",
-			data : cpuCurrent[j],
-			lines : {
-				fill : true,
-				lineWidth : 1.2
-			},
-			color : "#FF0000"
-		} ];
-
-		$.plot($("#flot-placeholder" + (j + 1)), dataset, options);
-		setTimeout(GetData, updateInterval);
-	}
-});
+$(document)
+		.ready(
+				function() {
+					size = document.getElementById("sizeApps").value;
+					size = parseInt(size) + 1;
+					for (var j = 1; j < size; j++) {
+						var strActualValue = document
+								.getElementById("flot-actual-value" + j).value;
+						var strPredictValue = document
+								.getElementById("flot-predict-value" + j).value;
+						var actualValue = convertStrToArr(strActualValue);
+						var lastActualValue = actualValue[actualValue.length - 1];
+						var predictValue = convertStrToArr(strPredictValue);
+						var lastPredictValue = predictValue[predictValue.length - 1];
+						var check = document
+								.getElementById("check-predict-value" + j).value;
+						if (check == "true") {
+							dataset = [
+									{
+										label : "Actual CPU:"
+												+ lastActualValue[1] + "%",
+										data : actualValue,
+										lines : {
+											fill : true,
+											lineWidth : 1.2
+										},
+										color : "#FF0000"
+									},
+									{
+										label : "Predict CPU:"
+												+ lastPredictValue[1] + "%",
+										data : predictValue,
+										lines : {
+											fill : true,
+											lineWidth : 1.2
+										},
+										color : "#00FF00"
+									} ];
+						} else {
+							dataset = [ {
+								label : "Actual CPU:" + lastActualValue[1]
+										+ "% ",
+								data : actualValue,
+								lines : {
+									fill : true,
+									lineWidth : 1.2
+								},
+								color : "#FF0000"
+							} ];
+						}
+						$.plot($("#flot-placeholder" + j), dataset, options);
+					}
+				});

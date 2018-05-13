@@ -109,13 +109,11 @@
 			<version>2.0.4</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/io.kubernetes/client-java -->
+		<!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java -->
 		<dependency>
-			<groupId>io.kubernetes</groupId>
-			<artifactId>client-java</artifactId>
-			<version>1.0.0-beta4</version>
+			<groupId>org.influxdb</groupId>
+			<artifactId>influxdb-java</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>

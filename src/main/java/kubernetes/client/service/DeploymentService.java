@@ -10,10 +10,14 @@ public interface DeploymentService {
 	void create(Application app, String projectName);
 
 	void create(Template template, String projectName);
+	
+	void createAutoscaler(Application app);
 
 	void delete(String name, String projectName);
 
 	void update(Application app, String projectName);
+	
+	void updateAutoscaler(Application app);
 
 	void scale(Deployment deployment);
 

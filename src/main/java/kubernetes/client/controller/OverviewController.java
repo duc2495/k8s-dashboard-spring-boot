@@ -32,7 +32,12 @@ public class OverviewController extends BaseController {
 		model.addAttribute("projectName", name);
 		Project project = projectService.getProjectByName(name);
 		List<Application> apps = appService.getAll(project);
+		int sizeApps = 0;
+		if (apps != null) {
+			sizeApps = apps.size();
+		}
 		model.addAttribute("apps", apps);
+		model.addAttribute("sizeApps", sizeApps);
 		return "overview/overview";
 	}
 }

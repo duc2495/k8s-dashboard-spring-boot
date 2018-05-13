@@ -1,9 +1,12 @@
 package kubernetes.client.api;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
@@ -14,8 +17,8 @@ import kubernetes.client.model.Template;
 
 @Repository
 public class DeploymentAPI extends ConnectK8SConfig {
+	
 	public void create(Application app, String namespace) {
-
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Create a deployment
 			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(app.getName())
@@ -71,6 +74,48 @@ public class DeploymentAPI extends ConnectK8SConfig {
 				}
 			}
 		}
+	}
+	
+	public void createAutoscaler(Application app) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Create a deployment
+			String namespace = "default";
+			String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
+			String image = "duc2495/tf-serving-client:latest";
+			Map<String, String> podLabels = app.getListPod().get(0).getMetadata().getLabels();
+			String labels = "app:" + podLabels.get("app") + ",pod-template-hash:" + podLabels.get("pod-template-hash");
+			List<EnvVar> envs = new ArrayList<EnvVar>();
+			envs.add(new EnvVar("TF_SERVER", "192.168.5.10:30900", null));
+			envs.add(new EnvVar("INFLUX_SERVER","192.168.5.10:30086", null));
+			envs.add(new EnvVar("WEB_SERVER", "192.168.5.10:8080", null));
+			envs.add(new EnvVar("NAMESPACE", app.getDeployment().getMetadata().getNamespace(), null));
+			envs.add(new EnvVar("LABELS", labels, null));
+			envs.add(new EnvVar("APP_ID", String.valueOf(app.getId()), null));
+			envs.add(new EnvVar("MODEL_NAME", "cpu", null));
+			String command = "bin/sh";
+			List<String> args = new ArrayList<String>();
+			args.add("-c");
+			args.add("while true ; do ./run_client.sh & sleep 60; done");
+			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(name)
+					.addToLabels("app", name).endMetadata().withNewSpec()
+					.withNewTemplate()
+					.withNewMetadata().addToLabels("app", name).endMetadata().withNewSpec().addNewContainer()
+					.withName(name).withImage(image).withEnv(envs).withCommand(command).withArgs(args).endContainer().endSpec()
+					.endTemplate().endSpec().build();
+			logger.info("{}: {}", "Created autoscaler job",
+					client.extensions().deployments().inNamespace(namespace).create(deployment));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+
 	}
 
 	public Deployment get(String name, String namespace) {
@@ -146,7 +191,30 @@ public class DeploymentAPI extends ConnectK8SConfig {
 			}
 		}
 	}
-
+	
+	public void updateAutoscaler(Application app) {
+		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+			// Update a deployment
+			String namespace = "default";
+			String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
+			Map<String, String> podLabels = app.getListPod().get(0).getMetadata().getLabels();
+			String labels = "app:" + podLabels.get("app") + ",pod-template-hash:" + podLabels.get("pod-template-hash");
+			logger.info("{}: {}", "Update deployment",
+					client.extensions().deployments().inNamespace(namespace).withName(name).edit().editSpec()
+							.editTemplate().editOrNewSpec().editFirstContainer().editEnv(4).withValue(labels).endEnv()
+							.endContainer().endSpec().endTemplate().endSpec().done());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+	
 	public void addStorage(Deployment deploy) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
 			// Add a Storage

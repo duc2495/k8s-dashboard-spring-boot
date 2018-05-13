@@ -45,8 +45,7 @@
 									<th>Edit</th>
 									<th>Delete</th>
 								</tr>
-								<tr th:each="pro,iterStat : ${projects}"
-									th:onclick="'javascript:rowClickedProject(\'' + ${pro.projectName} + '\');'">
+								<tr th:each="pro,iterStat : ${projects}">
 									<td th:text="${iterStat.count}">1</td>
 									<td th:text="${pro.projectName}">Project Name</td>
 									<td th:text="${pro.description}">Project Description</td>

@@ -123,9 +123,6 @@
 								href="#"
 								th:href="@{/project/{name}/deployments(name=${projectName})}"><i
 									class="fa fa-circle-o"></i>Deployments</a></li>
-							<li th:class="${CURRENT_MENU == 'Pods'}? 'active' : ''"><a
-								href="#" th:href="@{/project/{name}/pods(name=${projectName})}"><i
-									class="fa fa-circle-o"></i>Pods</a></li>
 							<li th:class="${CURRENT_MENU == 'Services'}? 'active' : ''"><a
 								href="#"
 								th:href="@{/project/{name}/services(name=${projectName})}"><i

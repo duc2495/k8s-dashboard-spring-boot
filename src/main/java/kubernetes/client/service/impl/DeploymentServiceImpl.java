@@ -30,6 +30,11 @@ public class DeploymentServiceImpl implements DeploymentService {
 	}
 
 	@Override
+	public void createAutoscaler(Application app) {
+		deploymentAPI.createAutoscaler(app);
+	}
+	
+	@Override
 	public void delete(String name, String projectName) {
 		deploymentAPI.delete(name, projectName);
 	}
@@ -53,6 +58,12 @@ public class DeploymentServiceImpl implements DeploymentService {
 	public void update(Application app, String projectName) {
 		deploymentAPI.update(app, projectName);
 	}
+	
+	@Override
+	public void updateAutoscaler(Application app) {
+		deploymentAPI.updateAutoscaler(app);
+	}
+
 
 	@Override
 	public void pause(Deployment deployment) {

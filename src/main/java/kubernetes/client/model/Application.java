@@ -20,6 +20,8 @@ public class Application {
 	private List<Pod> listPod;
 	private HorizontalPodAutoscaler hpa;
 	private boolean proAutoscaler = false;
+	private Deployment autoscaler;
+	private Resources resources;
 
 	public Application() {
 		this.pods = 1;
@@ -112,6 +114,22 @@ public class Application {
 
 	public void setProAutoscaler(boolean proAutoscaler) {
 		this.proAutoscaler = proAutoscaler;
+	}
+
+	public Deployment getAutoscaler() {
+		return autoscaler;
+	}
+
+	public void setAutoscaler(Deployment autoscaler) {
+		this.autoscaler = autoscaler;
+	}
+
+	public Resources getResources() {
+		return resources;
+	}
+
+	public void setResources(Resources resources) {
+		this.resources = resources;
 	}
 
 }

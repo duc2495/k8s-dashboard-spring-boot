@@ -14,7 +14,7 @@ import kubernetes.client.service.AutoscalerService;
 import kubernetes.client.service.DeploymentService;
 import kubernetes.client.service.K8sServiceService;
 import kubernetes.client.service.PodService;
-import kubernetes.client.service.ProactiveAutoScalerService;
+import kubernetes.client.service.ResourcesService;
 
 @Transactional
 @Service
@@ -29,9 +29,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Autowired
 	private ApplicationMapper applicationMapper;
 	@Autowired
-	private ProactiveAutoScalerService proAuto;
-	@Autowired
 	private PodService podService;
+	@Autowired
+	private ResourcesService resourcesService;
 
 	@Override
 	public void deploy(Application app, Project project) {
@@ -44,12 +44,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 	public void delete(int id, String projectName) {
 		Application app = applicationMapper.getApplicationById(id);
 		if (app != null) {
+			if (app.isProAutoscaler()) {
+				this.deleteProAutoscaler(app);
+			}
 			deploymentService.delete(app.getName(), projectName);
 			serviceService.delete(app.getName(), projectName);
 			applicationMapper.delete(id);
-			if (app.isProAutoscaler()) {
-				proAuto.delete(app.getName(), projectName);
-			}
 		}
 	}
 
@@ -63,6 +63,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 			app.setDeployment(deploymentService.getDeploymentByName(app.getName(), project.getProjectName()));
 			app.setService(serviceService.getServiceByName(app.getName(), project.getProjectName()));
 			app.setListPod(podService.getAll(app.getDeployment()));
+			app.setResources(resourcesService.get(app));
 			app.setHpa(autoscalerService.getHpaByName(app.getName(), project.getProjectName()));
 			app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
 			app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
@@ -118,7 +119,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		applicationMapper.update(app);
 		Application appUpdated = getApplicationByName(app.getName(), projectName);
 		if (appUpdated.isProAutoscaler()) {
-			proAuto.update(appUpdated);
+			deploymentService.updateAutoscaler(appUpdated);
 		}
 	}
 
@@ -148,14 +149,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 	public void proAutoScaling(Application app) {
 		app.setProAutoscaler(true);
 		applicationMapper.updateAutoscaler(app);
-		proAuto.create(app);
+		deploymentService.createAutoscaler(app);
 	}
 
 	@Override
 	public void deleteProAutoscaler(Application app) {
 		app.setProAutoscaler(false);
 		applicationMapper.updateAutoscaler(app);
-		proAuto.delete(app.getName(), app.getDeployment().getMetadata().getNamespace());
+		String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
+		deploymentService.delete(name, "default");
 	}
 
 	@Override

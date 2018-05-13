@@ -77,7 +77,7 @@ public class ProactiveAutoscalerController extends BaseController {
 			return "403";
 		}
 		int pods = app.getDeployment().getSpec().getReplicas();
-		if (currentCPU > 80 || futureCPU > 80) {
+		if ((currentCPU > 80 || futureCPU > 80) && pods < 3) {
 			appService.scaleUp(id, name);
 			System.out.println(
 					"Auto Scaling: scale up with \'" + futureCPU + "%\' future cpu usage(" + currentCPU + "% current). Number of pods after scaled: " + (pods + 1));

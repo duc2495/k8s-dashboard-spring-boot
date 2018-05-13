@@ -179,8 +179,8 @@
 }
 
 .app-header {
-	background-color: #fff;
 	padding: unset;
+	margin-bottom: 0px;
 }
 
 .app-header .table {
@@ -194,10 +194,7 @@
 
 .box {
 	border-radius: unset;
-}
-
-.btn {
-	padding: 8px 12px;
+	border-top: 3px solid #ff7665;
 }
 
 .btn-box-tool {

@@ -27,6 +27,7 @@
 		</div>
 		<!-- ELSE -->
 		<div th:unless="${apps == null}">
+			<input id="sizeApps" type="hidden" th:value="${sizeApps}">
 			<div class="row">
 				<div class="col-md-12">
 					<div th:if="${#ctx.containsVariable('info')}">
@@ -39,47 +40,62 @@
 						</div>
 					</div>
 					<div class="app-template" th:each="app,iterStat : ${apps}">
-						<div class="box-header with-border app-header">
-							<div class="app-header">
-								<table class="table table-hover">
-									<tr></tr>
-									<tr>
-										<th><span class="app-label"> NAME: <span
-												th:text="${app.name}"></span>
-										</span></th>
-										<th><span>STATUS: </span> <span></span></th>
-										<th><span>DESCRIPTION: </span> <span
-											th:text="${app.description}"></span></th>
-										<th style="padding: 0 8px;"><div
-												class="box-tools pull-right">
-												<div class="dropdown">
-													<button class="btn btn-primary dropdown-toggle"
-														type="button" data-toggle="dropdown">
-														ACTION <span class="caret"></span>
-													</button>
-													<ul class="dropdown-menu">
-														<li><a href="#"
-															th:href="@{/project/{name}/apps/{id}(name=${projectName}, id=${app.id})}">Update</a></li>
-
-														<li><a href="#"
-															th:href="@{/project/{name}/deployment/{deployName}(name=${projectName}, deployName=${app.deployment.metadata.name})}">Rollback</a></li>
-														<li><a href="#" class="delete-application-confirm"
-															th:href="@{/project/{name}/apps/delete/{id}(name=${projectName}, id=${app.id})}">Delete</a></li>
-													</ul>
-												</div>
-											</div></th>
-									</tr>
-
-								</table>
+						<div
+							th:if="${app.listPod[0].status.containerStatuses[0].state.waiting}  != null">
+							<div class="alert alert-danger alert-dismissible" role="alert">
+								<button type="button" class="close" data-dismiss="alert"
+									aria-label="Close">
+									<span aria-hidden="true">×</span>
+								</button>
+								<strong
+									th:text="${app.listPod[0].status.containerStatuses[0].state.waiting.message}"></strong>
 							</div>
-
 						</div>
+						<div class="box app-header">
+							<div class="box-header with-border" style="padding-bottom: 0px;">
+								<div class="row">
+									<div class="col-md-2">
+										<span class="box-title"> APP NAME: <span
+											class="box-title" th:text="${app.name}"></span>
+										</span>
+									</div>
+									<div class="col-md-2">
+										<span class="box-title">STATUS: </span> <span
+											class="box-title" th:text="${app.listPod[0].status.phase}"></span>
+									</div>
+									<div class="col-md-6">
+										<span class="box-title">DESCRIPTION: </span> <span
+											class="box-title" th:text="${app.description}"></span>
+									</div>
+									<div class="col-md-2">
+										<div class="box-tools pull-right">
+											<div class="dropdown">
+												<button class="btn btn-primary dropdown-toggle"
+													type="button" data-toggle="dropdown">
+													ACTION <span class="caret"></span>
+												</button>
+												<ul class="dropdown-menu">
+													<li><a href="#"
+														th:href="@{/project/{name}/apps/{id}(name=${projectName}, id=${app.id})}">Update</a></li>
+
+													<li><a href="#"
+														th:href="@{/project/{name}/deployment/{deployName}(name=${projectName}, deployName=${app.deployment.metadata.name})}">Rollback</a></li>
+													<li><a href="#" class="delete-application-confirm"
+														th:href="@{/project/{name}/apps/delete/{id}(name=${projectName}, id=${app.id})}">Delete</a></li>
+												</ul>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
 						<div class="box" style="border-top: none;">
 							<div class="box-header with-border">
 								<div class="row">
 									<div class="col-md-2">
-										<h5 class="box-title">DEPLOYTMENT:</h5>
-										<a class="box-title"
+										<span class="box-title">Deployment:</span> <a
+											class="box-title"
 											th:href="@{/project/{name}/deployment/{deployName}(name=${projectName}, deployName=${app.deployment.metadata.name})}"
 											th:text="${app.deployment.metadata.name}"></a>
 									</div>
@@ -109,153 +125,195 @@
 							<div class="box-body">
 								<div class="row">
 									<div class="col-md-6">
-										<h4 class="component-label section-label">CONTAINER</h4>
-										<div class="pod-template">
-											<div>
-												<p>
-													Name: <span
-														th:text="${app.deployment.spec.template.spec.containers[0].name}"></span>
-												</p>
-											</div>
-											<div class="icon-row">
-												<div class="icon-wrap">
-													<i class="glyphicon glyphicon-picture"></i>
-												</div>
-												<div class="word-break">
-													<span class="pod-template-key">Image:</span> <span
-														th:text="${app.deployment.spec.template.spec.containers[0].image}"></span>
-												</div>
-											</div>
-											<div class="icon-row">
-												<div class="icon-wrap">
-													<i class="fa fa-plug"></i>
-												</div>
-												<div class="word-break">
-													<span class="pod-template-key">Port:</span> <span
-														th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}"></span>
+										<div class="row">
+											<div class="col-md-12">
+												<h4 class="component-label section-label">CONTAINER</h4>
+												<div class="pod-template">
+													<div>
+														<p>
+															Container name: <span
+																th:text="${app.deployment.spec.template.spec.containers[0].name}"></span>
+														</p>
+													</div>
+													<div class="icon-row">
+														<div class="icon-wrap">
+															<i class="glyphicon glyphicon-picture"></i>
+														</div>
+														<div class="word-break">
+															<span class="pod-template-key">Image:</span> <span
+																th:text="${app.deployment.spec.template.spec.containers[0].image}"></span>
+														</div>
+													</div>
+													<div class="icon-row">
+														<div class="icon-wrap">
+															<i class="fa fa-plug"></i>
+														</div>
+														<div class="word-break">
+															<span class="pod-template-key">Port:</span> <span
+																th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}"></span>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-									<div class="col-md-6">
-										<h4 class="component-label section-label">PODS</h4>
 										<div class="row">
-											<div class="col-md-6">
-												<div class="circle text-center">
-													<div>
-														<p class="pod-number"
-															th:text="${app.deployment.spec.replicas}"></p>
-														<p>Pod</p>
+											<div class="col-md-12">
+												<h4 class="component-label section-label">PODS</h4>
+												<div class="row">
+
+													<div class="col-md-6"
+														th:if="${app.hpa} == null  and ${app.proAutoscaler} == false">
+														<div class="auto-scaler">
+															<a href="#"
+																th:href="@{/project/{name}/app/{appName}/hpa/new(name=${projectName}, appName=${app.name})}"
+																class=""> <i class="fa fa-plus-circle"></i> Add Auto
+																Scaling
+															</a>
+														</div>
+
+														<div class="auto-scaler">
+															<a href="#"
+																th:href="@{/project/{name}/app/{id}/autoscaler/create(name=${projectName}, id=${app.id})}"
+																class=""> <i class="fa fa-plus-circle"></i> Add
+																Proactive Auto Scaling
+															</a>
+														</div>
+
+													</div>
+													<div class="col-md-6"
+														th:unless="${app.hpa} == null  and ${app.proAutoscaler} == false">
+														<div th:if="${app.hpa} != null">
+															<div class="autoscaler-template">
+																<div>
+																	<span>Auto Scaling</span> <a href="#"
+																		th:href="@{/project/{name}/app/{appName}/hpa(name=${projectName}, appName=${app.name})}"
+																		style="padding-left: 10px;"> Edit</a> <span
+																		class="action-divider">|</span> <a href="#"
+																		th:href="@{/project/{name}/app/{appName}/hpa/delete(name=${projectName}, appName=${app.name})}">
+																		Delete</a>
+																</div>
+																<div class="icon-row">
+																	<div class="word-break">
+																		<span class="pod-template-key">Min Pods:</span> <span
+																			th:text="${app.hpa.spec.minReplicas}"></span>
+																	</div>
+																</div>
+																<div class="icon-row">
+																	<div class="word-break">
+																		<span class="pod-template-key">Max Pods:</span> <span
+																			th:text="${app.hpa.spec.maxReplicas}"></span>
+																	</div>
+																</div>
+																<div class="icon-row">
+																	<div class="word-break">
+																		<span class="pod-template-key">CPU Request:</span> <span
+																			th:text="${app.hpa.spec.targetCPUUtilizationPercentage}"></span><span>%</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div th:if="${app.proAutoscaler} == true">
+															<div class="autoscaler-template">
+																<div>
+																	<span>Proactive Auto Scaling with RNN model</span> <a
+																		href="#"
+																		th:href="@{/project/{name}/app/{id}/autoscaler/delete(name=${projectName}, id=${app.id})}"
+																		style="padding-left: 10px;"> Delete</a>
+																</div>
+
+																<div class="icon-row">
+																	<div class="word-break">
+																		<span class="pod-template-key">Min Pods:</span> <span>1</span>
+																	</div>
+																</div>
+																<div class="icon-row">
+																	<div class="word-break">
+																		<span class="pod-template-key">Max Pods:</span> <span>3</span>
+																	</div>
+																</div>
+																<div class="icon-row">
+																	<div class="word-break">
+																		<span class="pod-template-key">CPU Request:</span> <span>80</span><span>%</span>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-md-6">
+														<div class="circle text-center">
+															<div>
+
+																<p class="pod-number"
+																	th:if="${app.deployment.status.readyReplicas} == null">
+																	0/<span th:text="${app.deployment.spec.replicas}"></span>
+																</p>
+																<p class="pod-number"
+																	th:unless="${app.deployment.status.readyReplicas} == null">
+																	<span th:text="${app.deployment.status.readyReplicas}"></span>/<span
+																		th:text="${app.deployment.spec.replicas}"></span>
+																</p>
+																<p>Pods</p>
+															</div>
+														</div>
+														<div class="scaling-controls"
+															th:if="${app.hpa} == null  and ${app.proAutoscaler} == false">
+															<a
+																th:href="@{/project/{name}/apps/scaleup/{id}(name=${projectName}, id=${app.id})}"><i
+																class="fa fa-chevron-up"></i></a> <a
+																th:id="${ app.deployment.spec.replicas == 0}? 'disabled'"
+																th:class="${app.deployment.spec.replicas == 1}? 'scale-down-confirm'"
+																th:href="@{/project/{name}/apps/scaledown/{id}(name=${projectName}, id=${app.id})}"><i
+																class="fa fa-chevron-down"></i></a>
+														</div>
+
 													</div>
 												</div>
-												<div class="scaling-controls"
-													th:if="${app.hpa} == null  and ${app.proAutoscaler} == false">
-													<a
-														th:href="@{/project/{name}/apps/scaleup/{id}(name=${projectName}, id=${app.id})}"><i
-														class="fa fa-chevron-up"></i></a> <a
-														th:id="${ app.deployment.spec.replicas == 0}? 'disabled'"
-														th:class="${app.deployment.spec.replicas == 1}? 'scale-down-confirm'"
-														th:href="@{/project/{name}/apps/scaledown/{id}(name=${projectName}, id=${app.id})}"><i
-														class="fa fa-chevron-down"></i></a>
-												</div>
-
 											</div>
-
-											<div class="col-md-6"
-												th:if="${app.hpa} == null  and ${app.proAutoscaler} == false">
-												<div class="auto-scaler">
-													<a href="#"
-														th:href="@{/project/{name}/app/{appName}/hpa/new(name=${projectName}, appName=${app.name})}"
-														class=""> <i class="fa fa-plus-circle"></i>
-														Add Auto Scaling
-													</a>
-												</div>
-
-												<div class="auto-scaler">
-													<a href="#"
-														th:href="@{/project/{name}/app/{id}/autoscaler/create(name=${projectName}, id=${app.id})}"
-														class=""> <i class="fa fa-plus-circle"></i>
-														Add Proactive Auto Scaling
-													</a>
-												</div>
-
-											</div>
-											<div class="col-md-6"
-												th:unless="${app.hpa} == null  and ${app.proAutoscaler} == false">
-												<div th:if="${app.hpa} != null">
-													<div class="autoscaler-template">
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<h4 class="component-label section-label">
+													NETWORK - SERVICE: <a
+														th:text="${app.deployment.metadata.name}"></a>
+												</h4>
+												<div class="row">
+													<div class="col-md-6">
+														<div class="resource-label">Internal Traffic</div>
 														<div>
-															<span>Auto Scaling</span> <a href="#"
-																th:href="@{/project/{name}/app/{appName}/hpa(name=${projectName}, appName=${app.name})}"
-																style="padding-left: 10px;"> Edit</a> <span
-																class="action-divider">|</span> <a href="#"
-																th:href="@{/project/{name}/app/{appName}/hpa/delete(name=${projectName}, appName=${app.name})}">
-																Delete</a>
-														</div>
-														<div class="icon-row">
-															<div class="word-break">
-																<span class="pod-template-key">Min Pods:</span> <span
-																	th:text="${app.hpa.spec.minReplicas}"></span>
-															</div>
-														</div>
-														<div class="icon-row">
-															<div class="word-break">
-																<span class="pod-template-key">Max Pods:</span> <span
-																	th:text="${app.hpa.spec.maxReplicas}"></span>
-															</div>
-														</div>
-														<div class="icon-row">
-															<div class="word-break">
-																<span class="pod-template-key">CPU Request:</span> <span
-																	th:text="${app.hpa.spec.targetCPUUtilizationPercentage}"></span><span>%</span>
-															</div>
+															<p>
+																Port: <span
+																	th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}">
+																</span><i class="fa fa-long-arrow-right text-muted"> </i> <span
+																	th:text="${app.service.spec.ports[0].port}"> </span>
+															</p>
 														</div>
 													</div>
-												</div>
-												<div th:if="${app.proAutoscaler} == true">
-													<div>
-														<span>Proactive Auto Scaling</span> <a href="#"
-															th:href="@{/project/{name}/app/{id}/autoscaler/delete(name=${projectName}, id=${app.id})}"
-															style="padding-left: 10px;"> Delete</a>
+													<div class="col-md-6">
+														<div class="resource-label">External Traffic</div>
+														<div>
+															<p>
+																NodePort: <span
+																	th:text="${app.service.spec.ports[0].nodePort}"></span>
+															</p>
+														</div>
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 
-								</div>
-								<div class="row">
+
 									<div class="col-md-6">
-										<h4 class="component-label section-label">
-											NETWORK - SERVICE: <a
-												th:text="${app.deployment.metadata.name}"></a>
-										</h4>
-										<div class="row">
-											<div class="col-md-6">
-												<div class="resource-label">Internal Traffic</div>
-												<div>
-													<p>
-														Port: <span
-															th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}">
-														</span><i class="fa fa-long-arrow-right text-muted"> </i> <span
-															th:text="${app.service.spec.ports[0].port}"> </span>
-													</p>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="resource-label">External Traffic</div>
-												<div>
-													<p>
-														NodePort: <span
-															th:text="${app.service.spec.ports[0].nodePort}"></span>
-													</p>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<h4 class="component-label section-label">STORAGE</h4>
-										<div id="flot-placeholder1" style="width:500px;height:300px;margin:0 auto"></div>
+										<h4 class="component-label section-label">RESOURCES</h4>
+										<input th:id="'flot-actual-value' + ${iterStat.count}"
+											type="hidden" th:value="${app.resources.actualCPU}">
+										<input th:id="'flot-predict-value' + ${iterStat.count}"
+											type="hidden" th:value="${app.resources.predictCPU}">
+										<input th:id="'check-predict-value' + ${iterStat.count}"
+											type="hidden" th:value="${app.proAutoscaler}">
+										<div th:id="'flot-placeholder' + ${iterStat.count}"
+											style="width: 500px; height: 300px; margin: 0 auto"></div>
 									</div>
 								</div>
 							</div>
@@ -269,7 +327,6 @@
 			</div>
 		</div>
 	</div>
-
 </body>
 
 </html>
