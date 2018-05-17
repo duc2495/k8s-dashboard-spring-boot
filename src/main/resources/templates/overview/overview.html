@@ -42,13 +42,16 @@
 					<div class="app-template" th:each="app,iterStat : ${apps}">
 						<div
 							th:if="${app.listPod[0].status.containerStatuses[0].state.waiting}  != null">
-							<div class="alert alert-danger alert-dismissible" role="alert">
-								<button type="button" class="close" data-dismiss="alert"
-									aria-label="Close">
-									<span aria-hidden="true">×</span>
-								</button>
-								<strong
-									th:text="${app.listPod[0].status.containerStatuses[0].state.waiting.message}"></strong>
+							<div
+								th:if="${app.listPod[0].status.containerStatuses[0].state.waiting.message}  != null">
+								<div class="alert alert-danger alert-dismissible" role="alert">
+									<button type="button" class="close" data-dismiss="alert"
+										aria-label="Close">
+										<span aria-hidden="true">×</span>
+									</button>
+									<strong
+										th:text="${app.listPod[0].status.containerStatuses[0].state.waiting.message}"></strong>
+								</div>
 							</div>
 						</div>
 						<div class="box app-header">
