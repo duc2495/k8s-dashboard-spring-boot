@@ -89,53 +89,58 @@ function convertStrToArr(str) {
 $(document)
 		.ready(
 				function() {
-					size = document.getElementById("sizeApps").value;
-					size = parseInt(size) + 1;
-					for (var j = 1; j < size; j++) {
-						var strActualValue = document
-								.getElementById("flot-actual-value" + j).value;
-						var strPredictValue = document
-								.getElementById("flot-predict-value" + j).value;
-						var actualValue = convertStrToArr(strActualValue);
-						var lastActualValue = actualValue[actualValue.length - 1];
-						var predictValue = convertStrToArr(strPredictValue);
-						var lastPredictValue = predictValue[predictValue.length - 1];
-						var check = document
-								.getElementById("check-predict-value" + j).value;
-						if (check == "true") {
-							dataset = [
-									{
-										label : "Actual CPU:"
-												+ lastActualValue[1] + "%",
-										data : actualValue,
-										lines : {
-											fill : true,
-											lineWidth : 1.2
+					var element = document.getElementById('sizeApps');
+					if (element != null) {
+						size = element.value;
+						size = parseInt(size) + 1;
+						for (var j = 1; j < size; j++) {
+							var strActualValue = document
+									.getElementById("flot-actual-value" + j).value;
+							var strPredictValue = document
+									.getElementById("flot-predict-value" + j).value;
+							var actualValue = convertStrToArr(strActualValue);
+							var lastActualValue = actualValue[actualValue.length - 1];
+							var predictValue = convertStrToArr(strPredictValue);
+							var lastPredictValue = predictValue[predictValue.length - 1];
+							var check = document
+									.getElementById("check-predict-value" + j).value;
+							if (check == "true") {
+								dataset = [
+										{
+											label : "Actual CPU:"
+													+ lastActualValue[1] + "%",
+											data : actualValue,
+											lines : {
+												fill : true,
+												lineWidth : 1.2
+											},
+											color : "#FF0000"
 										},
-										color : "#FF0000"
+										{
+											label : "Predict CPU:"
+													+ lastPredictValue[1] + "%",
+											data : predictValue,
+											lines : {
+												fill : true,
+												lineWidth : 1.2
+											},
+											color : "#00FF00"
+										} ];
+							} else {
+								dataset = [ {
+									label : "Actual CPU:" + lastActualValue[1]
+											+ "% ",
+									data : actualValue,
+									lines : {
+										fill : true,
+										lineWidth : 1.2
 									},
-									{
-										label : "Predict CPU:"
-												+ lastPredictValue[1] + "%",
-										data : predictValue,
-										lines : {
-											fill : true,
-											lineWidth : 1.2
-										},
-										color : "#00FF00"
-									} ];
-						} else {
-							dataset = [ {
-								label : "Actual CPU:" + lastActualValue[1]
-										+ "% ",
-								data : actualValue,
-								lines : {
-									fill : true,
-									lineWidth : 1.2
-								},
-								color : "#FF0000"
-							} ];
+									color : "#FF0000"
+								} ];
+							}
+							$
+									.plot($("#flot-placeholder" + j), dataset,
+											options);
 						}
-						$.plot($("#flot-placeholder" + j), dataset, options);
 					}
 				});
