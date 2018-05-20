@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 
-public class ConnectK8SConfig {
+public class ConnectK8SConfiguration {
 	
 	static final Logger logger = LoggerFactory.getLogger(ServiceAPI.class);
 

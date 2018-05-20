@@ -117,10 +117,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 		app.setService(serviceService.getServiceByName(app.getName(), projectName));
 		serviceService.update(app.getService(), app.getPort());
 		applicationMapper.update(app);
-		Application appUpdated = getApplicationByName(app.getName(), projectName);
-		if (appUpdated.isProAutoscaler()) {
-			deploymentService.updateAutoscaler(appUpdated);
-		}
 	}
 
 	@Override

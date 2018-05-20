@@ -9,7 +9,7 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
-public class ReplicaSetAPI extends ConnectK8SConfig {
+public class ReplicaSetAPI extends ConnectK8SConfiguration {
 
 	public List<ReplicaSet> getAll(Deployment deployment) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {

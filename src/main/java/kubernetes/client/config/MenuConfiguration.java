@@ -15,7 +15,6 @@ public class MenuConfiguration {
 		MENU_URL_PATTERN_MAP.put("/overview", "Overview");
 		MENU_URL_PATTERN_MAP.put("/apps", "Applications");
 		MENU_URL_PATTERN_MAP.put("/deployments", "Deployments");
-		MENU_URL_PATTERN_MAP.put("/pods", "Pods");
 		MENU_URL_PATTERN_MAP.put("/services", "Services");
 		MENU_URL_PATTERN_MAP.put("/templates", "Templates");
 		MENU_URL_PATTERN_MAP.put("/storage", "Storage");	

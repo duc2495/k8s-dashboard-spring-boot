@@ -8,7 +8,7 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
-public class NamespaceAPI extends ConnectK8SConfig {
+public class NamespaceAPI extends ConnectK8SConfiguration {
 
 	public void create(String name) {
 

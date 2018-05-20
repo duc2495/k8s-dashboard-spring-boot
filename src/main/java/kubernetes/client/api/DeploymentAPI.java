@@ -2,7 +2,6 @@ package kubernetes.client.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +15,7 @@ import kubernetes.client.model.Application;
 import kubernetes.client.model.Template;
 
 @Repository
-public class DeploymentAPI extends ConnectK8SConfig {
+public class DeploymentAPI extends ConnectK8SConfiguration {
 	
 	public void create(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
@@ -82,15 +81,13 @@ public class DeploymentAPI extends ConnectK8SConfig {
 			String namespace = "default";
 			String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
 			String image = "duc2495/tf-serving-client:latest";
-			Map<String, String> podLabels = app.getListPod().get(0).getMetadata().getLabels();
-			String labels = "app:" + podLabels.get("app") + ",pod-template-hash:" + podLabels.get("pod-template-hash");
+
 			List<EnvVar> envs = new ArrayList<EnvVar>();
 			envs.add(new EnvVar("TF_SERVER", "192.168.5.10:30900", null));
 			envs.add(new EnvVar("INFLUX_SERVER","192.168.5.10:30086", null));
 			envs.add(new EnvVar("WEB_SERVER", "192.168.5.10:8080", null));
 			envs.add(new EnvVar("NAMESPACE", app.getDeployment().getMetadata().getNamespace(), null));
-			envs.add(new EnvVar("LABELS", labels, null));
-			envs.add(new EnvVar("APP_ID", String.valueOf(app.getId()), null));
+			envs.add(new EnvVar("NAME",app.getName(), null));
 			envs.add(new EnvVar("MODEL_NAME", "cpu", null));
 			String command = "bin/sh";
 			List<String> args = new ArrayList<String>();
@@ -179,29 +176,6 @@ public class DeploymentAPI extends ConnectK8SConfig {
 					client.extensions().deployments().inNamespace(namespace).withName(app.getName()).edit().editSpec()
 							.editTemplate().editOrNewSpec().editFirstContainer().withName(app.getName())
 							.withImage(app.getImage()).editFirstPort().withContainerPort(app.getPort()).endPort()
-							.endContainer().endSpec().endTemplate().endSpec().done());
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage(), e);
-			Throwable[] suppressed = e.getSuppressed();
-			if (suppressed != null) {
-				for (Throwable t : suppressed) {
-					logger.error(t.getMessage(), t);
-				}
-			}
-		}
-	}
-	
-	public void updateAutoscaler(Application app) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			// Update a deployment
-			String namespace = "default";
-			String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
-			Map<String, String> podLabels = app.getListPod().get(0).getMetadata().getLabels();
-			String labels = "app:" + podLabels.get("app") + ",pod-template-hash:" + podLabels.get("pod-template-hash");
-			logger.info("{}: {}", "Update deployment",
-					client.extensions().deployments().inNamespace(namespace).withName(name).edit().editSpec()
-							.editTemplate().editOrNewSpec().editFirstContainer().editEnv(4).withValue(labels).endEnv()
 							.endContainer().endSpec().endTemplate().endSpec().done());
 		} catch (Exception e) {
 			e.printStackTrace();

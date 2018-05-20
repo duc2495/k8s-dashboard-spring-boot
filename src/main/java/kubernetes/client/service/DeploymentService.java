@@ -16,8 +16,6 @@ public interface DeploymentService {
 	void delete(String name, String projectName);
 
 	void update(Application app, String projectName);
-	
-	void updateAutoscaler(Application app);
 
 	void scale(Deployment deployment);
 

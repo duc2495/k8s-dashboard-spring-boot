@@ -12,7 +12,7 @@ import kubernetes.client.model.Application;
 import kubernetes.client.model.Template;
 
 @Repository
-public class ServiceAPI extends ConnectK8SConfig {
+public class ServiceAPI extends ConnectK8SConfiguration {
 
 	public void create(Application app, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {

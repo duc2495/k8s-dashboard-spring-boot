@@ -12,7 +12,7 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import kubernetes.client.model.Storage;
 
 @Repository
-public class PersistentVolumeClaimAPI extends ConnectK8SConfig {
+public class PersistentVolumeClaimAPI extends ConnectK8SConfiguration {
 
 	public void create(Storage storage, String namespace) {
 		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {

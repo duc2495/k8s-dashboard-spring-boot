@@ -10,7 +10,7 @@ import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
-public class PodAPI extends ConnectK8SConfig {
+public class PodAPI extends ConnectK8SConfiguration {
 
 	public List<Pod> getAll(Deployment deployment) {
 
