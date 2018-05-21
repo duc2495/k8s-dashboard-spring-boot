@@ -5,16 +5,15 @@ import org.springframework.stereotype.Repository;
 
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.ReplicaSet;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
 public class ReplicaSetAPI extends ConnectK8SConfiguration {
 
 	public List<ReplicaSet> getAll(Deployment deployment) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get all ReplicaSets
-			List<ReplicaSet> replicaSets = client.extensions().replicaSets().inNamespace(deployment.getMetadata().getNamespace())
+			List<ReplicaSet> replicaSets = client.extensions().replicaSets()
+					.inNamespace(deployment.getMetadata().getNamespace())
 					.withLabel("app", deployment.getMetadata().getLabels().get("app")).list().getItems();
 			logger.info("{}: {}", "Get ReplicaSets", replicaSets);
 			return replicaSets;
@@ -32,7 +31,7 @@ public class ReplicaSetAPI extends ConnectK8SConfiguration {
 	}
 
 	public ReplicaSet get(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get a ReplicaSet
 			ReplicaSet relica = client.extensions().replicaSets().inNamespace(namespace).withName(name).get();
 			logger.info("{}: {}", "Get ReplicaSet", relica);
@@ -51,7 +50,7 @@ public class ReplicaSetAPI extends ConnectK8SConfiguration {
 	}
 
 	public long getRevision(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get a ReplicaSet
 			ReplicaSet relica = client.extensions().replicaSets().inNamespace(namespace).withName(name).get();
 			logger.info("{}: {}", "Delete ReplicaSet", relica);
@@ -70,7 +69,7 @@ public class ReplicaSetAPI extends ConnectK8SConfiguration {
 	}
 
 	public void delete(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Delete a ReplicaSet
 			logger.info("{}: {}", "Delete ReplicaSet",
 					client.extensions().replicaSets().inNamespace(namespace).withName(name).delete());
@@ -87,7 +86,7 @@ public class ReplicaSetAPI extends ConnectK8SConfiguration {
 	}
 
 	public boolean exists(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			if (client.extensions().replicaSets().inNamespace(namespace).withName(name).get() != null) {
 				return true;
 			}
