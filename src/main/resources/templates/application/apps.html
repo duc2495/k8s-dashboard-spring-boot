@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Application</title>
+</head>
+<body>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>APPLICATIONS</h1>
+	</section>
+</div>
+	<div layout:fragment="content">
+		<!-- IF -->
+		<div th:if="${apps == null}">
+			<div class="text-center">
+				<h2>There is nothing to display here.</h2>
+				<p>You can deploy new application.</p> <a class="btn btn-primary"
+				th:href="@{/project/{name}/apps/new(name=${projectName})}"><i
+					class="fa fa-plus-circle"></i> Deploy Application</a>
+		</div>
+	</div> <!-- ELSE -->
+		<div th:unless="${apps == null}">
+			<div class="row">
+				<div class="col-md-12 app-template" th:each="app,iterStat : ${apps}">
+					<div class="box-header with-border" style="background-color: #fff;">
+						<div class="app-header"><span class="app-label">Name:
+								<span th:text="${app.name}"></span>
+						</span> <span>Status: </span><span>status</span> <span>Desscription:
+						</span><span th:text="${app.description}"></span> <span>Created
+								At: </span><span th:text="${app.deployment.metadata.creationTimestamp}"></span>
+					</div>
+						<div class="box-tools pull-right">
+							<div class="dropdown">
+								<button class="btn btn-primary dropdown-toggle" type="button"
+								data-toggle="dropdown" style="margin-top: -2px;">Action
+									<span class="caret"></span>
+							</button>
+								<ul class="dropdown-menu">
+									<li><a href="#"
+										th:href="@{/project/{name}/apps/{id}(name=${projectName}, id=${app.id})}">Update</a></li>
+									<li><a href="#" class="delete-application-confirm"
+										th:href="@{/project/{name}/apps/delete/{id}(name=${projectName}, id=${app.id})}">Delete</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+					<div class="box" style="border-top: none;">
+						<div class="box-header with-border">
+							<h5 class="box-title">DEPLOYTMENT CONFIG:</h5> <a
+							class="box-title"
+							th:href="@{/project/{name}/deployments/(name=${projectName})}"
+							th:text="${app.deployment.metadata.name}"></a>
+							<div class="box-tools pull-right">
+								<!-- Collapse Button -->
+								<button type="button" class="btn btn-box-tool"
+								data-widget="collapse"><i class="fa fa-minus"></i></button>
+						</div>
+					</div> <!-- /.box-header -->
+						<div class="box-body">
+							<div class="col-md-6">
+								<h4 class="component-label section-label">CONTAINER</h4>
+								<div class="pod-template">
+									<div>
+										<p>Name: <span
+											th:text="${app.deployment.spec.template.spec.containers[0].name}"></span></p>
+								</div>
+									<div class="pod-template-image icon-row">
+										<div class="icon-wrap"><i
+											class="glyphicon glyphicon-picture"></i></div>
+										<div class="word-break"><span class="pod-template-key">Image:</span>
+											<span
+											th:text="${app.deployment.spec.template.spec.containers[0].image}"></span>
+									</div>
+								</div>
+									<div class="pod-template-image icon-row">
+										<div class="icon-wrap"><i class="fa fa-plug"></i></div>
+										<div class="word-break"><span class="pod-template-key">Port:</span>
+											<span
+											th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+							<div class="col-md-3">
+								<h4 class="component-label section-label">PODS</h4>
+
+								<div class="col-md-4 circle text-center">
+									<div>
+										<p class="pod-number"
+										th:text="${app.deployment.spec.replicas}"></p>
+										<p>Pod</p>
+								</div>
+							</div>
+
+								<div class="col-md-2 scaling-controls"><a
+									th:href="@{/project/{name}/apps/scaleup/{id}(name=${projectName}, id=${app.id})}"><i
+										class="fa fa-chevron-up"></i></a> <a
+									th:class="${app.deployment.spec.replicas == 1}? 'scale-down-confirm'"
+									th:href="@{/project/{name}/apps/scaledown/{id}(name=${projectName}, id=${app.id})}"><i
+										class="fa fa-chevron-down"></i></a></div>
+
+						</div>
+							<div class="col-md-3"></div>
+							<div class="col-md-6">
+								<h4 class="component-label section-label">NETWORK -
+									SERVICE: <a th:text="${app.deployment.metadata.name}"></a>
+							</h4>
+
+								<div class="col-md-6">
+									<div class="resource-label">Internal Traffic</div>
+									<div>
+										<p>Port: <span
+											th:text="${app.deployment.spec.template.spec.containers[0].ports[0].containerPort}">
+										</span><i class="fa fa-long-arrow-right text-muted"> </i> <span
+											th:text="${app.service.spec.ports[0].port}"> </span></p>
+								</div>
+							</div>
+								<div class="col-md-6">
+									<div class="resource-label">External Traffic</div>
+									<div>
+										<p>NodePort: <span
+											th:text="${app.service.spec.ports[0].nodePort}"></span></p>
+								</div>
+							</div>
+						</div>
+							<div class="col-md-6">
+								<h4 class="component-label section-label">STORAGE</h4>
+						</div>
+					</div> <!-- /.box-body -->
+
+				</div> <!-- /.box -->
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>

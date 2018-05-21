@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Storage</title>
+</head>
+<body>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>My Storage</h1>
+		</section>
+	</div>
+
+	<div layout:fragment="content">
+		<div class="box box-warning">
+			<div class="box-header with-border">
+				<h3 class="box-title">Create New Storage</h3>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<form role="form"
+					th:action="@{/project/{name}/storage(name=${projectName})}"
+					th:object="${storage}" method="post">
+					<p th:if="${#fields.hasErrors('global')}" th:errors="*{global}"
+						th:class="text-red">Incorrect data</p>
+					<!-- text input -->
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+						<label>Storage Name *</label> <input type="text"
+							class="form-control" name="name" th:field="*{name}"
+							placeholder="Enter Storage Name" required />
+						<p class="recommend">The name must contain only lowercase
+							letters, numbers, and hyphens.</p>
+						<p th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+							th:class="text-red">Incorrect data</p>
+					</div>
+
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('size')}? 'has-error'">
+						<label>Volume Capacity *</label> <input type="text"
+							class="form-control" name="size" th:field="*{size}"
+							placeholder="Enter Volume Capacity" required />
+						<p class="recommend">Volume space available for data, e.g.
+							512Mi, 2Gi.</p>
+						<p th:if="${#fields.hasErrors('size')}" th:errors="*{size}"
+							th:class="text-red">Incorrect data</p>
+					</div>
+
+					<div class="box-footer">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</form>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+
+	</div>
+
+</body>
+
+</html>

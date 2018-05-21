@@ -1,0 +1,211 @@
+.navbar {
+	margin-bottom: 0px;
+	border-radius: 0px;
+}
+
+.main-sidebar, .left-side {
+	top: unset;
+	padding-top: 0px;
+	min-height: unset;
+}
+
+.sidebar-menu>li>a {
+	padding: 12px 15px;
+}
+
+.floating-box {
+	float: left;
+	width: 100px;
+	height: 100px;
+	margin: 15px 40px 30px 40px;
+	border: none;
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.floating-box img {
+	height: 100px;
+	width: 100px;
+}
+
+/* Set error page style */
+#fof {
+	display: block;
+	width: 100%;
+	margin: 100px 0;
+	line-height: 1.6em;
+	text-align: center;
+}
+
+#fof .hgroup {
+	text-transform: uppercase;
+}
+
+#fof .hgroup h1 {
+	margin-bottom: 25px;
+	font-size: 80px;
+}
+
+#fof .hgroup h1 span {
+	display: inline-block;
+	margin-left: 5px;
+	padding: 2px;
+	border: 1px solid #CCCCCC;
+	overflow: hidden;
+}
+
+#fof .hgroup h1 span strong {
+	display: inline-block;
+	padding: 0 20px 20px;
+	border: 1px solid #CCCCCC;
+	font-weight: normal;
+}
+
+#fof .hgroup h2 {
+	font-size: 60px;
+}
+
+#fof .hgroup h2 span {
+	display: block;
+	font-size: 30px;
+}
+
+#fof p {
+	margin: 25px 0 0 0;
+	padding: 0;
+	font-size: 16px;
+}
+
+#fof p:first-child {
+	margin-top: 0;
+}
+/* End of set error page style */
+.component-label {
+	align-self: center;
+	color: #757575;
+	font-size: 14px;
+	padding: 0 10px 0 0;
+}
+
+.component-label.section-label {
+	border-bottom: 1px solid #dcdcdc;
+	line-height: 1;
+	margin-bottom: 10px;
+	padding-bottom: 5px;
+}
+
+.pod-template .icon-row {
+	border-left: 3px solid #f1f1f1;
+	padding: 2px 0 0 2px;
+	flex-direction: row;
+	display: flex;
+}
+
+.autoscaler-template .icon-row {
+	border-left: 3px solid #f1f1f1;
+	padding: 2px 0 0 10px;
+	flex-direction: row;
+	display: flex;
+}
+
+.icon-row .icon-wrap {
+	text-align: center;
+	width: 30px;
+}
+
+.app-template {
+	margin-bottom: 20px;
+}
+
+.recommend {
+	margin-bottom: 0px;
+}
+
+.dropdown-menu {
+	right: 0;
+	left: auto;
+	background-color: #ecf0f5;
+	border: 1px solid #bbb;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.box-header .box-title {
+	font-size: 16px;
+}
+
+.circle {
+	float: left;
+	width: 100px;
+	height: 100px;
+	border: 8px solid #3c8dbc;
+	-moz-border-radius: 50px;
+	-webkit-border-radius: 50px;
+	border-radius: 50px;
+	margin-right: 15px;
+}
+
+.pod-number {
+	margin: 20px 0 0 0;
+}
+
+.scaling-controls {
+	float: left;
+}
+
+.scaling-controls a {
+	height: 50px;
+	justify-content: center;
+	font-size: 30px;
+	flex-direction: column;
+	display: flex;
+}
+
+.auto-scaler {
+	margin: 5px;
+}
+
+#disabled {
+	pointer-events: none;
+	cursor: default;
+	opacity: 0.6;
+}
+
+.alert {
+	margin-bottom: 5px;
+}
+
+.navbar-brand {
+	font-size: 22px;
+}
+
+.app-header {
+	padding: unset;
+	margin-bottom: 0px;
+}
+
+.app-header .table {
+	margin-bottom: 0px;
+}
+
+.app-header th {
+	font-weight: 400;
+	font-size: 16px;
+}
+
+.box {
+	border-radius: unset;
+	border-top: 3px solid #ff7665;
+}
+
+.btn-box-tool {
+	padding: unset;
+}
+
+.action-divider {
+	color: #9c9c9c;
+	padding: 0 6px;
+}
+
+.box .overlay {
+	background: unset;
+}

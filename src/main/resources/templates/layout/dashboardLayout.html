@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">K8S
+	Client</title>
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport" />
+<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css"
+	th:href="@{/assets/bootstrap/css/bootstrap.min.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
+	th:href="@{https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css}" />
+<link rel="stylesheet"
+	href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
+	th:href="@{https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css}" />
+<link rel="stylesheet" href="assets/dist/css/AdminLTE.min.css"
+	th:href="@{/assets/dist/css/AdminLTE.min.css}" />
+<link rel="stylesheet" href="assets/dist/css/skins/skin-blue.min.css"
+	th:href="@{/assets/dist/css/skins/skin-blue.min.css}" />
+<link rel="stylesheet" href="assets/custom/main.css"
+	th:href="@{/assets/custom/css/main.css}" />
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#myNavbar">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><strong>KUBERNETES</strong>
+					ONLINE</a>
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+				<ul class="nav navbar-nav">
+					<li th:class="${CURRENT_MENU == 'Home'}? 'active' : ''"><a
+						th:href="@{/home}">HOME</a></li>
+					<li sec:authorize="${isAuthenticated()}"
+						th:class="${CURRENT_MENU == 'Projects'}? 'active' : ''"><a
+						th:href="@{/projects}">PROJECTS</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+
+					<li sec:authorize="${!isAuthenticated()}"><a href="#"
+						th:href="@{/register}"><i class="fa fa-user"></i> Register</a></li>
+					<li sec:authorize="${!isAuthenticated()}"><a href="#"
+						th:href="@{/login}"><span class="glyphicon glyphicon-log-in"></span>
+							Login</a></li>
+					<li sec:authorize="${isAuthenticated()}"><a href="#"
+						th:href="@{/myAccount}"><i class="fa fa-user"></i> <span
+							th:text="${#authentication.getPrincipal().getCustomer().getFullName()}"></span></a></li>
+					<li sec:authorize="${isAuthenticated()}"><a href="#"
+						th:href="@{/logout}"><i class="glyphicon glyphicon-log-out"></i>
+							Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="wrapper">
+
+		<!-- Main Header -->
+		<header class="main-header">
+
+			<!-- Logo -->
+			<a href="#"
+				th:href="@{/project/{name}/overview(name=${projectName})}"
+				class="logo"> <!-- mini logo for sidebar mini 50x50 pixels --> <span
+				class="logo-mini"><b>NA</b></span> <!-- logo for regular state and mobile devices -->
+				<span class="logo-lg"><b th:text="${projectName}"></b></span>
+			</a>
+
+			<!-- Header Navbar -->
+			<nav class="navbar navbar-static-top" role="navigation">
+				<!-- Sidebar toggle button-->
+				<a href="#" class="sidebar-toggle" data-toggle="offcanvas"
+					role="button"> <span class="sr-only">Toggle navigation</span>
+				</a>
+				<!-- Navbar Right Menu -->
+				<div class="navbar-custom-menu">
+					<ul class="nav navbar-nav">
+						<li><a
+							th:href="@{/project/{name}/apps/new(name=${projectName})}"><i
+								class="fa fa-plus-circle"></i> Deploy Application</a></li>
+					</ul>
+				</div>
+			</nav>
+
+		</header>
+
+		<!-- Left side column. contains the logo and sidebar -->
+		<aside class="main-sidebar">
+
+			<!-- sidebar: style can be found in sidebar.less -->
+			<section class="sidebar">
+				<!-- Sidebar Menu -->
+				<ul class="sidebar-menu" data-widget="tree">
+					<!-- <li class="header">HEADER</li> -->
+					<!-- Optionally, you can add icons to the links -->
+					<li th:class="${CURRENT_MENU == 'Overview'}? 'active' : ''"><a
+						href="#"
+						th:href="@{/project/{name}/overview(name=${projectName})}"><i
+							class="fa fa-dashboard"></i> <span>Overview</span></a></li>
+
+					<li
+						th:class="${CURRENT_MENU == 'Deployments' || CURRENT_MENU == 'Pods' || CURRENT_MENU == 'Services'}? 'active' : ''"><a
+						href="#"> <i class="fa fa-cubes"></i> <span>Applications</span>
+							<span class="pull-right-container"> <i
+								class="fa fa-angle-down pull-right"></i>
+						</span>
+					</a>
+						<ul class="treeview-menu" style="display: block;">
+							<li th:class="${CURRENT_MENU == 'Deployments'}? 'active' : ''"><a
+								href="#"
+								th:href="@{/project/{name}/deployments(name=${projectName})}"><i
+									class="fa fa-circle-o"></i>Deployments</a></li>
+							<li th:class="${CURRENT_MENU == 'Services'}? 'active' : ''"><a
+								href="#"
+								th:href="@{/project/{name}/services(name=${projectName})}"><i
+									class="fa fa-circle-o"></i>Services</a></li>
+						</ul></li>
+					<li th:class="${CURRENT_MENU == 'Storage'}? 'active' : ''"><a
+						href="#" th:href="@{/project/{name}/storage(name=${projectName})}"><i
+							class="fa fa-database"></i> <span>Storage</span></a></li>
+					<li th:class="${CURRENT_MENU == 'Templates'}? 'active' : ''"><a
+						href="#"
+						th:href="@{/project/{name}/templates(name=${projectName})}"><i
+							class="fa fa-book"></i> <span>Template</span></a></li>
+				</ul>
+				<!-- /.sidebar-menu -->
+			</section>
+			<!-- /.sidebar -->
+		</aside>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div layout:fragment="pageHeader"></div>
+
+			<!-- Main content -->
+			<section class="content">
+				<div layout:fragment="content">
+					<!-- Your Page Content Here -->
+				</div>
+
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Main Footer -->
+		<footer class="main-footer">
+			<!-- To the right -->
+			<div class="pull-right hidden-xs">
+				<strong><a href="http://kubernetes.io" target="_blank">http://kubernetes.io</a></strong>
+			</div>
+			<!-- Default to the left -->
+			<strong>Copyright &copy; 2018 <a href="#">MyLabs</a>.
+			</strong> All rights reserved.
+		</footer>
+
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED JS SCRIPTS -->
+	<script th:src="@{'/assets/plugins/jQuery/jQuery-2.1.4.min.js'}"></script>
+	<script th:src="@{'/assets/bootstrap/js/bootstrap.min.js'}"></script>
+	<script th:src="@{'/assets/custom/js/confirm.js'}"></script>
+	<script th:src="@{'/assets/dist/js/app.min.js'}"></script>
+	
+	<script th:src="@{'/assets/plugins/flot/jquery.flot.min.js'}"></script>
+	<script th:src="@{'/assets/plugins/flot/jquery.flot.time.js'}"></script>
+	<script th:src="@{'/assets/plugins/flot/jquery.flot.symbol.js'}"></script>
+	<script th:src="@{'/assets/plugins/flot/jquery.flot.axislabels.js'}"></script>
+	<script th:src="@{'/assets/custom/js/chart.js'}"></script>
+	
+</body>
+</html>
