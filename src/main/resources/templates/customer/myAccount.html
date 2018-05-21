@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/mainLayout}">
+
+<head>
+<title>Home</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<h1 class="text-center">Welcome</h1>
+		<div class="text-center">
+			<p
+				th:text="${#authentication.getPrincipal().getCustomer().getFullName()}">
+			</p>
+		</div>
+	</div>
+
+</body>
+
+</html>

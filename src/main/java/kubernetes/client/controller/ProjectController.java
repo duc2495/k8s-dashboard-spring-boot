@@ -19,11 +19,11 @@ import kubernetes.client.service.ProjectService;
 import kubernetes.client.validator.ProjectValidator;
 
 @Controller
-public class ProjectController extends BaseController{
+public class ProjectController extends BaseController {
 
 	@Autowired
 	private ProjectService projectService;
-	
+
 	@Autowired
 	private ProjectValidator projectValidator;
 
@@ -50,7 +50,7 @@ public class ProjectController extends BaseController{
 		if (result.hasErrors()) {
 			return "projects/create_project";
 		}
-		
+
 		projectService.insert(project, getCurrentUser().getCustomer().getId());
 		redirectAttributes.addFlashAttribute("info", "Project created successfully");
 		return "redirect:/projects";
@@ -59,7 +59,7 @@ public class ProjectController extends BaseController{
 	@RequestMapping(value = "/projects/{id}", method = RequestMethod.GET)
 	public String editProjectForm(@PathVariable int id, Model model) {
 		Project project = projectService.getProjectById(id, getCurrentUser().getCustomer().getId());
-		if(project == null) {
+		if (project == null) {
 			return "403";
 		}
 		model.addAttribute("project", project);
@@ -73,11 +73,16 @@ public class ProjectController extends BaseController{
 		return "redirect:/projects";
 	}
 
-	@RequestMapping(value = "/projects/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/projects/delete/{id}", method = RequestMethod.GET)
 	public String deleteProject(@PathVariable int id, Model model, RedirectAttributes redirectAttributes) {
+		Project project = projectService.getProjectById(id, getCurrentUser().getCustomer().getId());
+		if (project == null) {
+			model.addAttribute("error", "The Project does not exist or you are not authorized to delete it.");
+			return "403";
+		}
 		projectService.delete(id);
 		redirectAttributes.addFlashAttribute("info", "Project deleted successfully");
 		return "redirect:/projects";
 	}
-	
+
 }

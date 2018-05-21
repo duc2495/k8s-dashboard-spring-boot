@@ -1,20 +1,39 @@
 package kubernetes.client.model;
 
-import java.util.Hashtable;
+import io.fabric8.kubernetes.api.model.extensions.Deployment;
+
+import java.util.List;
+
+import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.Service;
 
 public class Application {
+	private int id;
 	private String name;
+	private String description;
 	private String image;
-	private String tag;
-	private String createdAt;
 	private int pods;
-	private String version;
+	private int port;
+	private Deployment deployment;
+	private Service service;
+	private List<Pod> listPod;
+	private HorizontalPodAutoscaler hpa;
+	private boolean proAutoscaler = false;
+	private Deployment autoscaler;
+	private Resources resources;
 
+	public Application() {
+		this.pods = 1;
+		this.port = 80;
+	}
 
-	private Hashtable<String, String> envList;
-	private Hashtable<String, String> labelList;
-	
-	public Application() {	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -25,44 +44,20 @@ public class Application {
 		this.name = name;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public String getImage() {
 		return image;
 	}
 
 	public void setImage(String image) {
 		this.image = image;
-	}
-
-	public String getTag() {
-		return tag;
-	}
-
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
-
-	public Hashtable<String, String> getEnvList() {
-		return envList;
-	}
-
-	public void setEnvList(Hashtable<String, String> envList) {
-		this.envList = envList;
-	}
-
-	public Hashtable<String, String> getLabelList() {
-		return labelList;
-	}
-
-	public void setLabelList(Hashtable<String, String> labelList) {
-		this.labelList = labelList;
-	}
-	
-	public String getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(String createdAt) {
-		this.createdAt = createdAt;
 	}
 
 	public int getPods() {
@@ -73,12 +68,68 @@ public class Application {
 		this.pods = pods;
 	}
 
-	public String getVersion() {
-		return version;
+	public int getPort() {
+		return port;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setPort(int port) {
+		this.port = port;
 	}
-	
+
+	public Deployment getDeployment() {
+		return deployment;
+	}
+
+	public void setDeployment(Deployment deployment) {
+		this.deployment = deployment;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
+	}
+
+	public List<Pod> getListPod() {
+		return listPod;
+	}
+
+	public void setListPod(List<Pod> listPod) {
+		this.listPod = listPod;
+	}
+
+	public HorizontalPodAutoscaler getHpa() {
+		return hpa;
+	}
+
+	public void setHpa(HorizontalPodAutoscaler hpa) {
+		this.hpa = hpa;
+	}
+
+	public boolean isProAutoscaler() {
+		return proAutoscaler;
+	}
+
+	public void setProAutoscaler(boolean proAutoscaler) {
+		this.proAutoscaler = proAutoscaler;
+	}
+
+	public Deployment getAutoscaler() {
+		return autoscaler;
+	}
+
+	public void setAutoscaler(Deployment autoscaler) {
+		this.autoscaler = autoscaler;
+	}
+
+	public Resources getResources() {
+		return resources;
+	}
+
+	public void setResources(Resources resources) {
+		this.resources = resources;
+	}
+
 }

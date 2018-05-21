@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>K8sClient</name>
-	<description>Spring Boot + Security + JDBC</description>
+	<description>Spring Boot + Security + MyBatis + Thymeleaf + K8S API</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -102,27 +102,6 @@
 			<version>3.1.8</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.github.mifmif/generex -->
-		<dependency>
-			<groupId>com.github.mifmif</groupId>
-			<artifactId>generex</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
-		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-			<version>3.9.1</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor -->
-		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>logging-interceptor</artifactId>
-			<version>3.9.1</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/io.fabric8/kubernetes-model -->
 		<dependency>
 			<groupId>io.fabric8</groupId>
@@ -130,25 +109,10 @@
 			<version>2.0.4</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/io.fabric8/zjsonpatch -->
+		<!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java -->
 		<dependency>
-			<groupId>io.fabric8</groupId>
-			<artifactId>zjsonpatch</artifactId>
-			<version>0.3.0</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/io.sundr/builder-annotations -->
-		<dependency>
-			<groupId>io.sundr</groupId>
-			<artifactId>builder-annotations</artifactId>
-			<version>0.3.12</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.apache.felix/org.apache.felix.scr.annotations -->
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.scr.annotations</artifactId>
-			<version>1.9.12</version>
+			<groupId>org.influxdb</groupId>
+			<artifactId>influxdb-java</artifactId>
 		</dependency>
 	</dependencies>
 

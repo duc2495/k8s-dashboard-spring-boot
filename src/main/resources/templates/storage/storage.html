@@ -11,53 +11,70 @@
 <body>
 	<div layout:fragment="pageHeader">
 		<section class="content-header">
-			<h1>My Storage</h1>
+			<h1>STORAGE</h1>
 		</section>
 	</div>
 	<div layout:fragment="content">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="box">
-					<div class="box-header">
-						<h3 class="box-title">List of Storage</h3>
-						<div class="box-tools">
-							<div class="input-group" style="width: 150px;">
-								<a class="btn btn-sm btn-default"
-									th:href="@{/project/{name}/storage/new(name=${project.projectName})}"><i
-									class="fa fa-plus-circle"></i> Create new Storage</a>
+		<!-- IF -->
+		<div th:if="${storageList == null}">
+			<div class="text-center">
+				<h2>There is nothing to display here.</h2>
+				<p>You can create new storage.</p>
+				<a class="btn btn-primary"
+					th:href="@{/project/{name}/storage/new(name=${projectName})}"><i
+					class="fa fa-plus-circle"></i> Create Storage</a>
+
+			</div>
+		</div>
+		<!-- ELSE -->
+		<div th:unless="${storageList == null}">
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="box">
+						<div class="box-header">
+							<h3 class="box-title">My Storage</h3>
+							<div class="box-tools">
+								<div class="input-group" style="width: 150px;">
+									<a class="btn btn-primary"
+										th:href="@{/project/{name}/storage/new(name=${projectName})}"><i
+										class="fa fa-plus-circle"></i> Create Storage</a>
+								</div>
 							</div>
 						</div>
-					</div>
-					<!-- /.box-header -->
-					<div class="box-body table-responsive no-padding">
-						<table class="table table-hover">
-							<tr>
-								<th style="width: 10px">#</th>
-								<th>Name</th>
-								<th>Status</th>
-								<th>Capacity</th>
-								<th>Created At</th>
-								<th>Action</th>
-							</tr>
-							<tr th:each="storage,iterStat : ${storageList}">
-								<td th:text="${iterStat.count}">1</td>
-								<td th:text="${storage.name}">Name</td>
-								<td th:text="${storage.status}">Status</td>
-								<td th:text="${storage.size}">Capacity</td>
-								<td th:text="${storage.createdAt}">Created At</td>
-								<td><form th:method="delete"
-										th:action="@{/project/{name}/storage/{storageName}(name=${project.projectName}, storageName=${storage.name})}">
-										<button class="btn btn-danger" type="submit" name="submit"
-											value="value">Delete</button>
-									</form></td>
-							</tr>
+						<!-- /.box-header -->
+						<div class="box-body table-responsive no-padding">
+							<table class="table table-hover">
+								<tr>
+									<th style="width: 10px">#</th>
+									<th>Name</th>
+									<th>Status</th>
+									<th>Capacity</th>
+									<th>Created At</th>
+									<th>Action</th>
+								</tr>
+								<tr th:each="storage,iterStat : ${storageList}">
+									<td th:text="${iterStat.count}">1</td>
+									<td th:text="${storage.name}">Name</td>
+									<td th:text="${storage.status}">Status</td>
+									<td th:text="${storage.size}">Capacity</td>
+									<td th:text="${storage.createdAt}">Created At</td>
+									<td><form th:method="delete"
+											th:action="@{/project/{name}/storage/{storageName}(name=${projectName}, storageName=${storage.name})}">
+											<button class="btn btn-danger" type="submit" name="submit"
+												value="value">Delete</button>
+										</form></td>
+								</tr>
 
-						</table>
-					</div>
-					<!-- /.box-body -->
+							</table>
+						</div>
+						<!-- /.box-body -->
 
+
+
+					</div>
+					<!-- /.box -->
 				</div>
-				<!-- /.box -->
 			</div>
 		</div>
 

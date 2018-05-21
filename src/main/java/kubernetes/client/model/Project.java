@@ -1,13 +1,11 @@
 package kubernetes.client.model;
 
-import java.util.Date;
 import java.util.List;
 
 public class Project {
 	private int projectId;
 	private String projectName;
 	private String description;
-	private Date createdAt;
 
 	private List<Application> apps;
 
@@ -15,11 +13,14 @@ public class Project {
 
 	}
 
-	public Project(int projectId, String projectName, String description, Date createdAt) {
+	public Project(String name) {
+		this.projectName = name;
+	}
+
+	public Project(int projectId, String projectName, String description) {
 		this.projectId = projectId;
 		this.projectName = projectName;
 		this.description = description;
-		this.createdAt = createdAt;
 	}
 
 	public int getProjectId() {
@@ -44,14 +45,6 @@ public class Project {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
 	}
 
 	public List<Application> getApps() {

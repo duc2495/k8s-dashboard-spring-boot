@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Template-Databases</title>
+</head>
+<body>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>TEMPLATE-DATABASES</h1>
+		</section>
+	</div>
+	<div layout:fragment="content">
+		<div class="floating-box">
+			<a
+				th:href="@{/project/{name}/template/postgres/new(name=${projectName})}">
+				<img alt="" src=""
+				th:src="@{'/assets/dist/img/logos/postgresql.svg'}">
+				<p class="text-center">PostgreSQL</p>
+			</a>
+		</div>
+		<div class="floating-box">
+			<a
+				th:href="@{/project/{name}/template/mysql/new(name=${projectName})}">
+				<img alt="" src=""
+				th:src="@{'/assets/dist/img/logos/mysql-database.svg'}">
+				<p class="text-center">MySQL</p>
+			</a>
+		</div>
+	</div>
+</body>
+
+</html>

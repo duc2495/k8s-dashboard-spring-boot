@@ -4,18 +4,24 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import kubernetes.client.api.NamespacesAPI;
+import org.springframework.transaction.annotation.Transactional;
+
+import kubernetes.client.api.NamespaceAPI;
+import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.mapper.ProjectMapper;
 import kubernetes.client.model.Project;
 import kubernetes.client.service.ProjectService;
 
+@Transactional
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
 	private ProjectMapper projectMapper;
 	@Autowired
-	private NamespacesAPI namespaces;
+	private ApplicationMapper applicationMapper;
+	@Autowired
+	private NamespaceAPI namespaces;
 
 	@Override
 	public synchronized void insert(Project project, int customerId) {
@@ -33,7 +39,9 @@ public class ProjectServiceImpl implements ProjectService {
 	public void delete(int projectId) {
 		Project project = projectMapper.getProjectById(projectId);
 		namespaces.delete(project.getProjectName());
+		applicationMapper.deleteByProjectId(projectId);
 		projectMapper.delete(projectId);
+		
 	}
 
 	@Override
@@ -63,6 +71,9 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public List<Project> getProjectsByUserId(int customerId) {
 		List<Project> projectList = projectMapper.getProjectsByUserId(customerId);
+		if(projectList.isEmpty()) {
+			return null;
+		}
 		return projectList;
 	}
 

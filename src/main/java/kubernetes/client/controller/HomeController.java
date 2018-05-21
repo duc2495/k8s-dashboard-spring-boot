@@ -18,8 +18,10 @@ public class HomeController {
     public String welcomePage(Model model) {
         return "home";
     }
-    @RequestMapping(value = { "/dashboard/**" }, method = RequestMethod.GET)
-    public String dashboardPage(Model model) {
-        return "dashboard";
+    
+    @RequestMapping(value = { "/403", }, method = RequestMethod.GET)
+    public String error403(Model model) {
+    	model.addAttribute("error", "You are not authorized to access this page.");
+        return "403";
     }
 }

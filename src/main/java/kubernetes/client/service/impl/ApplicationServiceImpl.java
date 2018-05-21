@@ -2,98 +2,162 @@ package kubernetes.client.service.impl;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import io.fabric8.kubernetes.api.model.ServiceBuilder;
-import io.fabric8.kubernetes.api.model.extensions.Deployment;
-import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
-import io.fabric8.kubernetes.client.Config;
-import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
-import kubernetes.client.model.Application;
-import kubernetes.client.service.ApplicationService;
+import org.springframework.transaction.annotation.Transactional;
 
+import kubernetes.client.mapper.ApplicationMapper;
+import kubernetes.client.model.Application;
+import kubernetes.client.model.Project;
+import kubernetes.client.service.ApplicationService;
+import kubernetes.client.service.AutoscalerService;
+import kubernetes.client.service.DeploymentService;
+import kubernetes.client.service.K8sServiceService;
+import kubernetes.client.service.PodService;
+import kubernetes.client.service.ResourcesService;
+
+@Transactional
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
 
-	private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
-
-	String master = "https://k8s-master:6443/";
-
-	Config config = new ConfigBuilder().withMasterUrl(master).build();
+	@Autowired
+	private K8sServiceService serviceService;
+	@Autowired
+	private DeploymentService deploymentService;
+	@Autowired
+	private AutoscalerService autoscalerService;
+	@Autowired
+	private ApplicationMapper applicationMapper;
+	@Autowired
+	private PodService podService;
+	@Autowired
+	private ResourcesService resourcesService;
 
 	@Override
-	public void deploy(Application app, String projectName) {
+	public void deploy(Application app, Project project) {
+		deploymentService.create(app, project.getProjectName());
+		serviceService.create(app, project.getProjectName());
+		applicationMapper.insert(app, project.getProjectId());
+	}
 
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-
-			io.fabric8.kubernetes.api.model.Service service = new ServiceBuilder().withNewMetadata()
-					.withName(app.getName()).endMetadata().withNewSpec().addNewPort().withPort(8080)
-					.withNewTargetPort(8080).endPort().addToSelector("app", app.getName()).withType("NodePort")
-					.endSpec().build();
-			service = client.services().inNamespace(projectName).create(service);
-			log("Created service", service);
-
-			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(app.getName())
-					.addToLabels("app", app.getName()).endMetadata().withNewSpec().withReplicas(1).withNewSelector()
-					.addToMatchLabels("app", app.getName()).endSelector().withNewTemplate().withNewMetadata()
-					.addToLabels("app", app.getName()).endMetadata().withNewSpec().addNewContainer()
-					.withName(app.getName()).withImage(app.getImage()).addNewPort().withContainerPort(8080).endPort()
-					.endContainer().endSpec().endTemplate().endSpec().build();
-			deployment = client.extensions().deployments().inNamespace(projectName).create(deployment);
-			log("Created deployment", deployment);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage(), e);
-			Throwable[] suppressed = e.getSuppressed();
-			if (suppressed != null) {
-				for (Throwable t : suppressed) {
-					logger.error(t.getMessage(), t);
-				}
+	@Override
+	public void delete(int id, String projectName) {
+		Application app = applicationMapper.getApplicationById(id);
+		if (app != null) {
+			if (app.isProAutoscaler()) {
+				this.deleteProAutoscaler(app);
 			}
+			deploymentService.delete(app.getName(), projectName);
+			serviceService.delete(app.getName(), projectName);
+			applicationMapper.delete(id);
 		}
-
 	}
 
 	@Override
-	public void delete(String name) {
-
-	}
-
-	@Override
-	public List<Application> getAllApp(String projectName) {
-		
-		return null;
+	public List<Application> getAll(Project project) {
+		List<Application> apps = applicationMapper.getApplicationsByProjectId(project.getProjectId());
+		if (apps.isEmpty()) {
+			return null;
+		}
+		for (Application app : apps) {
+			app.setDeployment(deploymentService.getDeploymentByName(app.getName(), project.getProjectName()));
+			app.setService(serviceService.getServiceByName(app.getName(), project.getProjectName()));
+			app.setListPod(podService.getAll(app.getDeployment()));
+			app.setResources(resourcesService.get(app));
+			app.setHpa(autoscalerService.getHpaByName(app.getName(), project.getProjectName()));
+			app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+			app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
+					.getContainerPort());
+		}
+		return apps;
 	}
 
 	@Override
 	public boolean appExists(String name, String projectName) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			if (client.extensions().deployments().inNamespace(projectName).withName(name).get() != null) {
-				return true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage(), e);
-			Throwable[] suppressed = e.getSuppressed();
-			if (suppressed != null) {
-				for (Throwable t : suppressed) {
-					logger.error(t.getMessage(), t);
-				}
-			}
+		return deploymentService.deploymentExists(name, projectName);
+	}
+
+	@Override
+	public Application getApplicationByName(String name, String projectName) {
+		Application app = applicationMapper.getApplicationByName(name);
+		if (app == null) {
+			return null;
 		}
-		return false;
+		app.setDeployment(deploymentService.getDeploymentByName(name, projectName));
+		app.setService(serviceService.getServiceByName(name, projectName));
+		app.setListPod(podService.getAll(app.getDeployment()));
+		app.setHpa(autoscalerService.getHpaByName(name, projectName));
+		app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+		app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
+				.getContainerPort());
+		return app;
 	}
 
-	private static void log(String action, Object obj) {
-		logger.info("{}: {}", action, obj);
+	@Override
+	public Application getApplicationById(int id, String projectName) {
+		Application app = applicationMapper.getApplicationById(id);
+		if (app == null) {
+			return null;
+		}
+		app.setDeployment(deploymentService.getDeploymentByName(app.getName(), projectName));
+		app.setService(serviceService.getServiceByName(app.getName(), projectName));
+		app.setListPod(podService.getAll(app.getDeployment()));
+		app.setHpa(autoscalerService.getHpaByName(app.getName(), projectName));
+		app.setImage(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+		app.setPort(app.getDeployment().getSpec().getTemplate().getSpec().getContainers().get(0).getPorts().get(0)
+				.getContainerPort());
+		return app;
 	}
 
-	private static void log(String action) {
-		logger.info(action);
+	@Override
+	public void update(Application app, String projectName) {
+
+		deploymentService.update(app, projectName);
+
+		app.setService(serviceService.getServiceByName(app.getName(), projectName));
+		serviceService.update(app.getService(), app.getPort());
+		applicationMapper.update(app);
+	}
+
+	@Override
+	public void pause(int id, String projectName) {
+		Application app = getApplicationById(id, projectName);
+		deploymentService.pause(app.getDeployment());
+	}
+
+	@Override
+	public void scaleUp(int id, String projectName) {
+		Application app = getApplicationById(id, projectName);
+		app.getDeployment().getSpec().setReplicas(app.getDeployment().getSpec().getReplicas() + 1);
+		deploymentService.scale(app.getDeployment());
+	}
+
+	@Override
+	public void scaleDown(int id, String projectName) {
+		Application app = getApplicationById(id, projectName);
+		if (app.getDeployment().getSpec().getReplicas() > 0) {
+			app.getDeployment().getSpec().setReplicas(app.getDeployment().getSpec().getReplicas() - 1);
+			deploymentService.scale(app.getDeployment());
+		}
+	}
+
+	@Override
+	public void proAutoScaling(Application app) {
+		app.setProAutoscaler(true);
+		applicationMapper.updateAutoscaler(app);
+		deploymentService.createAutoscaler(app);
+	}
+
+	@Override
+	public void deleteProAutoscaler(Application app) {
+		app.setProAutoscaler(false);
+		applicationMapper.updateAutoscaler(app);
+		String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
+		deploymentService.delete(name, "default");
+	}
+
+	@Override
+	public void autoScaling(Application app) {
+		autoscalerService.create(app.getHpa(), app.getDeployment());
 	}
 }

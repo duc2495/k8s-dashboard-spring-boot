@@ -21,6 +21,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private UserDetailsService customUserDetailsService;
 
+	@Autowired
+	private BasicAuthenticationPoint basicAuthenticationPoint;
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -28,17 +31,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/assets/**").permitAll()
+		http.csrf().disable().authorizeRequests().antMatchers("/admin/**").access("hasAnyRole('ROLE_ADMIN')")
+				.antMatchers("/resources/**", "/webjars/**", "/assets/**").permitAll()
 				.antMatchers("/", "/home", "/register", "/forgotPwd", "/resetPwd").permitAll().anyRequest()
 				.authenticated().and().formLogin().loginPage("/login").defaultSuccessUrl("/home")
 				.failureUrl("/login?error").permitAll().and().logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				// .logoutUrl("/logout")
 				.permitAll().and().exceptionHandling().accessDeniedPage("/403");
+
+		http.httpBasic().authenticationEntryPoint(basicAuthenticationPoint);
 	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication().passwordEncoder(passwordEncoder()).withUser("admin")
+				.password(passwordEncoder().encode("admin")).roles("ADMIN");
 		auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 }
