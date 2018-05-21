@@ -20,6 +20,7 @@ public class ResourcesMapper {
 
 	InfluxDB influxDB = InfluxDBFactory.connect("http://monitoring-influxdb.kube-system:8086", "root", "root");
 
+
 	public Resources get(Application app) {
 
 		long cpu = 0;
@@ -42,6 +43,7 @@ public class ResourcesMapper {
 				.query(new Query("SELECT sum(\"value\") FROM \"cpu/request\" WHERE \"namespace_name\" =~ /"
 						+ app.getDeployment().getMetadata().getNamespace() + "/ AND \"container_name\" =~ /"
 						+ app.getName() + "/ AND time >= now() - 10m GROUP BY time(1m)", "k8s"));
+		
 		QueryResult queryResult3 = influxDB
 				.query(new Query("SELECT value FROM \"cpu/predict\" WHERE \"namespace_name\" =~ /"
 						+ app.getDeployment().getMetadata().getNamespace() + "/ AND \"container_name\" =~ /"
