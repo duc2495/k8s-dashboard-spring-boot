@@ -18,7 +18,7 @@ import kubernetes.client.model.Resources;
 @Repository
 public class ResourcesMapper {
 
-	InfluxDB influxDB = InfluxDBFactory.connect("http://192.168.5.10:30086", "root", "root");
+	InfluxDB influxDB = InfluxDBFactory.connect("http://monitoring-influxdb.kube-system:8086", "root", "root");
 
 	public Resources get(Application app) {
 
@@ -33,19 +33,19 @@ public class ResourcesMapper {
 		String stringNow = "";
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
-		QueryResult queryResult1 = influxDB.query(new Query(
-				"SELECT sum(\"value\") FROM \"cpu/usage_rate\" WHERE \"namespace_name\" =~ /"
+		QueryResult queryResult1 = influxDB
+				.query(new Query("SELECT sum(\"value\") FROM \"cpu/usage_rate\" WHERE \"namespace_name\" =~ /"
 						+ app.getDeployment().getMetadata().getNamespace() + "/ AND \"container_name\" =~ /"
-						+ app.getName() + "/ AND time >= now() - 10m GROUP BY time(1m)",
-				"k8s"));
+						+ app.getName() + "/ AND time >= now() - 10m GROUP BY time(1m)", "k8s"));
 
-		QueryResult queryResult2 = influxDB.query(new Query(
-				"SELECT sum(\"value\") FROM \"cpu/request\" WHERE \"namespace_name\" =~ /"
+		QueryResult queryResult2 = influxDB
+				.query(new Query("SELECT sum(\"value\") FROM \"cpu/request\" WHERE \"namespace_name\" =~ /"
 						+ app.getDeployment().getMetadata().getNamespace() + "/ AND \"container_name\" =~ /"
-						+ app.getName() + "/ AND time >= now() - 10m GROUP BY time(1m)",
-				"k8s"));
-		QueryResult queryResult3 = influxDB.query(new Query("SELECT value FROM \"cpu/predict\" WHERE \"container_name\" =~ /"
-				+ app.getName() + "/ AND time > now() - 13m AND time < now() - 1m", "k8s"));
+						+ app.getName() + "/ AND time >= now() - 10m GROUP BY time(1m)", "k8s"));
+		QueryResult queryResult3 = influxDB
+				.query(new Query("SELECT value FROM \"cpu/predict\" WHERE \"namespace_name\" =~ /"
+						+ app.getDeployment().getMetadata().getNamespace() + "/ AND \"container_name\" =~ /"
+						+ app.getName() + "/ AND time > now() - 13m AND time < now() - 1m", "k8s"));
 		long now = System.currentTimeMillis();
 		now = now - now % 60000;
 		if (queryResult1.getResults().get(0).getSeries() == null
