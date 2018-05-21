@@ -83,9 +83,9 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 			String image = "duc2495/tf-serving-client:latest";
 
 			List<EnvVar> envs = new ArrayList<EnvVar>();
-			envs.add(new EnvVar("TF_SERVER", "192.168.5.10:30900", null));
-			envs.add(new EnvVar("INFLUX_SERVER","192.168.5.10:30086", null));
-			envs.add(new EnvVar("WEB_SERVER", "192.168.5.10:8080", null));
+			envs.add(new EnvVar("TF_SERVER", "tensorflow-serving:9000", null));
+			envs.add(new EnvVar("INFLUX_SERVER","monitoring-influxdb.kube-system:8086", null));
+			envs.add(new EnvVar("WEB_SERVER", "dashboard:8080", null));
 			envs.add(new EnvVar("NAMESPACE", app.getDeployment().getMetadata().getNamespace(), null));
 			envs.add(new EnvVar("NAME",app.getName(), null));
 			envs.add(new EnvVar("MODEL_NAME", "cpu", null));
