@@ -7,15 +7,13 @@ import org.springframework.stereotype.Repository;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.Quantity;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import kubernetes.client.model.Storage;
 
 @Repository
 public class PersistentVolumeClaimAPI extends ConnectK8SConfiguration {
 
 	public void create(Storage storage, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Create a pvc
 			Quantity size = new Quantity(storage.getSize());
 			PersistentVolumeClaim pvc = new PersistentVolumeClaimBuilder().withNewMetadata().withName(storage.getName())
@@ -37,7 +35,7 @@ public class PersistentVolumeClaimAPI extends ConnectK8SConfiguration {
 	}
 
 	public void delete(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Delete a pvc
 			logger.info("Delete PVC", client.persistentVolumeClaims().inNamespace(namespace).withName(name).delete());
 		} catch (Exception e) {
@@ -53,7 +51,7 @@ public class PersistentVolumeClaimAPI extends ConnectK8SConfiguration {
 	}
 
 	public Storage getPVClaimByName(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get a pvc
 			PersistentVolumeClaim pvc = client.persistentVolumeClaims().inNamespace(namespace).withName(name).get();
 			if (pvc != null) {
@@ -78,7 +76,7 @@ public class PersistentVolumeClaimAPI extends ConnectK8SConfiguration {
 	}
 
 	public List<Storage> getPVClaims(String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get a pvc
 			List<PersistentVolumeClaim> pvcList = client.persistentVolumeClaims().inNamespace(namespace).list()
 					.getItems();
@@ -109,7 +107,7 @@ public class PersistentVolumeClaimAPI extends ConnectK8SConfiguration {
 	}
 
 	public boolean exists(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Exists pvc
 			PersistentVolumeClaim pvc = client.persistentVolumeClaims().inNamespace(namespace).withName(name).get();
 			if (pvc != null) {
