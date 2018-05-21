@@ -18,7 +18,7 @@ import kubernetes.client.model.Resources;
 @Repository
 public class ResourcesMapper {
 
-	InfluxDB influxDB = InfluxDBFactory.connect("http://192.168.5.10:30086", "root", "root");
+	InfluxDB influxDB = InfluxDBFactory.connect("http://k8s-master:30086", "root", "root");
 
 	public Resources get(Application app) {
 
