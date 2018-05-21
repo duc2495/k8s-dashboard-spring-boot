@@ -310,9 +310,9 @@
 									<div class="col-md-6">
 										<h4 class="component-label section-label">RESOURCES</h4>
 										<input th:id="'flot-actual-value' + ${iterStat.count}"
-											type="hidden" th:value="${app.resources.actualCPU}">
+											type="hidden" th:if="${app.resources.actualCPU != null}" th:value="${app.resources.actualCPU}">
 										<input th:id="'flot-predict-value' + ${iterStat.count}"
-											type="hidden" th:value="${app.resources.predictCPU}">
+											type="hidden" th:if="${app.resources.predictCPU != null}" th:value="${app.resources.predictCPU}">
 										<input th:id="'check-predict-value' + ${iterStat.count}"
 											type="hidden" th:value="${app.proAutoscaler}">
 										<div th:id="'flot-placeholder' + ${iterStat.count}"

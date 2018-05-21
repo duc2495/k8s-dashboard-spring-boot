@@ -5,14 +5,12 @@ import org.springframework.stereotype.Repository;
 import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.api.model.HorizontalPodAutoscalerBuilder;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
 public class HorizontalPodAutoscalerAPI extends ConnectK8SConfiguration {
 
 	public void create(HorizontalPodAutoscaler hpa, Deployment deployment) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Create a HPA
 			HorizontalPodAutoscaler temp = new HorizontalPodAutoscalerBuilder().withNewMetadata()
 					.withName(deployment.getMetadata().getName()).withNamespace(deployment.getMetadata().getNamespace())
@@ -36,7 +34,7 @@ public class HorizontalPodAutoscalerAPI extends ConnectK8SConfiguration {
 	}
 
 	public void edit(HorizontalPodAutoscaler hpa) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Update a HPA
 			logger.info("{}: {}", "Edit HPA",
 					client.autoscaling().horizontalPodAutoscalers().inNamespace(hpa.getMetadata().getNamespace())
@@ -58,7 +56,7 @@ public class HorizontalPodAutoscalerAPI extends ConnectK8SConfiguration {
 	}
 
 	public HorizontalPodAutoscaler get(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get a HPA
 			HorizontalPodAutoscaler hpa = client.autoscaling().horizontalPodAutoscalers().inNamespace(namespace)
 					.withName(name).get();
@@ -78,7 +76,7 @@ public class HorizontalPodAutoscalerAPI extends ConnectK8SConfiguration {
 	}
 
 	public void delete(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Delete a HPA
 			logger.info("{}: {}", "Delete HPA",
 					client.autoscaling().horizontalPodAutoscalers().inNamespace(namespace).withName(name).delete());
