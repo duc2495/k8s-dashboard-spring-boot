@@ -19,18 +19,18 @@ import kubernetes.client.model.Resources;
 public class ResourcesMapper {
 
 	public Resources get(Application app) {
+		long cpu = 0;
+		float usage_rate = 0;
+		float request = 0;
+
+		Resources resources = new Resources();
+		List<List<Long>> actualCPU = new ArrayList<List<Long>>();
+		List<List<Long>> predictCPU = new ArrayList<List<Long>>();
+
+		String stringNow = "";
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 		try {
 			InfluxDB influxDB = InfluxDBFactory.connect("http://monitoring-influxdb.kube-system:8086", "root", "root");
-			long cpu = 0;
-			float usage_rate = 0;
-			float request = 0;
-
-			Resources resources = new Resources();
-			List<List<Long>> actualCPU = new ArrayList<List<Long>>();
-			List<List<Long>> predictCPU = new ArrayList<List<Long>>();
-
-			String stringNow = "";
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 			QueryResult queryResult1 = influxDB
 					.query(new Query("SELECT sum(\"value\") FROM \"cpu/usage_rate\" WHERE \"namespace_name\" =~ /"
@@ -142,6 +142,8 @@ public class ResourcesMapper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		resources.setActualCPU(actualCPU);
+		resources.setPredictCPU(predictCPU);
+		return resources;
 	}
 }
