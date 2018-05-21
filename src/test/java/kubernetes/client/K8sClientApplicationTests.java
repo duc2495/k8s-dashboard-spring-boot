@@ -1,4 +1,4 @@
-package kubernetes;
+package kubernetes.client;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
