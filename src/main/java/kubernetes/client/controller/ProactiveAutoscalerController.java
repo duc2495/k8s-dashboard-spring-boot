@@ -77,13 +77,13 @@ public class ProactiveAutoscalerController extends BaseController {
 			return "403";
 		}
 		int pods = app.getDeployment().getSpec().getReplicas();
-		if ((currentCPU > 80 || futureCPU > 90) && pods < 3) {
-			appService.scaleUp(app.getId(), name);
+		if ((currentCPU > 80 || futureCPU > 80) && pods < 3) {
+			appService.scaleUp(app.getId(), namespace);
 			System.out.println(
 					"Auto Scaling: scale up with \'" + futureCPU + "%\' future cpu usage(" + currentCPU + "% current). Number of pods after scaled: " + (pods + 1));
 			model.addAttribute("info", "Auto Scaling: scale up with " + futureCPU + "% future cpu usage.");
 		} else if ((currentCPU < 20 || futureCPU < 20) && pods > 1) {
-			appService.scaleDown(app.getId(), name);
+			appService.scaleDown(app.getId(), namespace);
 			System.out.println("Auto Scaling: scale down with \'" + futureCPU + "%\' future cpu usage (" + currentCPU
 					+ "% current). Number of pods after scaled: " + (pods - 1));
 			model.addAttribute("info", "Auto Scaling: scale down with " + futureCPU + "% future cpu usage.");
