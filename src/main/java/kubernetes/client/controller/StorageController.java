@@ -61,6 +61,7 @@ public class StorageController extends BaseController {
 			model.addAttribute("error", "The Project \"" + name +"\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
+		model.addAttribute("projectName", name);
 		storageValidator.validate(storage, result);
 		if (result.hasErrors()) {
 			return "storage/create_storage";

@@ -16,8 +16,8 @@ public class ServiceAPI extends ConnectK8SConfiguration {
 		try {
 			// Create a service
 			Service service = new ServiceBuilder().withNewMetadata().withName(app.getName()).endMetadata().withNewSpec()
-					.addNewPort().withPort(app.getPort()).endPort().addToSelector("app", app.getName())
-					.withType("NodePort").endSpec().build();
+					.addNewPort().withPort(app.getPort()).withNewTargetPort(app.getPort()).endPort()
+					.addToSelector("app", app.getName()).withType("NodePort").endSpec().build();
 			logger.info("{}: {}", "Created service", client.services().inNamespace(namespace).create(service));
 
 		} catch (Exception e) {
@@ -37,8 +37,8 @@ public class ServiceAPI extends ConnectK8SConfiguration {
 		try {
 			// Create a service
 			Service service = new ServiceBuilder().withNewMetadata().withName(template.getName()).endMetadata()
-					.withNewSpec().addNewPort().withPort(template.getPort()).endPort()
-					.addToSelector("app", template.getName()).endSpec().build();
+					.withNewSpec().addNewPort().withPort(template.getPort()).withNewTargetPort(template.getPort())
+					.endPort().addToSelector("app", template.getName()).endSpec().build();
 			logger.info("{}: {}", "Created service", client.services().inNamespace(namespace).create(service));
 
 		} catch (Exception e) {
@@ -60,7 +60,7 @@ public class ServiceAPI extends ConnectK8SConfiguration {
 			logger.info("{}: {}", "Update service",
 					client.services().inNamespace(service.getMetadata().getNamespace())
 							.withName(service.getMetadata().getName()).edit().editSpec().editFirstPort().withPort(port)
-							.endPort().endSpec().done());
+							.editTargetPort().withIntVal(port).endTargetPort().endPort().endSpec().done());
 
 		} catch (Exception e) {
 			e.printStackTrace();
