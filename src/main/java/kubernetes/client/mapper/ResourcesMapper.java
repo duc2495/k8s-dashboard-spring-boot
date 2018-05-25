@@ -29,6 +29,7 @@ public class ResourcesMapper {
 
 		String stringNow = "";
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
 		try {
 			InfluxDB influxDB = InfluxDBFactory.connect("http://monitoring-influxdb.kube-system:8086", "root", "root");
 

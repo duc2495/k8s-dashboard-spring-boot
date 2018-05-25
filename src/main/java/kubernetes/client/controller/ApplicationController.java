@@ -1,5 +1,7 @@
 package kubernetes.client.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,8 +14,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Project;
+import kubernetes.client.model.Storage;
 import kubernetes.client.service.ApplicationService;
 import kubernetes.client.service.ProjectService;
+import kubernetes.client.service.StorageService;
 import kubernetes.client.validator.ApplicationValidator;
 
 @Controller
@@ -26,6 +30,9 @@ public class ApplicationController extends BaseController {
 
 	@Autowired
 	private ApplicationValidator appValidator;
+
+	@Autowired
+	private StorageService storageService;
 
 	@RequestMapping(value = "/project/{name}/apps/new", method = RequestMethod.GET)
 	public String deployApplicationForm(@PathVariable String name, Model model) {
@@ -100,9 +107,16 @@ public class ApplicationController extends BaseController {
 			return "403";
 		}
 		model.addAttribute("projectName", name);
+		model.addAttribute("appId", id);
 		Application app = appService.getApplicationById(id, name);
+		if (app == null) {
+			model.addAttribute("error", "The Application does not exist or you are not authorized to delete it.");
+			return "403";
+		}
 		model.addAttribute("app", app);
-		return "application/update_app";
+		List<Storage> storageList = storageService.getStorageByProjectName(name);
+		model.addAttribute("storageList", storageList);
+		return "application/add_storage";
 	}
 
 	@RequestMapping(value = "/project/{name}/apps/add-storage/{id}", method = RequestMethod.POST)
@@ -113,9 +127,32 @@ public class ApplicationController extends BaseController {
 					"The Project \"" + name + "\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
+
 		model.addAttribute("projectName", name);
-		// appService.update(app, name);
-		redirectAttributes.addFlashAttribute("info", "Application updated successfully");
+		appService.addStorage(app);
+		redirectAttributes.addFlashAttribute("info", "Application mounted storage successfully");
+		return "redirect:/project/" + name + "/overview";
+	}
+
+	@RequestMapping(value = "/project/{name}/apps/delete-storage/{id}", method = RequestMethod.GET)
+	public String deleteStorage(@PathVariable String name, @PathVariable int id, Model model,
+			RedirectAttributes redirectAttributes) {
+
+		model.addAttribute("projectName", name);
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error",
+					"The Project \"" + name + "\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+
+		Application app = appService.getApplicationById(id, name);
+		if (app == null) {
+			model.addAttribute("error", "The Application does not exist or you are not authorized to delete it.");
+			return "403";
+		}
+
+		appService.deleteStorage(app);
+		redirectAttributes.addFlashAttribute("info", "Application unmounted storage successfully");
 		return "redirect:/project/" + name + "/overview";
 	}
 

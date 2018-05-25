@@ -10,7 +10,9 @@ import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
 import kubernetes.client.model.Application;
+import kubernetes.client.model.ProactiveAutoscaler;
 import kubernetes.client.model.Template;
+import kubernetes.client.model.Volume;
 
 @Repository
 public class DeploymentAPI extends ConnectK8SConfiguration {
@@ -73,30 +75,29 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 		}
 	}
 
-	public void createAutoscaler(Application app) {
+	public void createAutoscaler(ProactiveAutoscaler pa, String appName, String namespace) {
 		try {
 			// Create a deployment
-			String namespace = "default";
-			String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
 			String image = "duc2495/tf-serving-client:latest";
-
 			List<EnvVar> envs = new ArrayList<EnvVar>();
 			envs.add(new EnvVar("TF_SERVER", "tensorflow-serving:9000", null));
-			envs.add(new EnvVar("INFLUX_SERVER","monitoring-influxdb.kube-system:8086", null));
+
+			envs.add(new EnvVar("INFLUX_SERVER", "monitoring-influxdb.kube-system:8086", null));
 			envs.add(new EnvVar("WEB_SERVER", "dashboard:8080", null));
-			envs.add(new EnvVar("NAMESPACE", app.getDeployment().getMetadata().getNamespace(), null));
-			envs.add(new EnvVar("NAME", app.getName(), null));
+			envs.add(new EnvVar("NAMESPACE", namespace, null));
+			envs.add(new EnvVar("NAME", appName, null));
 			envs.add(new EnvVar("MODEL_NAME", "cpu", null));
 			String command = "bin/sh";
 			List<String> args = new ArrayList<String>();
 			args.add("-c");
 			args.add("while true ; do ./run_client.sh & sleep 60; done");
-			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(name).addToLabels("app", name)
-					.endMetadata().withNewSpec().withNewTemplate().withNewMetadata().addToLabels("app", name)
-					.endMetadata().withNewSpec().addNewContainer().withName(name).withImage(image).withEnv(envs)
-					.withCommand(command).withArgs(args).endContainer().endSpec().endTemplate().endSpec().build();
+			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(pa.getName())
+					.addToLabels("app", pa.getName()).endMetadata().withNewSpec().withNewTemplate().withNewMetadata()
+					.addToLabels("app", pa.getName()).endMetadata().withNewSpec().addNewContainer()
+					.withName(pa.getName()).withImage(image).withEnv(envs).withCommand(command).withArgs(args)
+					.endContainer().endSpec().endTemplate().endSpec().build();
 			logger.info("{}: {}", "Created autoscaler job",
-					client.extensions().deployments().inNamespace(namespace).create(deployment));
+					client.extensions().deployments().inNamespace("default").create(deployment));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -185,16 +186,40 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 		}
 	}
 
-	public void addStorage(Deployment deploy) {
+	public void addStorage(Deployment deploy, Volume volume) {
 		try {
 			// Add a Storage
+
 			logger.info("{}: {}", "Add a Storage",
 					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
-							.withName(deploy.getMetadata().getName()).edit().editSpec().editTemplate().editOrNewSpec()
-							.editFirstContainer().addNewVolumeMount().withName("").withMountPath("").withReadOnly(false)
-							.endVolumeMount().endContainer().addNewVolume().withName("").withNewPersistentVolumeClaim()
-							.withClaimName("").endPersistentVolumeClaim().and().endSpec().endTemplate().endSpec()
-							.done());
+							.withName(deploy.getMetadata().getName()).edit().editSpec().editTemplate().editSpec()
+							.editFirstContainer().addNewVolumeMount().withName(volume.getStorageName())
+							.withMountPath(volume.getMountPath()).withReadOnly(false).endVolumeMount().endContainer()
+							.addNewVolume().withName(volume.getStorageName()).withNewPersistentVolumeClaim()
+							.withClaimName(volume.getStorageName()).endPersistentVolumeClaim().endVolume().endSpec()
+							.endTemplate().endSpec().done());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+
+	public void deleteStorage(Deployment deploy) {
+		try {
+			// Unmount a Storage
+			deploy.getSpec().getTemplate().getSpec().getVolumes()
+					.removeAll(deploy.getSpec().getTemplate().getSpec().getVolumes());
+			deploy.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts()
+					.removeAll(deploy.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts());
+			logger.info("{}: {}", "Delete a Storage",
+					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
+							.withName(deploy.getMetadata().getName()).replace(deploy));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
