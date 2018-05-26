@@ -19,9 +19,10 @@ public class Application {
 	private Service service;
 	private List<Pod> listPod;
 	private HorizontalPodAutoscaler hpa;
-	private boolean proAutoscaler = false;
 	private Deployment autoscaler;
+	private ProactiveAutoscaler pa;
 	private Resources resources;
+	private Volume volume;
 
 	public Application() {
 		this.pods = 1;
@@ -108,14 +109,6 @@ public class Application {
 		this.hpa = hpa;
 	}
 
-	public boolean isProAutoscaler() {
-		return proAutoscaler;
-	}
-
-	public void setProAutoscaler(boolean proAutoscaler) {
-		this.proAutoscaler = proAutoscaler;
-	}
-
 	public Deployment getAutoscaler() {
 		return autoscaler;
 	}
@@ -124,12 +117,28 @@ public class Application {
 		this.autoscaler = autoscaler;
 	}
 
+	public ProactiveAutoscaler getPa() {
+		return pa;
+	}
+
+	public void setPa(ProactiveAutoscaler pa) {
+		this.pa = pa;
+	}
+
 	public Resources getResources() {
 		return resources;
 	}
 
 	public void setResources(Resources resources) {
 		this.resources = resources;
+	}
+
+	public Volume getVolume() {
+		return volume;
+	}
+
+	public void setVolume(Volume volume) {
+		this.volume = volume;
 	}
 
 }

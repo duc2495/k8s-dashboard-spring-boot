@@ -20,9 +20,11 @@ public interface ApplicationService {
 	
 	void autoScaling(Application app);
 	
-	void proAutoScaling(Application app);
+	void proactiveAutoscaling(Application app, int predictCPU, int actualCPU);
 	
-	void deleteProAutoscaler(Application app);
+	void addStorage(Application app);
+	
+	void deleteStorage(Application app);
 
 	List<Application> getAll(Project project);
 

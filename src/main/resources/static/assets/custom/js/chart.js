@@ -103,8 +103,8 @@ $(document)
 							var predictValue = convertStrToArr(strPredictValue);
 							var lastPredictValue = predictValue[predictValue.length - 1];
 							var check = document
-									.getElementById("check-predict-value" + j).value;
-							if (check == "true") {
+									.getElementById("check-predict-value" + j);
+							if (check != null) {
 								dataset = [
 										{
 											label : "Actual CPU:"

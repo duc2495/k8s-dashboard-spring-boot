@@ -34,9 +34,22 @@ CREATE TABLE application
   project_id integer NOT NULL,
   app_name character varying(50) NOT NULL,
   description character varying,
-  pro_autoscaler boolean NOT NULL DEFAULT FALSE,
   PRIMARY KEY (app_id),
   CONSTRAINT application_id_fkey FOREIGN KEY (project_id) REFERENCES project (project_id)
 )WITH (
   OIDS=FALSE
 );
+
+CREATE TABLE proactive_autoscaler
+(
+  app_id integer NOT NULL,
+  pa_name character varying(100) NOT NULL,
+  min_replicas integer NOT NULL,
+  max_replicas integer NOT NULL,
+  max_cpu integer NOT NULL,
+  PRIMARY KEY (app_id),
+  CONSTRAINT proactive_autoscaler_fkey FOREIGN KEY (app_id) REFERENCES application (app_id)
+)WITH (
+  OIDS=FALSE
+);
+

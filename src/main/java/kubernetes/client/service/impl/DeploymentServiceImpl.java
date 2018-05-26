@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import kubernetes.client.api.DeploymentAPI;
 import kubernetes.client.model.Application;
+import kubernetes.client.model.ProactiveAutoscaler;
 import kubernetes.client.model.Template;
+import kubernetes.client.model.Volume;
 import kubernetes.client.service.DeploymentService;
 
 @Transactional
@@ -30,10 +32,10 @@ public class DeploymentServiceImpl implements DeploymentService {
 	}
 
 	@Override
-	public void createAutoscaler(Application app) {
-		deploymentAPI.createAutoscaler(app);
+	public void createAutoscaler(ProactiveAutoscaler pa, String appName, String projectName) {
+		deploymentAPI.createAutoscaler(pa, appName, projectName);
 	}
-	
+
 	@Override
 	public void delete(String name, String projectName) {
 		deploymentAPI.delete(name, projectName);
@@ -74,4 +76,13 @@ public class DeploymentServiceImpl implements DeploymentService {
 		deploymentAPI.rollBack(deployment, revision);
 	}
 
+	@Override
+	public void addStorage(Deployment deployment, Volume volume) {
+		deploymentAPI.addStorage(deployment, volume);
+	}
+
+	@Override
+	public void deleteStorage(Deployment deployment) {
+		deploymentAPI.deleteStorage(deployment);
+	}
 }
