@@ -1,6 +1,5 @@
 # Kubernetes Web UI 
 Đây là giao diện người dùng web cho Kubernetes được viết bằng Java Spring Boot, cơ sở dữ liệu PostgreSQL.
-Xem bản phát triển [ở đây](https://github.com/duc2495/k8s-dashboard-spring-boot)
 # Hướng dẫn đóng gói ứng dụng thành docker image
 ## Điều kiện tiên quyết
 Trước khi đóng gói ứng dụng yêu cầu một số điều kiện sau:
