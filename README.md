@@ -7,10 +7,10 @@ Trước khi đóng gói ứng dụng yêu cầu một số điều kiện sau:
 - Cài đặt [Maven](https://maven.apache.org/install.html).
 ## Tải mã nguồn từ github 
 Mở Terminer lên và chạy lệnh sau:
-> git clone https://github.com/duc2495/do-an.git 
+> git clone https://github.com/duc2495/k8s-dashboard-spring-boot.git
 
-Sau khi tải về thành công, truy cập vào thư mục `do-an/K8sClient` với lệnh sau:
-> cd do-an/K8sClient
+Sau khi tải về thành công, truy cập vào thư mục `k8s-dashboard-spring-boot` với lệnh sau:
+> cd k8s-dashboard-spring-boot
 
 ## Đóng gói Web UI
 Sử dụng `Dockerfile` đã được định nghĩa sẵn trong thư mục để đóng gói Web UI
