@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Project;
+import kubernetes.client.model.ResourcesRequest;
 import kubernetes.client.model.Storage;
 import kubernetes.client.service.ApplicationService;
 import kubernetes.client.service.ProjectService;
@@ -226,6 +227,39 @@ public class ApplicationController extends BaseController {
 		model.addAttribute("projectName", name);
 		appService.pause(id, name);
 		redirectAttributes.addFlashAttribute("info", "Application pause successfully");
+		return "redirect:/project/" + name + "/overview";
+	}
+
+	@RequestMapping(value = "/project/{name}/apps/edit-resources/{id}", method = RequestMethod.GET)
+	public String editResourcesForm(@PathVariable String name, @PathVariable int id, Model model) {
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error",
+					"The Project \"" + name + "\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		model.addAttribute("projectName", name);
+		model.addAttribute("id", id);
+		ResourcesRequest resources = new ResourcesRequest();
+		model.addAttribute("resources", resources);
+		return "application/edit_resources";
+	}
+
+	@RequestMapping(value = "/project/{name}/apps/edit-resources/{id}", method = RequestMethod.POST)
+	public String editResources(@PathVariable String name, @PathVariable int id, ResourcesRequest resources,
+			Model model, RedirectAttributes redirectAttributes) {
+		model.addAttribute("projectName", name);
+		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
+			model.addAttribute("error",
+					"The Project \"" + name + "\" does not exist or you are not authorized to use it.");
+			return "403";
+		}
+		Application app = appService.getApplicationById(id, name);
+		if (app == null) {
+			model.addAttribute("error", "The Application does not exist or you are not authorized to pause it.");
+			return "403";
+		}
+		appService.editResources(app, resources);
+		redirectAttributes.addFlashAttribute("info", "Resources updated successfully");
 		return "redirect:/project/" + name + "/overview";
 	}
 }

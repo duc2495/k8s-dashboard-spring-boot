@@ -1,7 +1,9 @@
 package kubernetes.client.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,7 @@ import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.ProactiveAutoscaler;
+import kubernetes.client.model.ResourcesRequest;
 import kubernetes.client.model.Template;
 import kubernetes.client.model.Volume;
 
@@ -257,6 +260,28 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 					client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace())
 							.withName(deployment.getMetadata().getName()).edit().editSpec().editOrNewRollbackTo()
 							.withRevision(revision).endRollbackTo().endSpec().done());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+	
+	public void editResources(Deployment deployment, ResourcesRequest resources) {
+		try {
+			// Edit Resousces 
+			Map <String, Quantity> mapResources = new HashMap<String, Quantity>();
+			mapResources.put("cpu", new Quantity(resources.getCpu()));
+			mapResources.put("memory", new Quantity(resources.getMemory()));
+			logger.info("{}: {}", "Edit resources",
+					client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace()).withName(deployment.getMetadata().getName()).edit().editSpec()
+							.editTemplate().editOrNewSpec().editFirstContainer().editOrNewResources().addToRequests(mapResources).endResources()
+							.endContainer().endSpec().endTemplate().endSpec().done());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);

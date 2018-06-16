@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kubernetes.client.mapper.ApplicationMapper;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Project;
+import kubernetes.client.model.ResourcesRequest;
 import kubernetes.client.service.ApplicationService;
 import kubernetes.client.service.AutoscalerService;
 import kubernetes.client.service.DeploymentService;
@@ -178,5 +179,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Override
 	public void deleteStorage(Application app) {
 		deploymentService.deleteStorage(app.getDeployment());
+	}
+
+	@Override
+	public void editResources(Application app, ResourcesRequest resources) {
+		deploymentService.editResourcesRequest(app.getDeployment(), resources);
 	}
 }
