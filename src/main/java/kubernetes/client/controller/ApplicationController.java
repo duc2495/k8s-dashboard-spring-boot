@@ -2,6 +2,8 @@ package kubernetes.client.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,7 @@ import kubernetes.client.service.ApplicationService;
 import kubernetes.client.service.ProjectService;
 import kubernetes.client.service.StorageService;
 import kubernetes.client.validator.ApplicationValidator;
+import kubernetes.client.validator.ResourcesRequestValidator;
 
 @Controller
 public class ApplicationController extends BaseController {
@@ -31,6 +34,9 @@ public class ApplicationController extends BaseController {
 
 	@Autowired
 	private ApplicationValidator appValidator;
+	
+	@Autowired
+	private ResourcesRequestValidator resValidator;
 
 	@Autowired
 	private StorageService storageService;
@@ -245,14 +251,19 @@ public class ApplicationController extends BaseController {
 	}
 
 	@RequestMapping(value = "/project/{name}/apps/edit-resources/{id}", method = RequestMethod.POST)
-	public String editResources(@PathVariable String name, @PathVariable int id, ResourcesRequest resources,
-			Model model, RedirectAttributes redirectAttributes) {
+	public String editResources(@PathVariable String name, @PathVariable int id, @Valid  @ModelAttribute("resources") ResourcesRequest resources,
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		model.addAttribute("projectName", name);
 		if (projectService.getProjectByName(name, getCurrentUser().getCustomer().getId()) == null) {
 			model.addAttribute("error",
 					"The Project \"" + name + "\" does not exist or you are not authorized to use it.");
 			return "403";
 		}
+		resValidator.validate(resources, result);
+		if (result.hasErrors()) {
+			return "application/edit_resources";
+		}
+		
 		Application app = appService.getApplicationById(id, name);
 		if (app == null) {
 			model.addAttribute("error", "The Application does not exist or you are not authorized to pause it.");

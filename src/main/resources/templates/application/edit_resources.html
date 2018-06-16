@@ -29,8 +29,9 @@
 						th:classappend="${#fields.hasErrors('cpu')}? 'has-error'">
 						<label>CPU requests *</label> <input type="text"
 							class="form-control" name="cpu" th:field="*{cpu}"
-							placeholder="Docker image" required />
-						<p class="recommend">The amount of CPU can provide for Pods.</p>
+							placeholder="500m" required />
+						<p class="recommend">The amount of CPU can provide for
+							Container, e.g. 500m, 1, 2...</p>
 						<p th:if="${#fields.hasErrors('cpu')}" th:errors="*{cpu}"
 							th:class="text-red">Incorrect data</p>
 					</div>
@@ -38,9 +39,9 @@
 						th:classappend="${#fields.hasErrors('memory')}? 'has-error'">
 						<label>Memory requests *</label> <input type="text"
 							class="form-control" name="memory" th:field="*{memory}"
-							placeholder="memory" required />
+							placeholder="1Gi" required />
 						<p class="recommend">The amount of Memory can provide for
-							Pods.</p>
+							Container, e.g. 512Mi, 1Gi, 2Gi...</p>
 						<p th:if="${#fields.hasErrors('memory')}" th:errors="*{memory}"
 							th:class="text-red">Incorrect data</p>
 					</div>
