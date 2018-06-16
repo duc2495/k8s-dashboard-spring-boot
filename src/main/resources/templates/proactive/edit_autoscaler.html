@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Proactive Autoscaler</title>
+</head>
+<body>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>APPLICATIONS</h1>
+		</section>
+	</div>
+
+	<div layout:fragment="content">
+		<div class="box box-warning">
+			<div class="box-header with-border">
+				<h3 class="box-title">Create Proactive Autoscaler</h3>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<form role="form"
+					th:action="@{/project/{name}/app/{appId}/pa(name=${projectName}, appId=${appId})}"
+					th:object="${pa}" th:method="put">
+					<!-- text input -->
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('minReplicas')}? 'has-error'">
+						<label>Number of min pods *</label> <input type="number"
+							class="form-control" name="minReplicas" th:field="*{minReplicas}"
+							placeholder="1" required />
+						<p class="recommend">The pods number must be between 1 and 5.</p>
+						<p th:if="${#fields.hasErrors('minReplicas')}"
+							th:errors="*{minReplicas}" th:class="text-red">Incorrect data</p>
+					</div>
+
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('maxReplicas')}? 'has-error'">
+						<label>Number of max pods *</label> <input type="number"
+							class="form-control" name="maxReplicas" th:field="*{maxReplicas}"
+							placeholder="5" required />
+						<p class="recommend">The pods number must be between 1 and 10.
+							Must be greater than number of min pods.</p>
+						<p th:if="${#fields.hasErrors('maxReplicas')}"
+							th:errors="*{maxReplicas}" th:class="text-red">Incorrect data</p>
+					</div>
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('maxCPU')}? 'has-error'">
+						<label>CPU Utilization Percentage *</label> <input type="number"
+							class="form-control" name="maxCPU" th:field="*{maxCPU}"
+							placeholder="50" required />
+						<p class="recommend">The pods number must be between 50 and
+							100.</p>
+						<p th:if="${#fields.hasErrors('maxCPU')}" th:errors="*{maxCPU}"
+							th:class="text-red">Incorrect data</p>
+					</div>
+					<div class="box-footer">
+						<button type="submit" class="btn btn-primary">Update</button>
+					</div>
+				</form>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+
+	</div>
+
+</body>
+
+</html>

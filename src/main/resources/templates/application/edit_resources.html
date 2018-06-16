@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/dashboardLayout}">
+
+<head>
+<title>Applications</title>
+</head>
+<body>
+	<div layout:fragment="pageHeader">
+		<section class="content-header">
+			<h1>APPLICATIONS</h1>
+		</section>
+	</div>
+	<div layout:fragment="content">
+		<div class="box box-warning">
+			<div class="box-header with-border">
+				<h3 class="box-title">Edit Resources</h3>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<form role="form"
+					th:action="@{/project/{name}/apps/edit-resources/{id}(name=${projectName}, id=${id})}"
+					th:object="${resources}" method="post">
+					<!-- text input -->
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('cpu')}? 'has-error'">
+						<label>CPU requests *</label> <input type="text"
+							class="form-control" name="cpu" th:field="*{cpu}"
+							placeholder="Docker image" required />
+						<p class="recommend">The amount of CPU can provide for Pods.</p>
+						<p th:if="${#fields.hasErrors('cpu')}" th:errors="*{cpu}"
+							th:class="text-red">Incorrect data</p>
+					</div>
+					<div class="form-group"
+						th:classappend="${#fields.hasErrors('memory')}? 'has-error'">
+						<label>Memory requests *</label> <input type="text"
+							class="form-control" name="memory" th:field="*{memory}"
+							placeholder="memory" required />
+						<p class="recommend">The amount of Memory can provide for
+							Pods.</p>
+						<p th:if="${#fields.hasErrors('memory')}" th:errors="*{memory}"
+							th:class="text-red">Incorrect data</p>
+					</div>
+
+					<div class="box-footer">
+						<button type="submit" class="btn btn-primary">Edit
+							Resources</button>
+					</div>
+				</form>
+			</div>
+			<!-- /.box-body -->
+		</div>
+		<!-- /.box -->
+	</div>
+</body>
+
+</html>

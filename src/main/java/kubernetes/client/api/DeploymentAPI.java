@@ -1,7 +1,9 @@
 package kubernetes.client.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -9,16 +11,17 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import io.fabric8.kubernetes.api.model.extensions.DeploymentBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
 import kubernetes.client.model.Application;
+import kubernetes.client.model.ProactiveAutoscaler;
+import kubernetes.client.model.ResourcesRequest;
 import kubernetes.client.model.Template;
+import kubernetes.client.model.Volume;
 
 @Repository
 public class DeploymentAPI extends ConnectK8SConfiguration {
-	
+
 	public void create(Application app, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Create a deployment
 			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(app.getName())
 					.addToLabels("app", app.getName()).endMetadata().withNewSpec().withReplicas(app.getPods())
@@ -26,8 +29,8 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 					.withNewMetadata().addToLabels("app", app.getName()).endMetadata().withNewSpec().addNewContainer()
 					.withName(app.getName()).withImage(app.getImage()).addNewPort().withContainerPort(app.getPort())
 					.endPort().withNewResources().addToRequests("cpu", new Quantity("500m"))
-					.addToRequests("memory", new Quantity("1Gi")).endResources().endContainer().endSpec()
-					.endTemplate().endSpec().build();
+					.addToRequests("memory", new Quantity("1Gi")).endResources().endContainer().endSpec().endTemplate()
+					.endSpec().build();
 			logger.info("{}: {}", "Created deployment",
 					client.extensions().deployments().inNamespace(namespace).create(deployment));
 
@@ -45,7 +48,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public void create(Template template, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Create a deployment
 			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(template.getName())
 					.addToLabels("app", template.getName()).endMetadata().withNewSpec().withReplicas(1)
@@ -74,33 +77,30 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 			}
 		}
 	}
-	
-	public void createAutoscaler(Application app) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-			// Create a deployment
-			String namespace = "default";
-			String name = app.getName() + "-" + app.getDeployment().getMetadata().getNamespace() + "-tf-client";
-			String image = "duc2495/tf-serving-client:latest";
 
+	public void createAutoscaler(ProactiveAutoscaler pa, String appName, String namespace) {
+		try {
+			// Create a deployment
+			String image = "duc2495/tf-serving-client:latest";
 			List<EnvVar> envs = new ArrayList<EnvVar>();
-			envs.add(new EnvVar("TF_SERVER", "k8s-master:30900", null));
-			envs.add(new EnvVar("INFLUX_SERVER","k8s-master:30086", null));
-			envs.add(new EnvVar("WEB_SERVER", "k8s-master:8080", null));
-			envs.add(new EnvVar("NAMESPACE", app.getDeployment().getMetadata().getNamespace(), null));
-			envs.add(new EnvVar("NAME",app.getName(), null));
+			envs.add(new EnvVar("TF_SERVER", "tensorflow-serving:9000", null));
+
+			envs.add(new EnvVar("INFLUX_SERVER", "monitoring-influxdb.kube-system:8086", null));
+			envs.add(new EnvVar("WEB_SERVER", "dashboard:8080", null));
+			envs.add(new EnvVar("NAMESPACE", namespace, null));
+			envs.add(new EnvVar("NAME", appName, null));
 			envs.add(new EnvVar("MODEL_NAME", "cpu", null));
 			String command = "bin/sh";
 			List<String> args = new ArrayList<String>();
 			args.add("-c");
 			args.add("while true ; do ./run_client.sh & sleep 60; done");
-			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(name)
-					.addToLabels("app", name).endMetadata().withNewSpec()
-					.withNewTemplate()
-					.withNewMetadata().addToLabels("app", name).endMetadata().withNewSpec().addNewContainer()
-					.withName(name).withImage(image).withEnv(envs).withCommand(command).withArgs(args).endContainer().endSpec()
-					.endTemplate().endSpec().build();
+			Deployment deployment = new DeploymentBuilder().withNewMetadata().withName(pa.getName())
+					.addToLabels("app", pa.getName()).endMetadata().withNewSpec().withNewTemplate().withNewMetadata()
+					.addToLabels("app", pa.getName()).endMetadata().withNewSpec().addNewContainer()
+					.withName(pa.getName()).withImage(image).withEnv(envs).withCommand(command).withArgs(args)
+					.endContainer().endSpec().endTemplate().endSpec().build();
 			logger.info("{}: {}", "Created autoscaler job",
-					client.extensions().deployments().inNamespace(namespace).create(deployment));
+					client.extensions().deployments().inNamespace("default").create(deployment));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,7 +116,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public Deployment get(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get a deployment
 			Deployment deployment = client.extensions().deployments().inNamespace(namespace).withName(name).get();
 			logger.info("{}: {}", "Get deployment", deployment);
@@ -135,7 +135,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public List<Deployment> getAll(String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Get all deployment
 			List<Deployment> deployments = client.extensions().deployments().inNamespace(namespace).list().getItems();
 			return deployments;
@@ -153,7 +153,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public void delete(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Delete a deployment
 			logger.info("{}: {}", "Delete deployment",
 					client.extensions().deployments().inNamespace(namespace).withName(name).delete());
@@ -170,7 +170,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public void update(Application app, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Update a deployment
 			logger.info("{}: {}", "Update deployment",
 					client.extensions().deployments().inNamespace(namespace).withName(app.getName()).edit().editSpec()
@@ -188,17 +188,41 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 			}
 		}
 	}
-	
-	public void addStorage(Deployment deploy) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+
+	public void addStorage(Deployment deploy, Volume volume) {
+		try {
 			// Add a Storage
+
 			logger.info("{}: {}", "Add a Storage",
 					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
-							.withName(deploy.getMetadata().getName()).edit().editSpec().editTemplate().editOrNewSpec()
-							.editFirstContainer().addNewVolumeMount().withName("").withMountPath("").withReadOnly(false)
-							.endVolumeMount().endContainer().addNewVolume().withName("").withNewPersistentVolumeClaim()
-							.withClaimName("").endPersistentVolumeClaim().and().endSpec().endTemplate().endSpec()
-							.done());
+							.withName(deploy.getMetadata().getName()).edit().editSpec().editTemplate().editSpec()
+							.editFirstContainer().addNewVolumeMount().withName(volume.getStorageName())
+							.withMountPath(volume.getMountPath()).withReadOnly(false).endVolumeMount().endContainer()
+							.addNewVolume().withName(volume.getStorageName()).withNewPersistentVolumeClaim()
+							.withClaimName(volume.getStorageName()).endPersistentVolumeClaim().endVolume().endSpec()
+							.endTemplate().endSpec().done());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
+
+	public void deleteStorage(Deployment deploy) {
+		try {
+			// Unmount a Storage
+			deploy.getSpec().getTemplate().getSpec().getVolumes()
+					.removeAll(deploy.getSpec().getTemplate().getSpec().getVolumes());
+			deploy.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts()
+					.removeAll(deploy.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts());
+			logger.info("{}: {}", "Delete a Storage",
+					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
+							.withName(deploy.getMetadata().getName()).replace(deploy));
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -212,7 +236,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public void scale(Deployment deploy) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Scale a deployment
 			logger.info("{}: {}", "Scale deployment",
 					client.extensions().deployments().inNamespace(deploy.getMetadata().getNamespace())
@@ -230,7 +254,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public void rollBack(Deployment deployment, Long revision) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Update a deployment
 			logger.info("{}: {}", "Roll back deployment",
 					client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace())
@@ -247,9 +271,31 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 			}
 		}
 	}
+	
+	public void editResources(Deployment deployment, ResourcesRequest resources) {
+		try {
+			// Edit Resousces 
+			Map <String, Quantity> mapResources = new HashMap<String, Quantity>();
+			mapResources.put("cpu", new Quantity(resources.getCpu()));
+			mapResources.put("memory", new Quantity(resources.getMemory()));
+			logger.info("{}: {}", "Edit resources",
+					client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace()).withName(deployment.getMetadata().getName()).edit().editSpec()
+							.editTemplate().editOrNewSpec().editFirstContainer().editOrNewResources().addToRequests(mapResources).endResources()
+							.endContainer().endSpec().endTemplate().endSpec().done());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			Throwable[] suppressed = e.getSuppressed();
+			if (suppressed != null) {
+				for (Throwable t : suppressed) {
+					logger.error(t.getMessage(), t);
+				}
+			}
+		}
+	}
 
 	public void pause(Deployment deployment) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			// Pause a deployment
 			logger.info("{}: {}", "Pause deployment",
 					client.extensions().deployments().inNamespace(deployment.getMetadata().getNamespace())
@@ -268,7 +314,7 @@ public class DeploymentAPI extends ConnectK8SConfiguration {
 	}
 
 	public boolean exists(String name, String namespace) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 			if (client.extensions().deployments().inNamespace(namespace).withName(name).get() != null) {
 				return true;
 			}

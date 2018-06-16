@@ -4,15 +4,13 @@ import org.springframework.stereotype.Repository;
 
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClient;
 
 @Repository
 public class NamespaceAPI extends ConnectK8SConfiguration {
 
 	public void create(String name) {
 
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 
 			// Create a namespace
 			Namespace ns = new NamespaceBuilder().withNewMetadata().withName(name).endMetadata().build();
@@ -32,7 +30,7 @@ public class NamespaceAPI extends ConnectK8SConfiguration {
 	}
 
 	public void delete(String name) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 
 			// Delete a namespace
 			Namespace ns = new NamespaceBuilder().withNewMetadata().withName(name).endMetadata().build();
@@ -51,7 +49,7 @@ public class NamespaceAPI extends ConnectK8SConfiguration {
 	}
 
 	public boolean exists(String name) {
-		try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
+		try {
 
 			// Exists namespace
 			if (client.namespaces().withName(name).get() != null) {

@@ -38,9 +38,6 @@ public interface ApplicationMapper {
 	@Update("UPDATE application SET description =#{description} WHERE app_id =#{id}")
 	void update(Application app);
 
-	@Update("UPDATE application SET pro_autoscaler =#{proAutoscaler}  WHERE app_id =#{id}")
-	void updateAutoscaler(Application app);
-
 	@Delete("DELETE FROM application WHERE app_id =#{app_id}")
 	void delete(int app_id);
 

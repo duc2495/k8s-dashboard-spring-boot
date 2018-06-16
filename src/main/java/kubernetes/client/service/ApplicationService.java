@@ -4,6 +4,7 @@ import java.util.List;
 
 import kubernetes.client.model.Application;
 import kubernetes.client.model.Project;
+import kubernetes.client.model.ResourcesRequest;
 
 public interface ApplicationService {
 	void deploy(Application app, Project project);
@@ -20,9 +21,13 @@ public interface ApplicationService {
 	
 	void autoScaling(Application app);
 	
-	void proAutoScaling(Application app);
+	void proactiveAutoscaling(Application app, int predictCPU, int actualCPU);
 	
-	void deleteProAutoscaler(Application app);
+	void addStorage(Application app);
+	
+	void editResources(Application app, ResourcesRequest resources);
+	
+	void deleteStorage(Application app);
 
 	List<Application> getAll(Project project);
 
