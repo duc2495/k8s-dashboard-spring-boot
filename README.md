@@ -15,7 +15,7 @@ Sau khi tải về thành công, truy cập vào thư mục `k8s-dashboard-sprin
 ## Đóng gói Web UI
 Sử dụng `Dockerfile` đã được định nghĩa sẵn trong thư mục để đóng gói Web UI
 1. Xuất khẩu mã nguồn thành file thực thi Jar
-   > maven clean package 
+   > mvn clean package 
 2. Đóng gói image với `Dockerfile`. Sau khi xuất khẩu thành công, file `K8sClient-0.0.1-SNAPSHOT.jar`được tạo ra trong thư mục target. Thực hiện lệnh sau để đóng gói:
    > sudo docker build -t $USER/k8s-dashboard --build-arg JAR_FILE=target/K8sClient-0.0.1-SNAPSHOT.jar .
 3. Đẩy lên Docker Hub với lệnh sau:

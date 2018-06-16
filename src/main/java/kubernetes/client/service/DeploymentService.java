@@ -5,6 +5,7 @@ import java.util.List;
 import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.ProactiveAutoscaler;
+import kubernetes.client.model.ResourcesRequest;
 import kubernetes.client.model.Template;
 import kubernetes.client.model.Volume;
 
@@ -28,6 +29,8 @@ public interface DeploymentService {
 	void addStorage(Deployment deployment, Volume volume);
 
 	void deleteStorage(Deployment deployment);
+	
+	void editResourcesRequest(Deployment deployment, ResourcesRequest resources);
 
 	Deployment getDeploymentByName(String name, String projectName);
 

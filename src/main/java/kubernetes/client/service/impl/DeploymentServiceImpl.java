@@ -10,6 +10,7 @@ import io.fabric8.kubernetes.api.model.extensions.Deployment;
 import kubernetes.client.api.DeploymentAPI;
 import kubernetes.client.model.Application;
 import kubernetes.client.model.ProactiveAutoscaler;
+import kubernetes.client.model.ResourcesRequest;
 import kubernetes.client.model.Template;
 import kubernetes.client.model.Volume;
 import kubernetes.client.service.DeploymentService;
@@ -84,5 +85,10 @@ public class DeploymentServiceImpl implements DeploymentService {
 	@Override
 	public void deleteStorage(Deployment deployment) {
 		deploymentAPI.deleteStorage(deployment);
+	}
+
+	@Override
+	public void editResourcesRequest(Deployment deployment, ResourcesRequest resources) {
+		deploymentAPI.editResources(deployment, resources);
 	}
 }
